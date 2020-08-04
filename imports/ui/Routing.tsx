@@ -1,36 +1,30 @@
 // @ts-ignore
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-// @ts-ignore
-import { mount } from 'react-mounter';
 import React from 'react';
+// @ts-ignore
+import { mount } from "react-mounter";
 import { Container } from '@material-ui/core';
 import Routes from '/imports/api/RoutePaths'
 
-// @ts-ignore
-export const Routing = ({content}) => {
+export type RoutingArgs = {
+  content: () => JSX.Element,
+}
+
+export const Routing = ({content: Content}: RoutingArgs) => {
   return (
-  <Container maxWidth={"md"}>
-    <main>
-      {content}
-    </main>
-  </Container>
+    <Container maxWidth={"md"}>
+      <main>
+        <Content />
+      </main>
+    </Container>
   );
 }
 
-FlowRouter.route(Routes.index.path, {
-  name: Routes.index.routeName,
-  action() {
-    mount(Routing, {
-      content: <Routes.index.component/>
-    });
-  },
-});
-
-FlowRouter.route(Routes.wikiMain.path, {
-  name: Routes.wikiMain.routeName,
-  action() {
-    mount(Routing, {
-      content: <Routes.wikiMain.component/>
-    });
-  },
+Routes.forEach(route => {
+  FlowRouter.route(route.path, {
+    name: route.routeName,
+    action() {
+      mount(Routing, {content: route.component})
+    }
+  })
 });
