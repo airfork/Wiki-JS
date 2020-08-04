@@ -2,10 +2,9 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 // @ts-ignore
 import { mount } from 'react-mounter';
-import { Wiki } from './Wiki';
 import React from 'react';
-import { Index } from './Index'
 import { Container } from '@material-ui/core';
+import Routes from '/imports/api/RoutePaths'
 
 // @ts-ignore
 export const Routing = ({content}) => {
@@ -18,18 +17,20 @@ export const Routing = ({content}) => {
   );
 }
 
-FlowRouter.route('/', {
-  name: 'index',
+FlowRouter.route(Routes.index.path, {
+  name: Routes.index.routeName,
   action() {
     mount(Routing, {
-      content: <Index/>
+      content: <Routes.index.component/>
     });
   },
 });
 
-FlowRouter.route('/wiki', {
-  name: 'testing',
+FlowRouter.route(Routes.wikiMain.path, {
+  name: Routes.wikiMain.routeName,
   action() {
-    mount(Routing, {content: <Wiki/>});
+    mount(Routing, {
+      content: <Routes.wikiMain.component/>
+    });
   },
 });
