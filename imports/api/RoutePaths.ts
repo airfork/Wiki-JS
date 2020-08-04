@@ -3,11 +3,11 @@ import { Wiki } from '/imports/ui/Wiki';
 import { Index } from '/imports/ui/Index'
 
 class Route {
-  readonly routeName: String;
-  readonly path: String;
+  readonly routeName: string;
+  readonly path: string;
   readonly component: () => JSX.Element;
 
-  constructor(routeName: String, path: String, component: () => JSX.Element) {
+  constructor(routeName: string, path: string, component: () => JSX.Element) {
     this.routeName = routeName;
     this.path = path;
     this.component = component;
