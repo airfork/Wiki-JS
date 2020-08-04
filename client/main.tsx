@@ -1,8 +1,8 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
-import { Routing } from '/imports/ui/Routing';
+import App from '/imports/ui/App';
 
 Meteor.startup(() => {
-  render(<Routing content={() => <></>} />, document.getElementById('react-target'));
+  render(<App />, document.getElementById('react-target'));
 });
