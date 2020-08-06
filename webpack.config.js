@@ -31,16 +31,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.tsx$/,
-                use: [
-                    {
-                        loader: 'ts-loader',
-                    },
-                ],
-                exclude: /nodeModules/,
-            },
-            {
-                test: /\.(js|jsx)$/,
+                test: /\.(js|jsx|tsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: "babel-loader"
