@@ -1,6 +1,7 @@
 import Koa from 'koa';
-import koaWebpack from "koa-webpack";
 import send from 'koa-send';
+import serve from 'koa-static-server';
+import koaWebpack from 'koa-webpack';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
 import routes from '../client/routes';
@@ -13,7 +14,7 @@ const generalSetup = async () => {
 }
 
 const prodSetup = () => {
-
+  app.use(serve({ rootDir: 'dist', rootPath: '/' }));
 };
 
 const devSetup = async () => {
@@ -32,7 +33,7 @@ const devSetup = async () => {
   app.use(webpackMiddle);
   app.use(async (ctx, next) => {
     if (routes.map(route => route.path).includes(ctx.request.path)) {
-      await send(ctx, 'dist/index.html')
+      await send(ctx, 'dist/index.html');
     }
     else {
       await next();
@@ -41,5 +42,5 @@ const devSetup = async () => {
 }
 
 generalSetup()
-  .then(() => process.env.NODE_ENV === 'production' ? {} : devSetup())
+  .then(() => process.env.NODE_ENV === 'production' ? prodSetup() : devSetup())
   .then(() => app.listen(8080));
