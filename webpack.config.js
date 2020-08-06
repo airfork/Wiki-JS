@@ -3,7 +3,7 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: ['./src/client/main.ts', './src/client/index.html'],
+        main: ['./src/client/main.tsx', './src/client/index.html'],
     },
     mode: 'development',
     output: {
@@ -29,6 +29,22 @@ module.exports = {
                         loader: 'ts-loader',
                     },
                 ],
+            },
+            {
+                test: /\.tsx$/,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                    },
+                ],
+                exclude: /nodeModules/,
+            },
+            {
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
+                }
             },
             {
                 test: /\.css$/,
@@ -64,6 +80,9 @@ module.exports = {
                 ],
             },
         ],
+    },
+    resolve: {
+        extensions: [ '.tsx', '.ts', '.js' ],
     },
     plugins: [
         new HTMLWebpackPlugin({

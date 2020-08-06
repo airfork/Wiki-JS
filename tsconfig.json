@@ -10,6 +10,7 @@
             "es2017"
         ],
         "esModuleInterop": true,
+        "jsx": "react"
     },
     "include": [
         "./src/**/*"
