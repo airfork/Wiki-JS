@@ -6,7 +6,7 @@
   "author": "fjoggis@gmail.com",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --watch webpack.config.js --watch src/server/server.ts src/server/server.ts --exec ts-node",
+    "start": "nodemon --config nodemon.js src/server/server.ts",
     "build": "webpack"
   },
   "devDependencies": {
