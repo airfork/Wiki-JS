@@ -2,19 +2,27 @@ import Koa from 'koa';
 import send from 'koa-send';
 import serve from 'koa-static-server';
 import koaWebpack from 'koa-webpack';
+import Router from 'koa-router';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
+
 import routes from '../client/routes';
 
 const app = new Koa();
+const router = new Router();
 const compiler = webpack(config);
 
 const generalSetup = async () => {
-  //TODO
+  routes.map(route => route.path).forEach(path => {
+    router.get(path, async ctx => {
+      await send(ctx, 'dist/index.html');
+    });
+  })
 }
 
 const prodSetup = () => {
-  app.use(serve({ rootDir: 'dist', rootPath: '/' }));
+  app.use(router.routes());
+  app.use(serve({ rootDir: 'dist' }));
 };
 
 const devSetup = async () => {
@@ -31,14 +39,7 @@ const devSetup = async () => {
     }
   });
   app.use(webpackMiddle);
-  app.use(async (ctx, next) => {
-    if (routes.map(route => route.path).includes(ctx.request.path)) {
-      await send(ctx, 'dist/index.html');
-    }
-    else {
-      await next();
-    }
-  });
+  app.use(router.routes());
 }
 
 generalSetup()
