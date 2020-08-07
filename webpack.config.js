@@ -1,5 +1,6 @@
 const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -88,5 +89,6 @@ module.exports = {
     new HTMLWebpackPlugin({
       template: './src/client/index.html',
     }),
+    new CompressionPlugin(),
   ],
 };
