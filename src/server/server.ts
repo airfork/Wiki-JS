@@ -34,7 +34,7 @@ const devSetup = async () => {
         colors: true,
       },
       writeToDisk: (filePath) => {
-        return /\.(css|html)$/.test(filePath)
+        return /\.(css|html|html.gz|css.gz)$/.test(filePath)
       },
     }
   });
