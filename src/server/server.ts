@@ -6,6 +6,8 @@ import Router from 'koa-router';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
 
+import client from './db/client';
+
 import routes from '../client/routes';
 
 const app = new Koa();
