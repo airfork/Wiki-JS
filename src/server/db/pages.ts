@@ -1,9 +1,11 @@
-import { Schema, model } from 'mongoose';
+import { prop, getModelForClass } from '@typegoose/typegoose';
 
-const pageSchema = new Schema({
-  data: String,
-});
 
-const Page = model('Page', pageSchema);
+class Page {
+  @prop()
+  public data: string;
+}
 
-export { Page };
+const PageModel = getModelForClass(Page);
+
+export { Page, PageModel };

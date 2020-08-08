@@ -1,13 +1,13 @@
 import { Schema, model } from 'mongoose';
+import { prop, getModelForClass } from '@typegoose/typegoose';
 
-const Buffer = Schema.Types.Buffer;
-const ObjectId = Schema.Types.ObjectId;
+class Image {
+  @prop()
+  public post: Schema.Types.ObjectId;
+  @prop()
+  public data: Schema.Types.Buffer;
+}
 
-const imageSchema = new Schema({
-  post: ObjectId,
-  data: Buffer,
-});
+const ImageModel = getModelForClass(Image);
 
-const Image = model('Image', imageSchema);
-
-export { Image };
+export { Image, ImageModel };

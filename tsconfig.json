@@ -10,6 +10,7 @@
             "es2017"
         ],
         "esModuleInterop": true,
+        "experimentalDecorators": true,
         "jsx": "react"
     },
     "include": [

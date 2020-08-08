@@ -1,11 +1,14 @@
-import { Schema, model } from 'mongoose';
+import { prop, getModelForClass } from '@typegoose/typegoose';
 
-const userSchema = new Schema({
-  username: String,
-  password: String,
-  admin: Boolean,
-});
+class User {
+  @prop()
+  public username: string;
+  @prop()
+  public password: string;
+  @prop()
+  public admin: boolean;
+}
 
-const User = model('User', userSchema);
+const UserModel = getModelForClass(User);
 
-export { User };
+export { UserModel, User };
