@@ -42,6 +42,9 @@
   },
   "dependencies": {
     "@babel/preset-typescript": "^7.10.4",
+    "@graphql-tools/graphql-file-loader": "^6.0.16",
+    "@graphql-tools/load": "^6.0.16",
+    "@graphql-tools/schema": "^6.0.16",
     "@typegoose/typegoose": "^7.3.1",
     "@types/koa": "^2.11.3",
     "@types/koa-router": "^7.4.1",

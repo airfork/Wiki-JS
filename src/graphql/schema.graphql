@@ -1,0 +1,36 @@
+type User {
+    username: String!,
+    admin: Boolean!
+}
+
+type NewUser {
+    username: String!,
+    password: String!,
+    admin: Boolean
+}
+
+type Article {
+    contents: String!,
+    createdAt: String!,
+    updatedAt: String!,
+    contributors: [User]!
+    categories: [Tags]
+}
+
+type Tags {
+    category: String!
+}
+
+type Image {
+    data: File,
+}
+
+type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+}
+
+type Query {
+    users: [User]
+}

@@ -1,46 +1,14 @@
 import { gql } from 'apollo-server';
+import { loadSchemaSync } from '@graphql-tools/load';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { addResolversToSchema } from '@graphql-tools/schema';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
-export const typeDefs = gql`
-    type User {
-        username: String!,
-        admin: Boolean!
-    }
-
-    type NewUser {
-        username: String!,
-        password: String!,
-        admin: Boolean
-    }
-    
-    type Article {
-        contents: String!,
-        createdAt: String!,
-        updatedAt: String!,
-        contributors: [User]!
-        categories: [Tags]
-    }
-    
-    type Tags {
-        category: String!
-    }
-
-    type Image {
-        data: File,
-    }
-
-    type File {
-        filename: String!
-        mimetype: String!
-        encoding: String!
-    }
-    
-    type Query {
-        users: [User]
-    }
-`;
+const schema = loadSchemaSync('./src/graphql/schema.graphql', {
+  loaders: [new GraphQLFileLoader()]
+});
 
 const users = [
   {
@@ -53,9 +21,13 @@ const users = [
   },
 ];
 
-export const resolvers = {
+const resolvers = {
   Query: {
     users: () => users,
   },
 };
 
+export const schemaWithResolvers = addResolversToSchema({
+  schema,
+  resolvers
+});

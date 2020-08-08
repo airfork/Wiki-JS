@@ -11,7 +11,7 @@ import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
 
 import routes from '../client/routes';
-import { typeDefs, resolvers } from '../graphql/schema'
+import { schemaWithResolvers } from '../graphql/schema';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -41,7 +41,7 @@ const generalSetup = async () => {
   app.use(koaBody());
 
   // Setup Apollo middleware
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const server = new ApolloServer({ schema: schemaWithResolvers });
   server.applyMiddleware({ app });
 
   // Add routes for SPA
