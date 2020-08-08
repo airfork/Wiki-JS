@@ -7,13 +7,19 @@ import Router from 'koa-router';
 import { connect } from 'mongoose';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
+import koaBody from 'koa-bodyparser';
+import { ApolloServer, gql } from 'apollo-server-koa';
 
 import routes from '../client/routes';
+import { typeDefs, resolvers } from '../graphql/schema'
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
 const router = new Router();
 const compiler = webpack(config);
+
+const server = new ApolloServer({ typeDefs, resolvers });
+server.applyMiddleware({ app });
 
 const generalSetup = async () => {
   // Load .env variables
@@ -21,6 +27,7 @@ const generalSetup = async () => {
   // Connect to DB
   console.info(`Trying to connect to database at ${mongoUrl}...`);
   console.log(process.env.MONGO_INITDB_ROOT_USERNAME)
+
   await connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -31,7 +38,11 @@ const generalSetup = async () => {
     console.error(reason);
     process.exit(1);
   });
+
   console.info("Connected to database!");
+
+  app.use(koaBody());
+
   // Add routes for SPA
   routes.map(route => route.path).forEach(path => {
     router.get(path, async ctx => {
@@ -64,4 +75,6 @@ const devSetup = async () => {
 
 generalSetup()
   .then(() => process.env.NODE_ENV === 'production' ? prodSetup() : devSetup())
-  .then(() => app.listen(8080));
+  .then(() => app.listen(8080, () => {
+    console.log(`🚀 Server ready at http://localhost:8080${server.graphqlPath}`)
+  }));
