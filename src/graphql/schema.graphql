@@ -1,0 +1,8 @@
+type User {
+    username: String!,
+    admin: Boolean!
+}
+
+type Image {
+    data: File,
+}
