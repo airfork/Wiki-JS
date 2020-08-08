@@ -1,5 +1,9 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const Page = new Schema({
+const pageSchema = new Schema({
   data: String,
 });
+
+const Page = model('Page', pageSchema);
+
+export { Page };

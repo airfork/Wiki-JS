@@ -1,7 +1,11 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
-const User = new Schema({
+const userSchema = new Schema({
   username: String,
   password: String,
   admin: Boolean,
 });
+
+const User = model('User', userSchema);
+
+export { User };

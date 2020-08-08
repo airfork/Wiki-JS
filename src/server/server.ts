@@ -5,6 +5,7 @@ import koaWebpack from 'koa-webpack';
 import Router from 'koa-router';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
+import { config as dotenv } from 'dotenv';
 
 import routes from '../client/routes';
 import { connect } from 'mongoose';
@@ -15,11 +16,17 @@ const router = new Router();
 const compiler = webpack(config);
 
 const generalSetup = async () => {
+  // Load .env variables
+  dotenv();
   // Connect to DB
   console.info(`Trying to connect to database at ${mongoUrl}...`);
+  console.log(process.env.MONGO_INITDB_ROOT_USERNAME)
   await connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    user: process.env.MONGO_INITDB_ROOT_USERNAME,
+    pass: process.env.MONGO_INITDB_ROOT_PASSWORD,
+    authSource: 'admin',
   }).catch(reason => {
     console.error(reason);
     process.exit(1);
