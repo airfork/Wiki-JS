@@ -1,14 +1,14 @@
+import { config as dotenv } from 'dotenv';
 import Koa from 'koa';
 import send from 'koa-send';
 import serve from 'koa-static-server';
 import koaWebpack from 'koa-webpack';
 import Router from 'koa-router';
+import { connect } from 'mongoose';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
-import { config as dotenv } from 'dotenv';
 
 import routes from '../client/routes';
-import { connect } from 'mongoose';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -37,7 +37,7 @@ const generalSetup = async () => {
     router.get(path, async ctx => {
       await send(ctx, 'dist/index.html');
     });
-  })
+  });
 };
 
 const prodSetup = () => {
