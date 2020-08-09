@@ -76,7 +76,7 @@ export type Mutation = {
   createImage?: Maybe<Image>;
   createUser?: Maybe<User>;
   logIn: Scalars['String'];
-  makeAdmin?: Maybe<Scalars['Boolean']>;
+  makeAdmin?: Maybe<User>;
 };
 
 
@@ -267,7 +267,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image' | 'linkedPageId'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
   logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
-  makeAdmin?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
+  makeAdmin?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
 };
 
 export type Resolvers<ContextType = any> = {

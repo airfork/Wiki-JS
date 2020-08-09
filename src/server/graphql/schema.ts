@@ -58,8 +58,7 @@ const resolvers: Resolvers = {
       }
       toUpdate.admin = true;
       toUpdate.save();
-      // Need to return something from mutation
-      return true;
+      return toUpdate as User;
     }
   }
 };
