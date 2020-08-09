@@ -40,7 +40,6 @@ scalar Upload
 input UserInput {
     username: String!
     password: String!
-    admin: Boolean
 }
 
 input TagsInput {
@@ -53,6 +52,7 @@ input PageInput {
 }
 
 type Mutation {
-    createPage(page: PageInput): Page
+    createPage(page: PageInput!): Page
     createImage(image: Upload!, linkedPageId: String!): Image
+    createUser(user: UserInput!): User
 }

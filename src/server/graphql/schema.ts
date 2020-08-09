@@ -3,7 +3,7 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
 import { UserModel } from '../db/users';
-import { User } from '../graphql/types';
+import { User, MutationCreateUserArgs } from '../graphql/types';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -33,6 +33,16 @@ const resolvers = {
       }) as User);
     },
   },
+  Mutation: {
+    createUser: async (_, user: MutationCreateUserArgs) => {
+      let numUsers = await UserModel.estimatedDocumentCount();
+      let newUser = await UserModel.create({
+        admin: numUsers === 0,
+        ...user.user
+      });
+      return newUser as User;
+    }
+  }
 };
 
 export const schemaWithResolvers = addResolversToSchema({

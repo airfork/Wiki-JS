@@ -57,7 +57,6 @@ export type Query = {
 export type UserInput = {
   username: Scalars['String'];
   password: Scalars['String'];
-  admin?: Maybe<Scalars['Boolean']>;
 };
 
 export type TagsInput = {
@@ -73,15 +72,21 @@ export type Mutation = {
   __typename?: 'Mutation';
   createPage?: Maybe<Page>;
   createImage?: Maybe<Image>;
+  createUser?: Maybe<User>;
 };
 
 
 export type MutationCreatePageArgs = {
-  page?: Maybe<PageInput>;
+  page: PageInput;
 };
 
 
 export type MutationCreateImageArgs = {
   image: Scalars['Upload'];
   linkedPageId: Scalars['String'];
+};
+
+
+export type MutationCreateUserArgs = {
+  user: UserInput;
 };
