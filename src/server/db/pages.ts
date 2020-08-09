@@ -1,9 +1,15 @@
 import { prop, getModelForClass } from '@typegoose/typegoose';
+import {TimeStamps} from "@typegoose/typegoose/lib/defaultClasses";
+import {User} from "./users";
+import {Tag} from "./tags";
 
-
-class Page {
+class Page extends TimeStamps{
   @prop()
-  public data: string;
+  public contents: string;
+  @prop()
+  public contributors: User[]
+  @prop()
+  public tags: Tag[]
 }
 
 const PageModel = getModelForClass(Page);

@@ -9,7 +9,7 @@ type NewUser {
     admin: Boolean
 }
 
-type Article {
+type Page {
     contents: String!,
     createdAt: String!,
     updatedAt: String!,
