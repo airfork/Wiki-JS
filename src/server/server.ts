@@ -4,6 +4,7 @@ import send from 'koa-send';
 import serve from 'koa-static-server';
 import koaWebpack from 'koa-webpack';
 import Router from 'koa-router';
+import { verify } from 'jsonwebtoken';
 import { connect } from 'mongoose';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
@@ -12,11 +13,16 @@ import { ApolloServer } from 'apollo-server-koa';
 
 import routes from '../client/routes';
 import { schemaWithResolvers } from './graphql/schema';
+import { UserModel } from './db/users';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
 const router = new Router();
 const compiler = webpack(config);
+
+type jwtClaims = {
+  userId: String,
+}
 
 const generalSetup = async () => {
   // Load .env variables
@@ -40,7 +46,20 @@ const generalSetup = async () => {
   app.use(koaBody());
 
   // Setup Apollo middleware
-  const server = new ApolloServer({ schema: schemaWithResolvers });
+  const server = new ApolloServer({
+    schema: schemaWithResolvers,
+    context: async (req) => {
+      const token: string | null = req.ctx.request.header.authorization;
+
+      if (token == null) {
+        return {};
+      }
+
+      const claims = verify(token, process.env.JWT_SECRET) as jwtClaims;
+
+      await UserModel.findById(claims.userId);
+    }
+  });
   server.applyMiddleware({ app });
 
   // Add routes for SPA

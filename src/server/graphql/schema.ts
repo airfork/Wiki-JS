@@ -3,6 +3,7 @@ import { hash, verify } from 'argon2';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
+import { sign } from 'jsonwebtoken';
 
 import { UserModel } from '../db/users';
 import {
@@ -42,7 +43,7 @@ const resolvers: Resolvers = {
       if (!await verify(user.password, password)) {
         throw new UserInputError("Incorrect password");
       }
-      return 'Success!';
+      return sign({ userId: user.id! }, process.env.JWT_SECRET);
     }
   }
 };
