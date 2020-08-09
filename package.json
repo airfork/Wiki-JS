@@ -65,6 +65,7 @@
     "argon2": "^0.26.2",
     "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.5.1",
     "koa-bodyparser": "^4.3.0",
     "koa-jwt": "^4.0.0",

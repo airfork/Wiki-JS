@@ -56,4 +56,5 @@ type Mutation {
     createPage(page: PageInput!): Page
     createImage(image: Upload!, linkedPageId: String!): Image
     createUser(user: UserInput!): User
+    logIn(username: String!, password: String!): String!
 }
