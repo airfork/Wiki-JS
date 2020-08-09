@@ -10,12 +10,16 @@
   "license": "Apache",
   "scripts": {
     "start": "nodemon --config nodemon.js src/server/server.ts",
-    "build": "webpack"
+    "build": "webpack",
+    "server-codegen": "graphql-codegen"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
+    "@graphql-codegen/cli": "^1.17.7",
+    "@graphql-codegen/typescript": "^1.17.7",
+    "apollo": "^2.30.2",
     "babel-loader": "^8.1.0",
     "babel-preset-env": "^1.7.0",
     "compression-webpack-plugin": "^4.0.0",
