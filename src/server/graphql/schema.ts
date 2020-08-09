@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server-koa';
+import { UserInputError, AuthenticationError } from 'apollo-server-koa';
 import { hash, verify } from 'argon2';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -44,6 +44,20 @@ const resolvers: Resolvers = {
         throw new UserInputError("Incorrect password");
       }
       return sign({ userId: user.id! }, process.env.JWT_SECRET);
+    },
+    makeAdmin: async (_, { username }, context: User | null) => {
+      console.log(context);
+      if (context == null) {
+        throw new AuthenticationError("No authorization token provided")
+      }
+      if (!context.admin) {
+        throw new AuthenticationError("Must be an admin to make another user an admin");
+      }
+      const toUpdate = await UserModel.findOne({ username });
+      toUpdate.admin = true;
+      toUpdate.save();
+      // Need to return something from mutation
+      return true;
     }
   }
 };
