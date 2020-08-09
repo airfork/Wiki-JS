@@ -75,6 +75,7 @@ export type Mutation = {
   createPage?: Maybe<Page>;
   createImage?: Maybe<Image>;
   createUser?: Maybe<User>;
+  logIn: Scalars['String'];
 };
 
 
@@ -91,6 +92,12 @@ export type MutationCreateImageArgs = {
 
 export type MutationCreateUserArgs = {
   user: UserInput;
+};
+
+
+export type MutationLogInArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
 };
 
 
@@ -253,6 +260,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'page'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image' | 'linkedPageId'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
+  logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
 };
 
 export type Resolvers<ContextType = any> = {
