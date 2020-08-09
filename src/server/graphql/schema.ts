@@ -45,12 +45,11 @@ const resolvers: Resolvers = {
       }
       return sign({ userId: user.id! }, process.env.JWT_SECRET);
     },
-    makeAdmin: async (_, { username }, context: User | null) => {
-      console.log(context);
-      if (context == null) {
+    makeAdmin: async (_, { username }, { admin }: User | null) => {
+      if (admin == null) {
         throw new AuthenticationError("No authorization token provided")
       }
-      if (!context.admin) {
+      if (!admin) {
         throw new AuthenticationError("Must be an admin to make another user an admin");
       }
       const toUpdate = await UserModel.findOne({ username });
