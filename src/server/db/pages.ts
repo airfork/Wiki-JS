@@ -1,13 +1,13 @@
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import {TimeStamps} from "@typegoose/typegoose/lib/defaultClasses";
-import {User} from "./users";
-import {Tag} from "./tags";
+import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
+import { User } from "./users";
+import { Tag } from "./tags";
 
-class Page extends TimeStamps{
+class Page extends TimeStamps {
   @prop()
-  public contents: string;
+  public contents!: string;
   @prop()
-  public contributors: User[]
+  public contributors!: User[]
   @prop()
   public tags: Tag[]
 }

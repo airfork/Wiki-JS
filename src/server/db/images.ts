@@ -1,11 +1,12 @@
-import { Schema, model } from 'mongoose';
+import { Schema } from 'mongoose';
 import { prop, getModelForClass } from '@typegoose/typegoose';
+import { Page } from './pages';
 
 class Image {
   @prop()
-  public post: Schema.Types.ObjectId;
+  public page!: Page;
   @prop()
-  public data: Schema.Types.Buffer;
+  public data!: Schema.Types.Buffer;
 }
 
 const ImageModel = getModelForClass(Image);
