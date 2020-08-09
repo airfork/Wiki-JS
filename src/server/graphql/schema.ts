@@ -2,7 +2,8 @@ import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
 
-import { UserModel, User } from '../db/users';
+import { UserModel } from '../db/users';
+import { User } from '../graphql/types';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -28,8 +29,8 @@ const resolvers = {
       return (await UserModel.find().exec()).map(user => ({
         id: user._id,
         username: user.username,
-        admin: user.admin
-      }));
+        admin: user.admin,
+      }) as User);
     },
   },
 };
