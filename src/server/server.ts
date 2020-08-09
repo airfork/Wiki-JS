@@ -23,7 +23,6 @@ const generalSetup = async () => {
   dotenv();
   // Connect to DB
   console.info(`Trying to connect to database at ${mongoUrl}...`);
-  console.log(process.env.MONGO_INITDB_ROOT_USERNAME)
 
   await connect(mongoUrl, {
     useNewUrlParser: true,
