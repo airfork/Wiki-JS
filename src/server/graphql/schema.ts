@@ -1,7 +1,8 @@
+import { UserInputError } from 'apollo-server-koa';
+import { hash } from 'argon2';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
-import { UserInputError } from "apollo-server-koa";
 
 import { UserModel } from '../db/users';
 import { User, MutationCreateUserArgs, Resolvers } from '../graphql/types';
@@ -24,8 +25,9 @@ const resolvers: Resolvers = {
       }
       let numUsers = await UserModel.estimatedDocumentCount();
       let newUser = await UserModel.create({
+        ...user,
         admin: numUsers === 0,
-        ...user
+        password: await hash(user.password),
       });
       return newUser as User;
     },

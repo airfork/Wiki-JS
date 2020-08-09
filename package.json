@@ -61,6 +61,7 @@
     "@types/react-router-dom": "^5.1.5",
     "apollo-server": "^2.16.1",
     "apollo-server-koa": "^2.16.1",
+    "argon2": "^0.26.2",
     "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
     "koa": "^2.5.1",
