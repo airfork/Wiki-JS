@@ -7,6 +7,6 @@ exports.client = {
   tagName: 'gql',
   service: {
     name: 'wiki-js',
-    localSchemaFile: 'src/graphql/schema.graphql'
+    localSchemaFile: 'schema.graphql'
   }
 }

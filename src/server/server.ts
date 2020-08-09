@@ -11,7 +11,7 @@ import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
 
 import routes from '../client/routes';
-import { schemaWithResolvers } from '../graphql/schema';
+import { schemaWithResolvers } from './graphql/schema';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
