@@ -1,28 +1,28 @@
 type User {
-    username: String!,
+    id: String!
+    username: String!
     admin: Boolean!
 }
 
-type NewUser {
-    username: String!,
-    password: String!,
-    admin: Boolean
-}
-
 type Page {
-    contents: String!,
-    createdAt: String!,
-    updatedAt: String!,
+    id: String!
+    contents: String!
+    createdAt: String!
+    updatedAt: String!
     contributors: [User]!
     categories: [Tags]
+    images: Image
 }
 
 type Tags {
+    id: String!
     category: String!
 }
 
 type Image {
-    data: File,
+    id: String!
+    data: File
+    page: Page
 }
 
 type File {
@@ -33,4 +33,26 @@ type File {
 
 type Query {
     users: [User]
+}
+
+scalar Upload
+
+input UserInput {
+    username: String!
+    password: String!
+    admin: Boolean
+}
+
+input TagsInput {
+    category: String!
+}
+
+input PageInput {
+    contents: String!
+    categories: [TagsInput]
+}
+
+type Mutation {
+    createPage(page: PageInput): Page
+    createImage(image: Upload!, linkedPageId: String!): Image
 }
