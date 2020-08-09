@@ -14,7 +14,7 @@ export type Scalars = {
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['String'];
+  id: Scalars['ID'];
   username: Scalars['String'];
   admin: Scalars['Boolean'];
 };
@@ -53,6 +53,12 @@ export type File = {
 export type Query = {
   __typename?: 'Query';
   users?: Maybe<Array<Maybe<User>>>;
+  user?: Maybe<User>;
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -172,6 +178,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Page: ResolverTypeWrapper<Page>;
@@ -189,6 +196,7 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   User: User;
+  ID: Scalars['ID'];
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   Page: Page;
@@ -204,7 +212,7 @@ export type ResolversParentTypes = {
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   admin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
@@ -243,6 +251,7 @@ export type FileResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {

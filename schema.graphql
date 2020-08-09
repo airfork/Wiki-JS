@@ -1,5 +1,5 @@
 type User {
-    id: String!
+    id: ID!
     username: String!
     admin: Boolean!
 }
@@ -33,6 +33,7 @@ type File {
 
 type Query {
     users: [User]
+    user(id: ID!): User
 }
 
 scalar Upload

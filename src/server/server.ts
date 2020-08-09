@@ -9,9 +9,10 @@ import config from '../../webpack.config.js';
 import webpack from 'webpack';
 import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
+import jwt from 'koa-jwt';
 
 import routes from '../client/routes';
-import { schemaWithResolvers } from './graphql/schema';
+import { schemaWithResolvers, fetch } from './graphql/schema';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -39,9 +40,33 @@ const generalSetup = async () => {
 
   app.use(koaBody());
 
+  app.use(jwt({ secret: 'shared-secret', passthrough: true }));
+
   // Setup Apollo middleware
-  const server = new ApolloServer({ schema: schemaWithResolvers });
+  const server = new ApolloServer({
+    schema: schemaWithResolvers,
+    context: ({ ctx }) => {
+      // Get the user token from the headers.
+      const token = ctx.headers.authorization || '';
+
+      // try to retrieve a user with the token
+      const user = fetch({
+        query: `query {
+          user(id: "5f301748a0a2e0818fa9fb99") {
+              username
+              id
+              admin
+            }
+          }`
+      });
+
+      // add the user to the context
+      return { user };
+    }
+  });
   server.applyMiddleware({ app });
+
+
 
   // Add routes for SPA
   routes.map(route => route.path).forEach(path => {
