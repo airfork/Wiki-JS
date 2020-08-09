@@ -25,13 +25,7 @@ const users = [
 
 const resolvers = {
   Query: {
-    users: async () => {
-      return (await UserModel.find().exec()).map(user => ({
-        id: user._id,
-        username: user.username,
-        admin: user.admin,
-      }) as User);
-    },
+    users: async () => await UserModel.find().exec() as Array<User>
   },
   Mutation: {
     createUser: async (_, user: MutationCreateUserArgs) => {
