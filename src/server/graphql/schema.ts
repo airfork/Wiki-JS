@@ -54,6 +54,9 @@ const resolvers: Resolvers = {
         throw new AuthenticationError("Must be an admin to make another user an admin");
       }
       const toUpdate = await UserModel.findOne({ username });
+      if (toUpdate == null) {
+        throw new UserInputError("Provided user does not exist");
+      }
       toUpdate.admin = true;
       toUpdate.save();
       // Need to return something from mutation
