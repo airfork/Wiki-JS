@@ -8,12 +8,11 @@ import { isDocumentArray } from '@typegoose/typegoose';
 
 import { ApolloContext } from '../server';
 import { UserModel } from '../db/users';
-import { Tag } from '../db/tags';
 import {
   User,
   Page,
   Resolvers,
-  Image,
+  Tags
 } from '../graphql/types';
 import { PageModel } from '../db/pages';
 
@@ -72,7 +71,7 @@ const resolvers: Resolvers = {
       }
       let newPage = await PageModel.create({
         ...page,
-        categories: page.categories as Tag[],
+        categories: page.categories as Tags[],
         contributors: [user]
       });
       if (isDocumentArray(newPage.contributors)) {
