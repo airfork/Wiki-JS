@@ -1,15 +1,21 @@
-import { UserInputError, AuthenticationError } from 'apollo-server-koa';
+import { UserInputError, AuthenticationError, ApolloError } from 'apollo-server-koa';
 import { hash, verify } from 'argon2';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { sign } from 'jsonwebtoken';
+import { isDocumentArray } from '@typegoose/typegoose';
 
+import { ApolloContext } from '../server';
 import { UserModel } from '../db/users';
+import { Tag } from '../db/tags';
 import {
   User,
-  Resolvers
+  Page,
+  Resolvers,
+  Image,
 } from '../graphql/types';
+import { PageModel } from '../db/pages';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -43,13 +49,13 @@ const resolvers: Resolvers = {
       if (!await verify(user.password, password)) {
         throw new UserInputError("Incorrect password");
       }
-      return sign({ userId: user.id! }, process.env.JWT_SECRET);
+      return sign({ userId: user.id! }, process.env.JWT_SECRET!);
     },
-    makeAdmin: async (_, { username }, { admin }: User | null) => {
-      if (admin == null) {
+    makeAdmin: async (_, { username }, { user }: ApolloContext) => {
+      if (user == null) {
         throw new AuthenticationError("No authorization token provided")
       }
-      if (!admin) {
+      if (!user.admin) {
         throw new AuthenticationError("Must be an admin to make another user an admin");
       }
       const toUpdate = await UserModel.findOne({ username });
@@ -59,6 +65,30 @@ const resolvers: Resolvers = {
       toUpdate.admin = true;
       toUpdate.save();
       return toUpdate as User;
+    },
+    createPage: async (_, { page }, { user }: ApolloContext) => {
+      if (user == null) {
+        throw new AuthenticationError("Must be signed in to create a post");
+      }
+      let newPage = await PageModel.create({
+        ...page,
+        categories: page.categories as Tag[],
+        contributors: [user]
+      });
+      if (isDocumentArray(newPage.contributors)) {
+        const myPage: Page = {
+          // can't use object fill here for some reason?
+          id: newPage.id,
+          contents: newPage.contents,
+          categories: newPage.categories,
+          // TODO: Include images when they are working
+          createdAt: newPage.createdAt!.toUTCString(),
+          updatedAt: newPage.updatedAt!.toUTCString(),
+          contributors: newPage.contributors as Array<User>,
+        } as Page;
+        return myPage;
+      }
+      throw new ApolloError("Contributors not properly loaded from the database");
     }
   }
 };
