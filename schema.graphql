@@ -41,6 +41,7 @@ type File {
 type Query {
     users: [User]!
     images: [Image]!
+    pages: [Page]!
 }
 
 scalar Upload
