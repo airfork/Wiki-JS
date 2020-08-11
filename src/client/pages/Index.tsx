@@ -1,6 +1,6 @@
 import React from 'react';
 import Routes from '../routes';
-import Editor from "../components/Editor";
+import REditor from "../components/REditor";
 import { Container } from '@material-ui/core';
 
 export const Index = () => (
@@ -11,8 +11,9 @@ export const Index = () => (
 
     <Container maxWidth = "md">
       <div id={"editor"}>
-        <Editor/>
+        <REditor/>
       </div>
+
     </Container>
 
 
