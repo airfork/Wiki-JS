@@ -84,8 +84,12 @@
     "mongoose": "^5.9.28",
     "mongoose-autopopulate": "^0.12.2",
     "npm-force-resolutions": "0.0.3",
+    "pg": "^8.3.0",
+    "pg-hstore": "^2.3.3",
     "react-draft-wysiwyg": "^1.14.5",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "sequelize": "5.22.3",
+    "sequelize-typescript": "^1.1.0"
   },
   "resolutions": {
     "fs-capacitor": "^6.2.0",

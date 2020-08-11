@@ -8,7 +8,7 @@ import { sign } from 'jsonwebtoken';
 import { isDocumentArray, isDocument, DocumentType } from '@typegoose/typegoose';
 
 import { ApolloContext } from '../server';
-import { UserModel } from '../db/users';
+import { UserModel, SequelizeUser } from '../db/users';
 import { ImageModel, Image as DBImage } from '../db/images';
 import {
   User,
@@ -30,7 +30,10 @@ const schema = loadSchemaSync('schema.graphql', {
 
 const resolvers: Resolvers = {
   Query: {
-    users: async () => await UserModel.find() as Array<User>,
+    users: async (_, __, { sequelize }: ApolloContext) => {
+      const userRepostory = sequelize.getRepository(SequelizeUser);
+      return await userRepostory.findAll() as Array<User>
+    },
     images: async () => (await ImageModel.find())
       .map(dbImage => dbImageToGraphQL(dbImage))
       .filter(image => image != null) as Array<Image>,
@@ -39,36 +42,39 @@ const resolvers: Resolvers = {
       .filter(image => image != null) as Array<Page>
   },
   Mutation: {
-    createUser: async (_, { user }) => {
-      if (await UserModel.findOne({ username: user.username }) != null) {
+    createUser: async (_, { user }, { sequelize }: ApolloContext) => {
+      const userRepostory = sequelize.getRepository(SequelizeUser);
+      if (await userRepostory.findByPk(user.username) != null) {
         throw new UserInputError("Username already exists");
       }
-      let numUsers = await UserModel.estimatedDocumentCount();
-      let newUser = await UserModel.create({
+      let numUsers = await userRepostory.count();
+      let newUser = await userRepostory.create({
         ...user,
         admin: numUsers === 0,
         password: await hash(user.password),
       });
       return newUser as User;
     },
-    logIn: async (_, { username, password }) => {
-      let user = await UserModel.findOne({ username });
+    logIn: async (_, { username, password }, { sequelize }: ApolloContext) => {
+      const userRepostory = sequelize.getRepository(SequelizeUser);
+      let user = await userRepostory.findByPk(username);
       if (user == null) {
         throw new UserInputError("Username does not exist");
       }
       if (!await verify(user.password, password)) {
         throw new UserInputError("Incorrect password");
       }
-      return sign({ userId: user.id! }, process.env.JWT_SECRET!);
+      return sign({ username: user.username }, process.env.JWT_SECRET!);
     },
-    makeAdmin: async (_, { username }, { user }: ApolloContext) => {
+    makeAdmin: async (_, { username }, { user, sequelize }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("No authorization token provided")
       }
       if (!user.admin) {
         throw new AuthenticationError("Must be an admin to make another user an admin");
       }
-      const toUpdate = await UserModel.findOne({ username });
+      const userRepostory = sequelize.getRepository(SequelizeUser);
+      const toUpdate = await userRepostory.findByPk(username);
       if (toUpdate == null) {
         throw new UserInputError("Provided user does not exist");
       }

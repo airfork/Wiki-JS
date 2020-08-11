@@ -10,9 +10,14 @@ import config from '../../webpack.config.js';
 import webpack from 'webpack';
 import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
+import { Sequelize } from 'sequelize-typescript';
 
 import { schemaWithResolvers } from './graphql/schema';
-import { UserModel, User as DbUser } from './db/users';
+import { UserModel, User as DbUser, SequelizeUser } from './db/users';
+import { SequelizePage } from './db/pages';
+import { SequelizeTag } from './db/tags';
+import { UserPage } from './db/user_page';
+import { SequelizeImage } from './db/images';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -20,11 +25,12 @@ const router = new Router();
 const compiler = webpack(config);
 
 type jwtClaims = {
-  userId: String,
+  username: string,
 };
 
 export type ApolloContext = {
-  user?: DbUser
+  user?: DbUser,
+  sequelize: Sequelize,
 };
 
 const generalSetup = async () => {
@@ -48,6 +54,16 @@ const generalSetup = async () => {
 
   app.use(koaBody());
 
+  const sequelize = new Sequelize(process.env.POSTGRES_DB!, process.env.POSTGRES_USER!, process.env.POSTGRES_PASSWORD!, {
+    host: 'localhost',
+    dialect: 'postgres',
+    repositoryMode: true,
+    models: [SequelizeUser, SequelizeUser, SequelizePage, SequelizeTag, SequelizeImage, UserPage],
+  });
+
+  await sequelize.authenticate();
+  await sequelize.sync({ force: true });
+
   // Setup Apollo middleware
   const server = new ApolloServer({
     schema: schemaWithResolvers,
@@ -55,11 +71,15 @@ const generalSetup = async () => {
       const token: string | null = req.ctx.request.header.authorization;
 
       if (token == null) {
-        return null;
+        return { sequelize };
       }
 
       const claims = verify(token, process.env.JWT_SECRET!) as jwtClaims;
-      return { user: await UserModel.findById(claims.userId) ?? undefined };
+      const userRepository = sequelize.getRepository(SequelizeUser);
+      return {
+        user: await userRepository.findByPk(claims.username) ?? undefined,
+        sequelize,
+      };
     }
   });
   server.applyMiddleware({ app });

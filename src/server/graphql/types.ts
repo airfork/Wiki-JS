@@ -14,7 +14,6 @@ export type Scalars = {
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['ID'];
   username: Scalars['String'];
   admin: Scalars['Boolean'];
 };
@@ -196,10 +195,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   User: ResolverTypeWrapper<User>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   PageImage: ResolverTypeWrapper<PageImage>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Page: ResolverTypeWrapper<Page>;
   Tags: ResolverTypeWrapper<Tags>;
   Image: ResolverTypeWrapper<Image>;
@@ -215,10 +214,10 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   User: User;
-  ID: Scalars['ID'];
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   PageImage: PageImage;
+  ID: Scalars['ID'];
   Page: Page;
   Tags: Tags;
   Image: Image;
@@ -232,7 +231,6 @@ export type ResolversParentTypes = ResolversObject<{
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   admin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
