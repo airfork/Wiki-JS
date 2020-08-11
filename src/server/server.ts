@@ -11,10 +11,8 @@ import webpack from 'webpack';
 import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
 
-import routes from '../client/routes';
 import { schemaWithResolvers } from './graphql/schema';
 import { UserModel, User as DbUser } from './db/users';
-import { User } from './graphql/types.js';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -66,17 +64,11 @@ const generalSetup = async () => {
   });
   server.applyMiddleware({ app });
 
-  // Add routes for SPA
-  routes.map(route => route.path).forEach(path => {
-    router.get(path, async ctx => {
-      await send(ctx, 'dist/index.html');
-    });
-  });
 };
 
 const prodSetup = () => {
   app.use(router.routes());
-  app.use(serve({ rootDir: 'dist' }));
+  app.use(serve({ rootDir: 'dist', notFoundFile: 'index.html' }));
 };
 
 const devSetup = async () => {
@@ -92,6 +84,9 @@ const devSetup = async () => {
       },
     }
   });
+  router.get('/:fallback', async ctx => {
+    await send(ctx, 'dist/index.html');
+  })
   app.use(webpackMiddle);
   app.use(router.routes());
 }

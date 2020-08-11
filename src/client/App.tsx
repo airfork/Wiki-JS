@@ -7,7 +7,7 @@ export default function App() {
     <Router>
       <Switch>
         {Routes.map(route => (
-          <Route path={route.path} key={route.routeName}>
+          <Route path={route.path} key={route.routeName} exact>
             {React.createElement(route.component)}
           </Route>
         ))}
