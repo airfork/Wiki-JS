@@ -89,25 +89,33 @@ const resolvers: Resolvers = {
       return myPage;
     },
     createImage: async (_, { image, linkedPageId }: createImageArgs, { user }: ApolloContext) => {
+      const awaitedImage = await image;
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
+      console.log(awaitedImage);
       const page = await PageModel.findById(linkedPageId);
       if (page == null) {
         throw new UserInputError("Page ID to associate image with not found.");
       }
-      const stream = image.createReadStream();
-      const data = await readStream(stream, image.encoding as BufferEncoding);
+      const stream = awaitedImage.createReadStream();
+      const data = await readStream(stream);
       const myPage = dbPageToGraphQL(page);
       if (myPage == null) {
         throw new UserInputError("Page could not be loaded properly from database");
       }
       const newImage = await ImageModel.create({
-        fileInfo: { ...image },
+        fileInfo: { ...awaitedImage },
         data,
         page,
       });
-      return { ...newImage, url: `/images/${newImage.id}`, page: myPage, } as Image;
+      //can't use object fill here either????
+      return {
+        id: newImage.id,
+        fileInfo: newImage.fileInfo,
+        url: `/images/${newImage.id}`,
+        page: myPage,
+      } as Image;
     }
   }
 };
@@ -148,9 +156,7 @@ function dbImageToGraphQL(image: DocumentType<DBImage>) {
 }
 
 // Don't know why this isn't built in
-function readStream(stream: ReadStream, encoding: BufferEncoding = "utf8") {
-
-  stream.setEncoding(encoding);
+function readStream(stream: ReadStream) {
 
   return new Promise<string>((resolve, reject) => {
     let data = "";
@@ -162,7 +168,7 @@ function readStream(stream: ReadStream, encoding: BufferEncoding = "utf8") {
 }
 
 type createImageArgs = {
-  image: FileUpload,
+  image: Promise<FileUpload>,
   linkedPageId: string,
 }
 
