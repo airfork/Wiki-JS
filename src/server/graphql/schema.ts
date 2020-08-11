@@ -33,7 +33,10 @@ const resolvers: Resolvers = {
     users: async () => await UserModel.find() as Array<User>,
     images: async () => (await ImageModel.find())
       .map(dbImage => dbImageToGraphQL(dbImage))
-      .filter(image => image != null) as Array<Image>
+      .filter(image => image != null) as Array<Image>,
+    pages: async () => (await PageModel.find())
+      .map(dbPage => dbPageToGraphQL(dbPage))
+      .filter(image => image != null) as Array<Page>
   },
   Mutation: {
     createUser: async (_, { user }) => {

@@ -62,6 +62,7 @@ export type Query = {
   __typename?: 'Query';
   users: Array<Maybe<User>>;
   images: Array<Maybe<Image>>;
+  pages: Array<Maybe<Page>>;
 };
 
 
@@ -279,6 +280,7 @@ export type FileResolvers<ContextType = any, ParentType extends ResolversParentT
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   users?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   images?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
+  pages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType>;
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
