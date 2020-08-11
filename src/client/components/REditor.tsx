@@ -6,6 +6,9 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 export default function REditor() {
   const [value, setValue] = useState(EditorState.createEmpty());
 
+  const uploadCallback = async file => {
+    return {}
+  };
 
   return (
     <Editor
@@ -14,6 +17,7 @@ export default function REditor() {
       wrapperClassName="wrapperClassName"
       editorClassName="editorClassName"
       onEditorStateChange={setValue}
+      uploadCallback={uploadCallback}
     />
   );
 }
