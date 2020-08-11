@@ -147,7 +147,8 @@ function dbImageToGraphQL(image: DocumentType<DBImage>) {
       return undefined;
     }
     return {
-      ...image,
+      id: image.id,
+      fileInfo: image.fileInfo,
       page,
       url: `/image/${image.id}`
     } as Image;
