@@ -73,7 +73,7 @@ const resolvers: Resolvers = {
         throw new UserInputError("Provided user does not exist");
       }
       toUpdate.admin = true;
-      toUpdate.save();
+      await toUpdate.save();
       return toUpdate as User;
     },
     createPage: async (_, { page }, { user }: ApolloContext) => {
@@ -83,7 +83,7 @@ const resolvers: Resolvers = {
       let newPage = await PageModel.create({
         ...page,
         categories: page.categories as Tags[],
-        contributors: [user]
+        contributors: [user],
       });
       const myPage = dbPageToGraphQL(newPage);
       if (myPage == null) {
@@ -112,6 +112,9 @@ const resolvers: Resolvers = {
         data,
         page,
       });
+      page.images = page.images?.concat(newImage) ?? [newImage];
+      console.log(page)
+      await page.save();
       //can't use object fill here either????
       return {
         id: newImage.id,
@@ -124,6 +127,7 @@ const resolvers: Resolvers = {
 };
 
 function dbPageToGraphQL(page: DocumentType<DBPage>) {
+  console.log("My page: ", page);
   if (isDocumentArray(page.contributors) && isDocumentArray(page.images)) {
     const myPage: Page = {
       // can't use object fill here for some reason?
