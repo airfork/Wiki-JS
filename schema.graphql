@@ -4,25 +4,32 @@ type User {
     admin: Boolean!
 }
 
+type PageImage {
+    id: ID!
+    fileInfo: File!
+    url: String!
+}
+
 type Page {
-    id: String!
+    id: ID!
     contents: String!
     createdAt: String!
     updatedAt: String!
     contributors: [User]!
     categories: [Tags]
-    images: Image
+    images: [PageImage]
 }
 
 type Tags {
-    id: String!
+    id: ID!
     category: String!
 }
 
 type Image {
-    id: String!
-    data: File
-    page: Page
+    id: ID!
+    fileInfo: File!
+    page: Page!
+    url: String!
 }
 
 type File {
@@ -32,8 +39,8 @@ type File {
 }
 
 type Query {
-    users: [User]
-    user(id: ID!): User
+    users: [User]!
+    images: [Image]!
 }
 
 scalar Upload
@@ -54,8 +61,8 @@ input PageInput {
 
 type Mutation {
     createPage(page: PageInput!): Page
-    createImage(image: Upload!, linkedPageId: String!): Image
+    createImage(image: Upload!, linkedPageId: ID!): Image
     createUser(user: UserInput!): User
     logIn(username: String!, password: String!): String!
-    makeAdmin(username: String!): Boolean
+    makeAdmin(username: String!): User
 }

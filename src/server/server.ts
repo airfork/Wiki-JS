@@ -13,7 +13,7 @@ import { ApolloServer } from 'apollo-server-koa';
 
 import routes from '../client/routes';
 import { schemaWithResolvers } from './graphql/schema';
-import { UserModel } from './db/users';
+import { UserModel, User as DbUser } from './db/users';
 import { User } from './graphql/types.js';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
@@ -23,7 +23,11 @@ const compiler = webpack(config);
 
 type jwtClaims = {
   userId: String,
-}
+};
+
+export type ApolloContext = {
+  user?: DbUser
+};
 
 const generalSetup = async () => {
   // Load .env variables
@@ -49,15 +53,15 @@ const generalSetup = async () => {
   // Setup Apollo middleware
   const server = new ApolloServer({
     schema: schemaWithResolvers,
-    context: async (req): Promise<User | null> => {
+    context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
 
       if (token == null) {
         return null;
       }
 
-      const claims = verify(token, process.env.JWT_SECRET) as jwtClaims;
-      return await UserModel.findById(claims.userId) as User;
+      const claims = verify(token, process.env.JWT_SECRET!) as jwtClaims;
+      return { user: await UserModel.findById(claims.userId) ?? undefined };
     }
   });
   server.applyMiddleware({ app });

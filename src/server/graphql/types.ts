@@ -19,28 +19,36 @@ export type User = {
   admin: Scalars['Boolean'];
 };
 
+export type PageImage = {
+  __typename?: 'PageImage';
+  id: Scalars['ID'];
+  fileInfo: File;
+  url: Scalars['String'];
+};
+
 export type Page = {
   __typename?: 'Page';
-  id: Scalars['String'];
+  id: Scalars['ID'];
   contents: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   contributors: Array<Maybe<User>>;
   categories?: Maybe<Array<Maybe<Tags>>>;
-  images?: Maybe<Image>;
+  images?: Maybe<Array<Maybe<PageImage>>>;
 };
 
 export type Tags = {
   __typename?: 'Tags';
-  id: Scalars['String'];
+  id: Scalars['ID'];
   category: Scalars['String'];
 };
 
 export type Image = {
   __typename?: 'Image';
-  id: Scalars['String'];
-  data?: Maybe<File>;
-  page?: Maybe<Page>;
+  id: Scalars['ID'];
+  fileInfo: File;
+  page: Page;
+  url: Scalars['String'];
 };
 
 export type File = {
@@ -52,13 +60,8 @@ export type File = {
 
 export type Query = {
   __typename?: 'Query';
-  users?: Maybe<Array<Maybe<User>>>;
-  user?: Maybe<User>;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['ID'];
+  users: Array<Maybe<User>>;
+  images: Array<Maybe<Image>>;
 };
 
 
@@ -82,7 +85,7 @@ export type Mutation = {
   createImage?: Maybe<Image>;
   createUser?: Maybe<User>;
   logIn: Scalars['String'];
-  makeAdmin?: Maybe<Scalars['Boolean']>;
+  makeAdmin?: Maybe<User>;
 };
 
 
@@ -93,7 +96,7 @@ export type MutationCreatePageArgs = {
 
 export type MutationCreateImageArgs = {
   image: Scalars['Upload'];
-  linkedPageId: Scalars['String'];
+  linkedPageId: Scalars['ID'];
 };
 
 
@@ -112,7 +115,8 @@ export type MutationMakeAdminArgs = {
   username: Scalars['String'];
 };
 
-
+export type WithIndex<TObject> = TObject & Record<string, any>;
+export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -189,11 +193,12 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = {
+export type ResolversTypes = ResolversObject<{
   User: ResolverTypeWrapper<User>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  PageImage: ResolverTypeWrapper<PageImage>;
   Page: ResolverTypeWrapper<Page>;
   Tags: ResolverTypeWrapper<Tags>;
   Image: ResolverTypeWrapper<Image>;
@@ -204,14 +209,15 @@ export type ResolversTypes = {
   TagsInput: TagsInput;
   PageInput: PageInput;
   Mutation: ResolverTypeWrapper<{}>;
-};
+}>;
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = {
+export type ResolversParentTypes = ResolversObject<{
   User: User;
   ID: Scalars['ID'];
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
+  PageImage: PageImage;
   Page: Page;
   Tags: Tags;
   Image: Image;
@@ -222,65 +228,74 @@ export type ResolversParentTypes = {
   TagsInput: TagsInput;
   PageInput: PageInput;
   Mutation: {};
-};
+}>;
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   admin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
-};
+}>;
 
-export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type PageImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageImage'] = ResolversParentTypes['PageImage']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   contents?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   contributors?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tags']>>>, ParentType, ContextType>;
-  images?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>;
+  images?: Resolver<Maybe<Array<Maybe<ResolversTypes['PageImage']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
-};
+}>;
 
-export type TagsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tags'] = ResolversParentTypes['Tags']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type TagsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tags'] = ResolversParentTypes['Tags']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   category?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
-};
+}>;
 
-export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  data?: Resolver<Maybe<ResolversTypes['File']>, ParentType, ContextType>;
-  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
+export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
+  page?: Resolver<ResolversTypes['Page'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
-};
+}>;
 
-export type FileResolvers<ContextType = any, ParentType extends ResolversParentTypes['File'] = ResolversParentTypes['File']> = {
+export type FileResolvers<ContextType = any, ParentType extends ResolversParentTypes['File'] = ResolversParentTypes['File']> = ResolversObject<{
   filename?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mimetype?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   encoding?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
-};
+}>;
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
-};
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  users?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
+  images?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
+}>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
   name: 'Upload';
 }
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'page'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image' | 'linkedPageId'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
   logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
-  makeAdmin?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
-};
+  makeAdmin?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
+}>;
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = any> = ResolversObject<{
   User?: UserResolvers<ContextType>;
+  PageImage?: PageImageResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   Tags?: TagsResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
@@ -288,7 +303,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
-};
+}>;
 
 
 /**
