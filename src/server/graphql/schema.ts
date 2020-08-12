@@ -21,6 +21,7 @@ import {
 import { PageModel, Page as DBPage, SequelizePage } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
 import { SequelizeTag } from '../db/tags';
+import { UserPage } from '../db/user_page';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -32,15 +33,18 @@ const schema = loadSchemaSync('schema.graphql', {
 const resolvers: Resolvers = {
   Query: {
     users: async (_, __, { sequelize }: ApolloContext) => {
-      const userRepostory = sequelize.getRepository(SequelizeUser);
-      return await userRepostory.findAll() as Array<User>
+      const userRepository = sequelize.getRepository(SequelizeUser);
+      return await userRepository.findAll() as Array<User>
     },
     images: async () => (await ImageModel.find())
       .map(dbImage => dbImageToGraphQL(dbImage))
       .filter(image => image != null) as Array<Image>,
-    pages: async () => (await PageModel.find())
-      .map(dbPage => dbPageToGraphQL(dbPage))
-      .filter(image => image != null) as Array<Page>
+    pages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
+      const dbPages = await repos.pageRepo.findAll({
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
+      });
+      return dbPages.map(page => dbPageToGraphQL(page));
+    }
   },
   Mutation: {
     createUser: async (_, { user }, { sequelize }: ApolloContext) => {
@@ -83,41 +87,22 @@ const resolvers: Resolvers = {
       await toUpdate.save();
       return toUpdate as User;
     },
-    createPage: async (_, { page }, { user, sequelize }: ApolloContext) => {
-      const pageRepository = sequelize.getRepository(SequelizePage);
-      const imageRepository = sequelize.getRepository(SequelizeImage);
-      const userRepostory = sequelize.getRepository(SequelizeUser);
-      const tagRepository = sequelize.getRepository(SequelizeTag);
+    createPage: async (_, { page }, { user, sequelize, ...repos }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
-      const newPage = await pageRepository.create({
+      const newPage = await repos.pageRepo.create({
         ...page,
         categories: page.categories ?? [],
         images: [],
-      }, { include: [imageRepository, userRepostory, tagRepository] });
+      }, { include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
       // NOTE: This is how you can set associations, maybe?
-      newPage.set("contributors", [user]);
-      await newPage.save();
-      const graphqlPage: Page = {
-        contents: newPage.contents,
-        contributors: newPage.contributors,
-        id: newPage.id!,
-        createdAt: newPage.creationDate.toUTCString(),
-        updatedAt: newPage.updatedOn.toUTCString(),
-        images: newPage.images.map(image => ({
-          fileInfo: {
-            ...image,
-          },
-          ...image,
-          id: image.id!,
-          url: `/images/${image.id}`,
-        })),
-        categories: newPage.categories.map(category => ({
-          category: category.category,
-          id: category.id!
-        }))
-      }
+      await repos.userPageRepo.create({
+        user_id: user.username,
+        page_id: newPage.id,
+      });
+      await newPage.reload({ include: [repos.userRepo] });
+      const graphqlPage = dbPageToGraphQL(newPage);
       return graphqlPage;
     },
     createImage: async (_, { image, linkedPageId }: createImageArgs, { user }: ApolloContext) => {
@@ -132,7 +117,15 @@ const resolvers: Resolvers = {
       }
       const stream = awaitedImage.createReadStream();
       const data = await readStream(stream);
-      const myPage = dbPageToGraphQL(page);
+      const myPage = {
+        contents: "",
+        id: "",
+        contributors: [],
+        categories: [],
+        images: [],
+        createdAt: "",
+        updatedAt: "",
+      } as Page;
       if (myPage == null) {
         throw new UserInputError("Page could not be loaded properly from database");
       }
@@ -155,30 +148,40 @@ const resolvers: Resolvers = {
   }
 };
 
-function dbPageToGraphQL(page: DocumentType<DBPage>) {
-  console.log("My page: ", page);
-  if (isDocumentArray(page.contributors) && isDocumentArray(page.images)) {
-    const myPage: Page = {
-      // can't use object fill here for some reason?
-      id: page.id,
-      contents: page.contents,
-      categories: page.categories,
-      images: page.images.map(image => ({
+function dbPageToGraphQL(page: SequelizePage) {
+  const graphqlPage: Page = {
+    contents: page.contents,
+    contributors: page.contributors,
+    id: page.id!,
+    createdAt: page.creationDate.toUTCString(),
+    updatedAt: page.updatedOn.toUTCString(),
+    images: page.images.map(image => ({
+      fileInfo: {
         ...image,
-        url: `/images/${image.id}`,
-      })) as Array<PageImage>,
-      createdAt: page.createdAt!.toUTCString(),
-      updatedAt: page.updatedAt!.toUTCString(),
-      contributors: page.contributors as Array<User>,
-    } as Page;
-    return myPage;
+      },
+      ...image,
+      id: image.id!,
+      url: `/images/${image.id}`,
+    })),
+    categories: page.categories.map(category => ({
+      category: category.category,
+      id: category.id!
+    }))
   }
-  return undefined;
+  return graphqlPage;
 }
 
 function dbImageToGraphQL(image: DocumentType<DBImage>) {
   if (isDocument(image.page)) {
-    const page = dbPageToGraphQL(image.page);
+    const page = {
+      contents: "",
+      id: "",
+      contributors: [],
+      categories: [],
+      images: [],
+      createdAt: "",
+      updatedAt: "",
+    } as Page;
     if (page == null) {
       return undefined;
     }

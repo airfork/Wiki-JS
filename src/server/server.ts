@@ -10,7 +10,7 @@ import config from '../../webpack.config.js';
 import webpack from 'webpack';
 import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
-import { Sequelize } from 'sequelize-typescript';
+import { Sequelize, Repository } from 'sequelize-typescript';
 
 import { schemaWithResolvers } from './graphql/schema';
 import { UserModel, User as DbUser, SequelizeUser } from './db/users';
@@ -32,6 +32,11 @@ type jwtClaims = {
 export type ApolloContext = {
   user?: SequelizeUser,
   sequelize: Sequelize,
+  pageRepo: Repository<SequelizePage>,
+  imageRepo: Repository<SequelizeImage>,
+  userRepo: Repository<SequelizeUser>,
+  tagRepo: Repository<SequelizeTag>,
+  userPageRepo: Repository<UserPage>,
 };
 
 const generalSetup = async () => {
@@ -71,15 +76,29 @@ const generalSetup = async () => {
     context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
 
+      const userPageRepo = sequelize.getRepository(UserPage);
+      const pageRepo = sequelize.getRepository(SequelizePage);
+      const imageRepo = sequelize.getRepository(SequelizeImage);
+      const userRepo = sequelize.getRepository(SequelizeUser);
+      const tagRepo = sequelize.getRepository(SequelizeTag);
+
+      const sequelizeData: ApolloContext = {
+        sequelize,
+        userPageRepo,
+        pageRepo,
+        imageRepo,
+        userRepo,
+        tagRepo,
+      };
+
       if (token == null) {
-        return { sequelize };
+        return sequelizeData;
       }
 
       const claims = verify(token, process.env.JWT_SECRET!) as jwtClaims;
-      const userRepository = sequelize.getRepository(SequelizeUser);
       return {
-        user: await userRepository.findByPk(claims.username) ?? undefined,
-        sequelize,
+        user: await userRepo.findByPk(claims.username) ?? undefined,
+        ...sequelizeData,
       };
     }
   });
