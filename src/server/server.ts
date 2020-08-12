@@ -18,6 +18,7 @@ import { SequelizePage } from './db/pages';
 import { SequelizeTag } from './db/tags';
 import { UserPage } from './db/user_page';
 import { SequelizeImage } from './db/images';
+import { Model } from 'sequelize/types';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -29,7 +30,7 @@ type jwtClaims = {
 };
 
 export type ApolloContext = {
-  user?: DbUser,
+  user?: SequelizeUser,
   sequelize: Sequelize,
 };
 
@@ -62,7 +63,7 @@ const generalSetup = async () => {
   });
 
   await sequelize.authenticate();
-  await sequelize.sync({ force: true });
+  await sequelize.sync();
 
   // Setup Apollo middleware
   const server = new ApolloServer({

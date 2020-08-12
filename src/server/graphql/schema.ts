@@ -1,4 +1,4 @@
-import { UserInputError, AuthenticationError, ApolloError } from 'apollo-server-koa';
+import { UserInputError, AuthenticationError } from 'apollo-server-koa';
 import { hash, verify } from 'argon2';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
@@ -8,8 +8,8 @@ import { sign } from 'jsonwebtoken';
 import { isDocumentArray, isDocument, DocumentType } from '@typegoose/typegoose';
 
 import { ApolloContext } from '../server';
-import { UserModel, SequelizeUser } from '../db/users';
-import { ImageModel, Image as DBImage } from '../db/images';
+import { SequelizeUser } from '../db/users';
+import { ImageModel, Image as DBImage, SequelizeImage } from '../db/images';
 import {
   User,
   Page,
@@ -18,8 +18,9 @@ import {
   PageImage,
   Image
 } from '../graphql/types';
-import { PageModel, Page as DBPage } from '../db/pages';
+import { PageModel, Page as DBPage, SequelizePage } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
+import { SequelizeTag } from '../db/tags';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -82,20 +83,42 @@ const resolvers: Resolvers = {
       await toUpdate.save();
       return toUpdate as User;
     },
-    createPage: async (_, { page }, { user }: ApolloContext) => {
+    createPage: async (_, { page }, { user, sequelize }: ApolloContext) => {
+      const pageRepository = sequelize.getRepository(SequelizePage);
+      const imageRepository = sequelize.getRepository(SequelizeImage);
+      const userRepostory = sequelize.getRepository(SequelizeUser);
+      const tagRepository = sequelize.getRepository(SequelizeTag);
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
-      let newPage = await PageModel.create({
+      const newPage = await pageRepository.create({
         ...page,
-        categories: page.categories as Tags[],
-        contributors: [user],
-      });
-      const myPage = dbPageToGraphQL(newPage);
-      if (myPage == null) {
-        throw new ApolloError("Contributors or images not properly loaded from the database");
+        categories: page.categories ?? [],
+        images: [],
+      }, { include: [imageRepository, userRepostory, tagRepository] });
+      // NOTE: This is how you can set associations, maybe?
+      newPage.set("contributors", [user]);
+      await newPage.save();
+      const graphqlPage: Page = {
+        contents: newPage.contents,
+        contributors: newPage.contributors,
+        id: newPage.id!,
+        createdAt: newPage.creationDate.toUTCString(),
+        updatedAt: newPage.updatedOn.toUTCString(),
+        images: newPage.images.map(image => ({
+          fileInfo: {
+            ...image,
+          },
+          ...image,
+          id: image.id!,
+          url: `/images/${image.id}`,
+        })),
+        categories: newPage.categories.map(category => ({
+          category: category.category,
+          id: category.id!
+        }))
       }
-      return myPage;
+      return graphqlPage;
     },
     createImage: async (_, { image, linkedPageId }: createImageArgs, { user }: ApolloContext) => {
       const awaitedImage = await image;

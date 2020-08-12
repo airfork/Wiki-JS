@@ -27,7 +27,7 @@ type Tags {
 type Image {
     id: ID!
     fileInfo: File!
-    page: Page!
+    page: Page
     url: String!
 }
 

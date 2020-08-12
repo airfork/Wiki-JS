@@ -1,8 +1,7 @@
 import { Schema } from 'mongoose';
 import { prop, getModelForClass, plugin } from '@typegoose/typegoose';
-import { Table, Column, Model, HasOne, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import { Table, Column, Model, BelongsTo, ForeignKey } from 'sequelize-typescript';
 import { Page, SequelizePage } from './pages';
-import { Json, Col } from 'sequelize/types/lib/utils';
 
 type File = {
   filename: string,
@@ -42,7 +41,6 @@ class SequelizeImage extends Model implements SequelizeImage {
   page?: SequelizePage;
 }
 
-console.log(Page);
 const ImageModel = getModelForClass(Image);
 
 export { Image, ImageModel, SequelizeImage };

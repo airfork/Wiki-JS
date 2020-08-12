@@ -46,7 +46,7 @@ export type Image = {
   __typename?: 'Image';
   id: Scalars['ID'];
   fileInfo: File;
-  page: Page;
+  page?: Maybe<Page>;
   url: Scalars['String'];
 };
 
@@ -263,7 +263,7 @@ export type TagsResolvers<ContextType = any, ParentType extends ResolversParentT
 export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
-  page?: Resolver<ResolversTypes['Page'], ParentType, ContextType>;
+  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
