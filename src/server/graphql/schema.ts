@@ -16,7 +16,8 @@ import {
   Resolvers,
   Tags,
   PageImage,
-  Image
+  Image,
+  File
 } from '../graphql/types';
 import { PageModel, Page as DBPage, SequelizePage } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
@@ -105,44 +106,26 @@ const resolvers: Resolvers = {
       const graphqlPage = dbPageToGraphQL(newPage);
       return graphqlPage;
     },
-    createImage: async (_, { image, linkedPageId }: createImageArgs, { user }: ApolloContext) => {
+    createImage: async (_, { image }: createImageArgs, { user, imageRepo }: ApolloContext) => {
       const awaitedImage = await image;
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
       console.log(awaitedImage);
-      const page = await PageModel.findById(linkedPageId);
-      if (page == null) {
-        throw new UserInputError("Page ID to associate image with not found.");
-      }
       const stream = awaitedImage.createReadStream();
       const data = await readStream(stream);
-      const myPage = {
-        contents: "",
-        id: "",
-        contributors: [],
-        categories: [],
-        images: [],
-        createdAt: "",
-        updatedAt: "",
-      } as Page;
-      if (myPage == null) {
-        throw new UserInputError("Page could not be loaded properly from database");
-      }
-      const newImage = await ImageModel.create({
-        fileInfo: { ...awaitedImage },
+      const newImage = await imageRepo.create({
+        ...awaitedImage,
         data,
-        page,
       });
-      page.images = page.images?.concat(newImage) ?? [newImage];
-      console.log(page)
-      await page.save();
-      //can't use object fill here either????
       return {
         id: newImage.id,
-        fileInfo: newImage.fileInfo,
+        fileInfo: {
+          encoding: newImage.encoding,
+          filename: newImage.filename,
+          mimetype: newImage.mimetype,
+        } as File,
         url: `/images/${newImage.id}`,
-        page: myPage,
       } as Image;
     }
   }
@@ -196,15 +179,13 @@ function dbImageToGraphQL(image: DocumentType<DBImage>) {
 }
 
 // Don't know why this isn't built in
-function readStream(stream: ReadStream) {
+async function readStream(stream: ReadStream) {
 
-  return new Promise<string>((resolve, reject) => {
-    let data = "";
-
-    stream.on("data", chunk => data += chunk);
-    stream.on("end", () => resolve(data));
-    stream.on("error", error => reject(error));
-  });
+  const chunks: Array<Buffer> = [];
+  for await (let chunk of stream) {
+    chunks.push(chunk as Buffer);
+  }
+  return Buffer.concat(chunks);
 }
 
 type createImageArgs = {
