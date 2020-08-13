@@ -68,7 +68,6 @@ export default function LoginForm() {
             fullWidth
             id="email"
             label="Email Address"
-            name="email"
             autoComplete="email"
             value={email}
             onInput={handleEmailChange}
@@ -79,7 +78,6 @@ export default function LoginForm() {
             margin="normal"
             required={true}
             fullWidth
-            name="password"
             label="Password"
             type="password"
             id="password"

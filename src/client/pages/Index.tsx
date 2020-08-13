@@ -5,7 +5,8 @@ import { Container } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 export const Index = () => (
-  <CssBaseline>
+  <React.Fragment>
+    <CssBaseline/>
     <Container maxWidth={"lg"}>
       <div>
         <h1>Welcome to the Wiki</h1>
@@ -19,5 +20,5 @@ export const Index = () => (
 
       </div>
     </Container>
-  </CssBaseline>
+  </React.Fragment>
 );
