@@ -33,13 +33,15 @@ const schema = loadSchemaSync('schema.graphql', {
 
 const resolvers: Resolvers = {
   Query: {
-    users: async (_, __, { sequelize }: ApolloContext) => {
-      const userRepository = sequelize.getRepository(SequelizeUser);
-      return await userRepository.findAll() as Array<User>
+    users: async (_, __, { userRepo }: ApolloContext) => {
+      return await userRepo.findAll() as Array<User>
     },
-    images: async () => (await ImageModel.find())
-      .map(dbImage => dbImageToGraphQL(dbImage))
-      .filter(image => image != null) as Array<Image>,
+    images: async (_, __, ctx: ApolloContext) => {
+      const dbImages = await ctx.imageRepo.findAll({
+        include: [ctx.pageRepo]
+      });
+      return dbImages.map(image => dbImageToGraphQL(image));
+    },
     pages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
       const dbPages = await repos.pageRepo.findAll({
         include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
@@ -97,12 +99,21 @@ const resolvers: Resolvers = {
         categories: page.categories ?? [],
         images: [],
       }, { include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
+      for (let imageId of (page.imageIds ?? [])) {
+        const image = await repos.imageRepo.findByPk(imageId);
+        if (image == null) {
+          await newPage.destroy();
+          throw new UserInputError(`Provided image id ${imageId} does not exist in the database`);
+        }
+        image.pageId = newPage.id;
+        await image.save();
+      }
       // NOTE: This is how you can set associations, maybe?
       await repos.userPageRepo.create({
         user_id: user.username,
         page_id: newPage.id,
       });
-      await newPage.reload({ include: [repos.userRepo] });
+      await newPage.reload({ include: [repos.userRepo, repos.imageRepo] });
       const graphqlPage = dbPageToGraphQL(newPage);
       return graphqlPage;
     },
@@ -138,44 +149,34 @@ function dbPageToGraphQL(page: SequelizePage) {
     id: page.id!,
     createdAt: page.creationDate.toUTCString(),
     updatedAt: page.updatedOn.toUTCString(),
-    images: page.images.map(image => ({
+    images: page.images ? page.images.map(image => ({
       fileInfo: {
-        ...image,
+        encoding: image.encoding,
+        filename: image.filename,
+        mimetype: image.mimetype,
       },
-      ...image,
       id: image.id!,
       url: `/images/${image.id}`,
-    })),
-    categories: page.categories.map(category => ({
+    })) : [],
+    categories: page.categories ? page.categories.map(category => ({
       category: category.category,
       id: category.id!
-    }))
+    })) : [],
   }
   return graphqlPage;
 }
 
-function dbImageToGraphQL(image: DocumentType<DBImage>) {
-  if (isDocument(image.page)) {
-    const page = {
-      contents: "",
-      id: "",
-      contributors: [],
-      categories: [],
-      images: [],
-      createdAt: "",
-      updatedAt: "",
-    } as Page;
-    if (page == null) {
-      return undefined;
-    }
-    return {
-      id: image.id,
-      fileInfo: image.fileInfo,
-      page,
-      url: `/image/${image.id}`
-    } as Image;
-  }
-  return undefined;
+function dbImageToGraphQL(image: SequelizeImage) {
+  return {
+    id: image.id,
+    fileInfo: {
+      encoding: image.encoding,
+      filename: image.filename,
+      mimetype: image.mimetype,
+    } as File,
+    url: `/images/${image.id}`,
+    page: image.page ? dbPageToGraphQL(image.page) : undefined,
+  } as Image;
 }
 
 // Don't know why this isn't built in

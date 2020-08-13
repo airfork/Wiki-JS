@@ -20,14 +20,14 @@ export type User = {
 
 export type PageImage = {
   __typename?: 'PageImage';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   fileInfo: File;
   url: Scalars['String'];
 };
 
 export type Page = {
   __typename?: 'Page';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   contents: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -38,13 +38,13 @@ export type Page = {
 
 export type Tags = {
   __typename?: 'Tags';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   category: Scalars['String'];
 };
 
 export type Image = {
   __typename?: 'Image';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   fileInfo: File;
   page?: Maybe<Page>;
   url: Scalars['String'];
@@ -76,7 +76,8 @@ export type TagsInput = {
 
 export type PageInput = {
   contents: Scalars['String'];
-  categories?: Maybe<Array<Maybe<TagsInput>>>;
+  categories?: Maybe<Array<TagsInput>>;
+  imageIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type Mutation = {
@@ -198,7 +199,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   PageImage: ResolverTypeWrapper<PageImage>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Page: ResolverTypeWrapper<Page>;
   Tags: ResolverTypeWrapper<Tags>;
   Image: ResolverTypeWrapper<Image>;
@@ -209,6 +210,7 @@ export type ResolversTypes = ResolversObject<{
   TagsInput: TagsInput;
   PageInput: PageInput;
   Mutation: ResolverTypeWrapper<{}>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -217,7 +219,7 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   PageImage: PageImage;
-  ID: Scalars['ID'];
+  Int: Scalars['Int'];
   Page: Page;
   Tags: Tags;
   Image: Image;
@@ -228,6 +230,7 @@ export type ResolversParentTypes = ResolversObject<{
   TagsInput: TagsInput;
   PageInput: PageInput;
   Mutation: {};
+  ID: Scalars['ID'];
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
@@ -237,14 +240,14 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type PageImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageImage'] = ResolversParentTypes['PageImage']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   contents?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -255,13 +258,13 @@ export type PageResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type TagsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tags'] = ResolversParentTypes['Tags']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   category?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
 export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
   page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

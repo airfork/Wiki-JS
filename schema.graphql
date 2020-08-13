@@ -4,13 +4,13 @@ type User {
 }
 
 type PageImage {
-    id: ID!
+    id: Int!
     fileInfo: File!
     url: String!
 }
 
 type Page {
-    id: ID!
+    id: Int!
     contents: String!
     createdAt: String!
     updatedAt: String!
@@ -20,12 +20,12 @@ type Page {
 }
 
 type Tags {
-    id: ID!
+    id: Int!
     category: String!
 }
 
 type Image {
-    id: ID!
+    id: Int!
     fileInfo: File!
     page: Page
     url: String!
@@ -56,7 +56,8 @@ input TagsInput {
 
 input PageInput {
     contents: String!
-    categories: [TagsInput]
+    categories: [TagsInput!]
+    imageIds: [Int!]
 }
 
 type Mutation {
