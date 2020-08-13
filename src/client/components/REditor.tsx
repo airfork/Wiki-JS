@@ -13,9 +13,6 @@ export default function REditor() {
   return (
     <Editor
       editorState={value}
-      toolbarClassName="toolbarClassName"
-      wrapperClassName="wrapperClassName"
-      editorClassName="editorClassName"
       onEditorStateChange={setValue}
       uploadCallback={uploadCallback}
     />
