@@ -3,17 +3,8 @@ import { Table, Column, Model, PrimaryKey, ForeignKey, HasMany, BelongsToMany, A
 import { SequelizePage } from './pages';
 import { UserPage } from './user_page';
 
-class User {
-  @prop()
-  public username!: string;
-  @prop()
-  public password!: string;
-  @prop()
-  public admin!: boolean;
-}
-
 @Table
-class SequelizeUser extends Model implements SequelizeUser {
+class User extends Model implements User {
   @PrimaryKey
   @Column
   username!: string;
@@ -30,6 +21,4 @@ class SequelizeUser extends Model implements SequelizeUser {
   pages!: SequelizePage[];
 }
 
-const UserModel = getModelForClass(User);
-
-export { UserModel, User, SequelizeUser };
+export { User };

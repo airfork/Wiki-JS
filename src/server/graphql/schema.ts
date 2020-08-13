@@ -5,11 +5,9 @@ import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { ReadStream } from 'fs';
 import { sign } from 'jsonwebtoken';
-import { isDocumentArray, isDocument, DocumentType } from '@typegoose/typegoose';
 
 import { ApolloContext } from '../server';
-import { SequelizeUser } from '../db/users';
-import { ImageModel, Image as DBImage, SequelizeImage } from '../db/images';
+import { SequelizeImage } from '../db/images';
 import {
   User,
   Page,
@@ -19,10 +17,8 @@ import {
   Image,
   File
 } from '../graphql/types';
-import { PageModel, Page as DBPage, SequelizePage } from '../db/pages';
+import { SequelizePage } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
-import { SequelizeTag } from '../db/tags';
-import { UserPage } from '../db/user_page';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -50,22 +46,20 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
-    createUser: async (_, { user }, { sequelize }: ApolloContext) => {
-      const userRepostory = sequelize.getRepository(SequelizeUser);
-      if (await userRepostory.findByPk(user.username) != null) {
+    createUser: async (_, { user }, { userRepo }: ApolloContext) => {
+      if (await userRepo.findByPk(user.username) != null) {
         throw new UserInputError("Username already exists");
       }
-      let numUsers = await userRepostory.count();
-      let newUser = await userRepostory.create({
+      let numUsers = await userRepo.count();
+      let newUser = await userRepo.create({
         ...user,
         admin: numUsers === 0,
         password: await hash(user.password),
       });
       return newUser as User;
     },
-    logIn: async (_, { username, password }, { sequelize }: ApolloContext) => {
-      const userRepostory = sequelize.getRepository(SequelizeUser);
-      let user = await userRepostory.findByPk(username);
+    logIn: async (_, { username, password }, { userRepo }: ApolloContext) => {
+      let user = await userRepo.findByPk(username);
       if (user == null) {
         throw new UserInputError("Username does not exist");
       }
@@ -74,15 +68,14 @@ const resolvers: Resolvers = {
       }
       return sign({ username: user.username }, process.env.JWT_SECRET!);
     },
-    makeAdmin: async (_, { username }, { user, sequelize }: ApolloContext) => {
+    makeAdmin: async (_, { username }, { user, userRepo }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("No authorization token provided")
       }
       if (!user.admin) {
         throw new AuthenticationError("Must be an admin to make another user an admin");
       }
-      const userRepostory = sequelize.getRepository(SequelizeUser);
-      const toUpdate = await userRepostory.findByPk(username);
+      const toUpdate = await userRepo.findByPk(username);
       if (toUpdate == null) {
         throw new UserInputError("Provided user does not exist");
       }

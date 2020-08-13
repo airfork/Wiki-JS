@@ -13,7 +13,7 @@ import { ApolloServer } from 'apollo-server-koa';
 import { Sequelize, Repository } from 'sequelize-typescript';
 
 import { schemaWithResolvers } from './graphql/schema';
-import { UserModel, User as DbUser, SequelizeUser } from './db/users';
+import { User } from './db/users';
 import { SequelizePage } from './db/pages';
 import { SequelizeTag } from './db/tags';
 import { UserPage } from './db/user_page';
@@ -30,11 +30,11 @@ type jwtClaims = {
 };
 
 export type ApolloContext = {
-  user?: SequelizeUser,
+  user?: User,
   sequelize: Sequelize,
   pageRepo: Repository<SequelizePage>,
   imageRepo: Repository<SequelizeImage>,
-  userRepo: Repository<SequelizeUser>,
+  userRepo: Repository<User>,
   tagRepo: Repository<SequelizeTag>,
   userPageRepo: Repository<UserPage>,
 };
@@ -45,17 +45,6 @@ const generalSetup = async () => {
   // Connect to DB
   console.info(`Trying to connect to database at ${mongoUrl}...`);
 
-  await connect(mongoUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    user: process.env.MONGO_INITDB_ROOT_USERNAME,
-    pass: process.env.MONGO_INITDB_ROOT_PASSWORD,
-    authSource: 'admin',
-  }).catch(reason => {
-    console.error(reason);
-    process.exit(1);
-  });
-
   console.info("Connected to database!");
 
   app.use(koaBody());
@@ -64,7 +53,7 @@ const generalSetup = async () => {
     host: 'localhost',
     dialect: 'postgres',
     repositoryMode: true,
-    models: [SequelizeUser, SequelizeUser, SequelizePage, SequelizeTag, SequelizeImage, UserPage],
+    models: [User, User, SequelizePage, SequelizeTag, SequelizeImage, UserPage],
   });
 
   await sequelize.authenticate();
@@ -79,7 +68,7 @@ const generalSetup = async () => {
       const userPageRepo = sequelize.getRepository(UserPage);
       const pageRepo = sequelize.getRepository(SequelizePage);
       const imageRepo = sequelize.getRepository(SequelizeImage);
-      const userRepo = sequelize.getRepository(SequelizeUser);
+      const userRepo = sequelize.getRepository(User);
       const tagRepo = sequelize.getRepository(SequelizeTag);
 
       const sequelizeData: ApolloContext = {

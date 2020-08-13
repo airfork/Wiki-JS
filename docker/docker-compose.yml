@@ -1,10 +1,5 @@
 version: '3.5'
 services:
-    mongo:
-        image: mongo
-        env_file: ../.env
-        ports: 
-            - 27017:27017
     postgres:
         image: postgres
         env_file: ../.env
