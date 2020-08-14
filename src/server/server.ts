@@ -115,11 +115,11 @@ const devSetup = async () => {
       },
     }
   });
-  router.get('/:fallback', async ctx => {
-    await send(ctx, 'dist/index.html');
-  })
   app.use(webpackMiddle);
   app.use(router.routes());
+  app.use(async ctx => {
+    await send(ctx, 'dist/index.html');
+  })
 }
 
 generalSetup()
