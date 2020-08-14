@@ -58,7 +58,7 @@ export default function LoginForm() {
           <LockOutlinedIcon/>
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Login
         </Typography>
         <form className={classes.form} noValidate onSubmit={handleSubmitEvent}>
           <TextField
@@ -91,9 +91,8 @@ export default function LoginForm() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            // onClick={handleClickEvent}
           >
-            Sign In
+            Login
           </Button>
           <Grid container>
             <Grid item xs>

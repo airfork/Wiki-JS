@@ -3,14 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import TwitterIcon from '@material-ui/icons/Twitter';
 import Header from "../components/Header";
 import MainFeaturedPost from "../components/MainFeaturedPost";
 import FeaturedPost from "../components/FeaturedPost";
 import Main from "../components/MainContent"
 import Sidebar from "../components/Sidebar";
+import { RelatedArticle } from "../types";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -48,16 +46,11 @@ const featuredPosts = [
 
 const posts = [];
 
-const sidebar = {
-  title: 'About',
-  description:
-    'Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.',
-  archives: [
-    { title: 'Related post 1', url: '#' },
-    { title: 'Related post 2', url: '#' },
-    { title: 'Related post 3', url: '#' },
-  ],
-};
+const relatedArticles: Array<RelatedArticle> = [
+  { title: 'Related post 1', url: '#' },
+  { title: 'Related post 2', url: '#' },
+  { title: 'Related post 3', url: '#' },
+]
 
 export default function Showcase() {
   const classes = useStyles();
@@ -66,7 +59,7 @@ export default function Showcase() {
     <React.Fragment>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Header title="Showcase" />
+        <Header title="Showcase"/>
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
@@ -77,9 +70,7 @@ export default function Showcase() {
           <Grid container spacing={5} className={classes.mainGrid}>
             <Main title="From the firehose" posts={posts} />
             <Sidebar
-              title={sidebar.title}
-              description={sidebar.description}
-              archives={sidebar.archives}
+              related={relatedArticles}
             />
           </Grid>
         </main>

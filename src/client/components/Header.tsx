@@ -6,7 +6,9 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
+import Icon from "@material-ui/core/Icon";
+import { SvgIcon } from "@material-ui/core";
+
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -27,12 +29,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Header(props) {
   const classes = useStyles();
-  const { sections, title } = props;
+  const { title, searchIcon } = props;
 
   return (
     <React.Fragment>
       <Toolbar className={classes.toolbar}>
-        <Button size="small">Subscribe</Button>
+        <Button size="medium" href="/">
+              Home
+        </Button>
         <Typography
           component="h2"
           variant="h5"
@@ -43,11 +47,15 @@ export default function Header(props) {
         >
           {title}
         </Typography>
-        <IconButton>
-          <SearchIcon />
-        </IconButton>
-        <Button variant="outlined" size="small">
-          Sign in
+        {searchIcon === false
+          ? ""
+
+          : <IconButton>
+              <SearchIcon />
+            </IconButton>
+        }
+        <Button variant="outlined" size="small" href={"/login"}>
+          Login
         </Button>
       </Toolbar>
     </React.Fragment>
@@ -55,6 +63,6 @@ export default function Header(props) {
 }
 
 Header.propTypes = {
-  sections: PropTypes.array,
   title: PropTypes.string,
+  searchIcon: PropTypes.bool
 };
