@@ -7,7 +7,7 @@ import { ReadStream } from 'fs';
 import { sign } from 'jsonwebtoken';
 
 import { ApolloContext } from '../server';
-import { dbImageToGraphQL } from '../db/images';
+import { dbImageToGraphQL, Image as DBImage } from '../db/images';
 import {
   User,
   Resolvers,
@@ -89,16 +89,21 @@ const resolvers: Resolvers = {
         categories: [],
         images: [],
       }, { include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
-      // Add page to images provided, throw an error if an image doesn't exist
+      // Verify that image exist in DB and store them to be updated
+      const imagesToUpdate: Array<DBImage> = [];
       for (let imageId of (page.imageIds ?? [])) {
         const image = await repos.imageRepo.findByPk(imageId);
         if (image == null) {
           throw new UserInputError(`Provided image id ${imageId} does not exist in the database`);
         }
-        image.pageId = newPage.id;
-        await image.save();
+        imagesToUpdate.push(image);
       }
       await newPage.save();
+      // Actually sa
+      for (let image of imagesToUpdate) {
+        image.pageId = newPage.id,
+          await image.save();
+      }
       // Create a join table entry for each category, creating the category if
       // it doesn't exist
       for (let tag of (page.categories ?? [])) {
