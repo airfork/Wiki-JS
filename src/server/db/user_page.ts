@@ -7,7 +7,7 @@ class UserPage extends Model implements UserPage {
   @ForeignKey(() => User)
   @PrimaryKey
   @Column
-  user_id!: string;
+  user_id!: number;
 
   @ForeignKey(() => SequelizePage)
   @PrimaryKey

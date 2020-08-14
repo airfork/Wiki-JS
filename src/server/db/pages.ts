@@ -1,10 +1,9 @@
-import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 import { Table, Column, Model, HasMany, CreatedAt, UpdatedAt, BelongsToMany, AllowNull } from 'sequelize-typescript';
 import { User } from './users';
 import { SequelizeImage } from './images';
-import { Tag, SequelizeTag } from "./tags";
+import { SequelizeTag } from "./tags";
 import { UserPage } from './user_page';
+import { TagPage } from './tag_page';
 
 @Table
 class SequelizePage extends Model implements SequelizePage {
@@ -24,7 +23,7 @@ class SequelizePage extends Model implements SequelizePage {
   @HasMany(() => SequelizeImage)
   images!: SequelizeImage[];
 
-  @HasMany(() => SequelizeTag)
+  @BelongsToMany(() => SequelizeTag, () => TagPage)
   categories!: SequelizeTag[];
 }
 

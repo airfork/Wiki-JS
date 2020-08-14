@@ -1,5 +1,4 @@
-import { prop, getModelForClass } from '@typegoose/typegoose';
-import { Table, Column, Model, PrimaryKey, ForeignKey, HasMany, BelongsToMany, AllowNull } from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey, BelongsToMany, AllowNull } from 'sequelize-typescript';
 import { SequelizePage } from './pages';
 import { UserPage } from './user_page';
 

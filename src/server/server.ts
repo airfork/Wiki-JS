@@ -5,7 +5,6 @@ import serve from 'koa-static-server';
 import koaWebpack from 'koa-webpack';
 import Router from 'koa-router';
 import { verify } from 'jsonwebtoken';
-import { connect } from 'mongoose';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
 import koaBody from 'koa-bodyparser';
@@ -18,7 +17,7 @@ import { SequelizePage } from './db/pages';
 import { SequelizeTag } from './db/tags';
 import { UserPage } from './db/user_page';
 import { SequelizeImage } from './db/images';
-import { Model } from 'sequelize/types';
+import { TagPage } from './db/tag_page';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -53,7 +52,7 @@ const generalSetup = async () => {
     host: 'localhost',
     dialect: 'postgres',
     repositoryMode: true,
-    models: [User, User, SequelizePage, SequelizeTag, SequelizeImage, UserPage],
+    models: [User, User, SequelizePage, SequelizeTag, SequelizeImage, UserPage, TagPage],
   });
 
   await sequelize.authenticate();
