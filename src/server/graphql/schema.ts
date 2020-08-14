@@ -19,6 +19,7 @@ import {
 } from '../graphql/types';
 import { SequelizePage } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
+import { SequelizeTag } from '../db/tags';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -87,26 +88,42 @@ const resolvers: Resolvers = {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
-      const newPage = await repos.pageRepo.create({
+      const newPage = repos.pageRepo.build({
         ...page,
-        categories: page.categories ?? [],
+        categories: [],
         images: [],
       }, { include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
+      // Add page to images provided, throw an error if an image doesn't exist
       for (let imageId of (page.imageIds ?? [])) {
         const image = await repos.imageRepo.findByPk(imageId);
         if (image == null) {
-          await newPage.destroy();
           throw new UserInputError(`Provided image id ${imageId} does not exist in the database`);
         }
         image.pageId = newPage.id;
         await image.save();
       }
-      // NOTE: This is how you can set associations, maybe?
+      await newPage.save();
+      // Create a join table entry for each category, creating the category if
+      // it doesn't exist
+      for (let tag of (page.categories ?? [])) {
+        let dbTag = await repos.tagRepo.findByPk(tag.category);
+        if (dbTag == null) {
+          dbTag = await repos.tagRepo.create({ ...tag });
+        }
+        await repos.tagPageRepo.create({
+          tag_id: dbTag.category,
+          page_id: newPage.id,
+        });
+      }
+      // Created a join table entry between the current user (first contributor)
+      // and the page
       await repos.userPageRepo.create({
         user_id: user.username,
         page_id: newPage.id,
       });
-      await newPage.reload({ include: [repos.userRepo, repos.imageRepo] });
+      // Reload this page with all the new data
+      await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
+      // Convert page to GraphQL object
       const graphqlPage = dbPageToGraphQL(newPage);
       return graphqlPage;
     },

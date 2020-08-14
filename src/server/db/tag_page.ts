@@ -4,15 +4,15 @@ import { SequelizeTag } from './tags';
 
 @Table
 class TagPage extends Model implements TagPage {
-    @ForeignKey(() => SequelizeTag)
-    @PrimaryKey
-    @Column
-    tag_id!: number;
+  @ForeignKey(() => SequelizeTag)
+  @PrimaryKey
+  @Column
+  tag_id!: string;
 
-    @ForeignKey(() => SequelizePage)
-    @PrimaryKey
-    @Column
-    page_id!: number;
+  @ForeignKey(() => SequelizePage)
+  @PrimaryKey
+  @Column
+  page_id!: number;
 }
 
 export { TagPage };

@@ -36,6 +36,7 @@ export type ApolloContext = {
   userRepo: Repository<User>,
   tagRepo: Repository<SequelizeTag>,
   userPageRepo: Repository<UserPage>,
+  tagPageRepo: Repository<TagPage>,
 };
 
 const generalSetup = async () => {
@@ -69,6 +70,7 @@ const generalSetup = async () => {
       const imageRepo = sequelize.getRepository(SequelizeImage);
       const userRepo = sequelize.getRepository(User);
       const tagRepo = sequelize.getRepository(SequelizeTag);
+      const tagPageRepo = sequelize.getRepository(TagPage);
 
       const sequelizeData: ApolloContext = {
         sequelize,
@@ -77,6 +79,7 @@ const generalSetup = async () => {
         imageRepo,
         userRepo,
         tagRepo,
+        tagPageRepo,
       };
 
       if (token == null) {
