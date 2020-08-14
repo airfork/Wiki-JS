@@ -4,6 +4,7 @@ import { SequelizeImage } from './images';
 import { SequelizeTag } from "./tags";
 import { UserPage } from './user_page';
 import { TagPage } from './tag_page';
+import { Page } from '../graphql/types';
 
 @Table
 class SequelizePage extends Model implements SequelizePage {
@@ -27,4 +28,28 @@ class SequelizePage extends Model implements SequelizePage {
   categories!: SequelizeTag[];
 }
 
-export { SequelizePage };
+function dbPageToGraphQL(page: SequelizePage) {
+  const graphqlPage: Page = {
+    contents: page.contents,
+    contributors: page.contributors,
+    id: page.id!,
+    createdAt: page.creationDate.toUTCString(),
+    updatedAt: page.updatedOn.toUTCString(),
+    images: page.images ? page.images.map(image => ({
+      fileInfo: {
+        encoding: image.encoding,
+        filename: image.filename,
+        mimetype: image.mimetype,
+      },
+      id: image.id!,
+      url: `/images/${image.id}`,
+    })) : [],
+    categories: page.categories ? page.categories.map(category => ({
+      category: category.category,
+      id: category.id!
+    })) : [],
+  }
+  return graphqlPage;
+}
+
+export { SequelizePage, dbPageToGraphQL };

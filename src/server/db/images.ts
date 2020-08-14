@@ -1,5 +1,6 @@
 import { Table, Column, Model, BelongsTo, ForeignKey } from 'sequelize-typescript';
-import { SequelizePage } from './pages';
+import { SequelizePage, dbPageToGraphQL } from './pages';
+import { File, Image } from '../graphql/types';
 
 @Table
 class SequelizeImage extends Model implements SequelizeImage {
@@ -23,4 +24,17 @@ class SequelizeImage extends Model implements SequelizeImage {
   page?: SequelizePage;
 }
 
-export { SequelizeImage };
+function dbImageToGraphQL(image: SequelizeImage) {
+  return {
+    id: image.id,
+    fileInfo: {
+      encoding: image.encoding,
+      filename: image.filename,
+      mimetype: image.mimetype,
+    } as File,
+    url: `/images/${image.id}`,
+    page: image.page ? dbPageToGraphQL(image.page) : undefined,
+  } as Image;
+}
+
+export { SequelizeImage, dbImageToGraphQL };

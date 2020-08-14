@@ -7,19 +7,15 @@ import { ReadStream } from 'fs';
 import { sign } from 'jsonwebtoken';
 
 import { ApolloContext } from '../server';
-import { SequelizeImage } from '../db/images';
+import { dbImageToGraphQL } from '../db/images';
 import {
   User,
-  Page,
   Resolvers,
-  Tags,
-  PageImage,
   Image,
   File
 } from '../graphql/types';
-import { SequelizePage } from '../db/pages';
+import { dbPageToGraphQL } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
-import { SequelizeTag } from '../db/tags';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -151,43 +147,6 @@ const resolvers: Resolvers = {
     }
   }
 };
-
-function dbPageToGraphQL(page: SequelizePage) {
-  const graphqlPage: Page = {
-    contents: page.contents,
-    contributors: page.contributors,
-    id: page.id!,
-    createdAt: page.creationDate.toUTCString(),
-    updatedAt: page.updatedOn.toUTCString(),
-    images: page.images ? page.images.map(image => ({
-      fileInfo: {
-        encoding: image.encoding,
-        filename: image.filename,
-        mimetype: image.mimetype,
-      },
-      id: image.id!,
-      url: `/images/${image.id}`,
-    })) : [],
-    categories: page.categories ? page.categories.map(category => ({
-      category: category.category,
-      id: category.id!
-    })) : [],
-  }
-  return graphqlPage;
-}
-
-function dbImageToGraphQL(image: SequelizeImage) {
-  return {
-    id: image.id,
-    fileInfo: {
-      encoding: image.encoding,
-      filename: image.filename,
-      mimetype: image.mimetype,
-    } as File,
-    url: `/images/${image.id}`,
-    page: image.page ? dbPageToGraphQL(image.page) : undefined,
-  } as Image;
-}
 
 // Don't know why this isn't built in
 async function readStream(stream: ReadStream) {
