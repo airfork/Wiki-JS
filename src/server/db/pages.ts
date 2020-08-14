@@ -1,13 +1,13 @@
 import { Table, Column, Model, HasMany, CreatedAt, UpdatedAt, BelongsToMany, AllowNull } from 'sequelize-typescript';
 import { User } from './users';
-import { SequelizeImage } from './images';
-import { SequelizeTag } from "./tags";
+import { Image } from './images';
+import { Tag } from "./tags";
 import { UserPage } from './user_page';
 import { TagPage } from './tag_page';
-import { Page } from '../graphql/types';
+import { Page as GQLPage } from '../graphql/types';
 
 @Table
-class SequelizePage extends Model implements SequelizePage {
+class Page extends Model implements Page {
   @CreatedAt
   creationDate!: Date;
 
@@ -21,15 +21,15 @@ class SequelizePage extends Model implements SequelizePage {
   @BelongsToMany(() => User, () => UserPage)
   contributors!: User[];
 
-  @HasMany(() => SequelizeImage)
-  images!: SequelizeImage[];
+  @HasMany(() => Image)
+  images!: Image[];
 
-  @BelongsToMany(() => SequelizeTag, () => TagPage)
-  categories!: SequelizeTag[];
+  @BelongsToMany(() => Tag, () => TagPage)
+  categories!: Tag[];
 }
 
-function dbPageToGraphQL(page: SequelizePage) {
-  const graphqlPage: Page = {
+function dbPageToGraphQL(page: Page) {
+  const graphqlPage: GQLPage = {
     contents: page.contents,
     contributors: page.contributors,
     id: page.id!,
@@ -52,4 +52,4 @@ function dbPageToGraphQL(page: SequelizePage) {
   return graphqlPage;
 }
 
-export { SequelizePage, dbPageToGraphQL };
+export { Page, dbPageToGraphQL };

@@ -1,5 +1,5 @@
 import { Table, Column, Model, PrimaryKey, BelongsToMany, AllowNull } from 'sequelize-typescript';
-import { SequelizePage } from './pages';
+import { Page } from './pages';
 import { UserPage } from './user_page';
 
 @Table
@@ -16,8 +16,8 @@ class User extends Model implements User {
   @Column
   admin!: boolean;
 
-  @BelongsToMany(() => SequelizePage, () => UserPage)
-  pages!: SequelizePage[];
+  @BelongsToMany(() => Page, () => UserPage)
+  pages!: Page[];
 }
 
 export { User };

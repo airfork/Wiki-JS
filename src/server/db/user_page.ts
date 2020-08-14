@@ -1,6 +1,6 @@
 import { Table, Model, Column, ForeignKey, PrimaryKey } from 'sequelize-typescript';
 import { User } from './users';
-import { SequelizePage } from './pages';
+import { Page } from './pages';
 
 @Table
 class UserPage extends Model implements UserPage {
@@ -9,7 +9,7 @@ class UserPage extends Model implements UserPage {
   @Column
   user_id!: number;
 
-  @ForeignKey(() => SequelizePage)
+  @ForeignKey(() => Page)
   @PrimaryKey
   @Column
   page_id!: number;

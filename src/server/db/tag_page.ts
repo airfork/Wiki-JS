@@ -1,15 +1,15 @@
 import { Table, Model, Column, ForeignKey, PrimaryKey } from 'sequelize-typescript';
-import { SequelizePage } from './pages';
-import { SequelizeTag } from './tags';
+import { Page } from './pages';
+import { Tag } from './tags';
 
 @Table
 class TagPage extends Model implements TagPage {
-  @ForeignKey(() => SequelizeTag)
+  @ForeignKey(() => Tag)
   @PrimaryKey
   @Column
   tag_id!: string;
 
-  @ForeignKey(() => SequelizePage)
+  @ForeignKey(() => Page)
   @PrimaryKey
   @Column
   page_id!: number;

@@ -13,10 +13,10 @@ import { Sequelize, Repository } from 'sequelize-typescript';
 
 import { schemaWithResolvers } from './graphql/schema';
 import { User } from './db/users';
-import { SequelizePage } from './db/pages';
-import { SequelizeTag } from './db/tags';
+import { Page } from './db/pages';
+import { Tag } from './db/tags';
 import { UserPage } from './db/user_page';
-import { SequelizeImage } from './db/images';
+import { Image } from './db/images';
 import { TagPage } from './db/tag_page';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
@@ -31,10 +31,10 @@ type jwtClaims = {
 export type ApolloContext = {
   user?: User,
   sequelize: Sequelize,
-  pageRepo: Repository<SequelizePage>,
-  imageRepo: Repository<SequelizeImage>,
+  pageRepo: Repository<Page>,
+  imageRepo: Repository<Image>,
   userRepo: Repository<User>,
-  tagRepo: Repository<SequelizeTag>,
+  tagRepo: Repository<Tag>,
   userPageRepo: Repository<UserPage>,
   tagPageRepo: Repository<TagPage>,
 };
@@ -53,7 +53,7 @@ const generalSetup = async () => {
     host: 'localhost',
     dialect: 'postgres',
     repositoryMode: true,
-    models: [User, User, SequelizePage, SequelizeTag, SequelizeImage, UserPage, TagPage],
+    models: [User, Page, Tag, Image, UserPage, TagPage],
   });
 
   await sequelize.authenticate();
@@ -66,10 +66,10 @@ const generalSetup = async () => {
       const token: string | null = req.ctx.request.header.authorization;
 
       const userPageRepo = sequelize.getRepository(UserPage);
-      const pageRepo = sequelize.getRepository(SequelizePage);
-      const imageRepo = sequelize.getRepository(SequelizeImage);
+      const pageRepo = sequelize.getRepository(Page);
+      const imageRepo = sequelize.getRepository(Image);
       const userRepo = sequelize.getRepository(User);
-      const tagRepo = sequelize.getRepository(SequelizeTag);
+      const tagRepo = sequelize.getRepository(Tag);
       const tagPageRepo = sequelize.getRepository(TagPage);
 
       const sequelizeData: ApolloContext = {
