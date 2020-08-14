@@ -1,25 +1,25 @@
-import { UserInputError, AuthenticationError, ApolloError } from 'apollo-server-koa';
+import { UserInputError, AuthenticationError } from 'apollo-server-koa';
 import { hash, verify } from 'argon2';
 import { loadSchemaSync } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { addResolversToSchema } from '@graphql-tools/schema';
 import { ReadStream } from 'fs';
 import { sign } from 'jsonwebtoken';
-import { isDocumentArray, isDocument, DocumentType } from '@typegoose/typegoose';
 
 import { ApolloContext } from '../server';
-import { UserModel } from '../db/users';
-import { ImageModel, Image as DBImage } from '../db/images';
+import { SequelizeImage } from '../db/images';
 import {
   User,
   Page,
   Resolvers,
   Tags,
   PageImage,
-  Image
+  Image,
+  File
 } from '../graphql/types';
-import { PageModel, Page as DBPage } from '../db/pages';
+import { SequelizePage } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
+import { SequelizeTag } from '../db/tags';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -30,45 +30,53 @@ const schema = loadSchemaSync('schema.graphql', {
 
 const resolvers: Resolvers = {
   Query: {
-    users: async () => await UserModel.find() as Array<User>,
-    images: async () => (await ImageModel.find())
-      .map(dbImage => dbImageToGraphQL(dbImage))
-      .filter(image => image != null) as Array<Image>,
-    pages: async () => (await PageModel.find())
-      .map(dbPage => dbPageToGraphQL(dbPage))
-      .filter(image => image != null) as Array<Page>
+    users: async (_, __, { userRepo }: ApolloContext) => {
+      return await userRepo.findAll() as Array<User>
+    },
+    images: async (_, __, ctx: ApolloContext) => {
+      const dbImages = await ctx.imageRepo.findAll({
+        include: [ctx.pageRepo]
+      });
+      return dbImages.map(image => dbImageToGraphQL(image));
+    },
+    pages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
+      const dbPages = await repos.pageRepo.findAll({
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
+      });
+      return dbPages.map(page => dbPageToGraphQL(page));
+    }
   },
   Mutation: {
-    createUser: async (_, { user }) => {
-      if (await UserModel.findOne({ username: user.username }) != null) {
+    createUser: async (_, { user }, { userRepo }: ApolloContext) => {
+      if (await userRepo.findByPk(user.username) != null) {
         throw new UserInputError("Username already exists");
       }
-      let numUsers = await UserModel.estimatedDocumentCount();
-      let newUser = await UserModel.create({
+      let numUsers = await userRepo.count();
+      let newUser = await userRepo.create({
         ...user,
         admin: numUsers === 0,
         password: await hash(user.password),
       });
       return newUser as User;
     },
-    logIn: async (_, { username, password }) => {
-      let user = await UserModel.findOne({ username });
+    logIn: async (_, { username, password }, { userRepo }: ApolloContext) => {
+      let user = await userRepo.findByPk(username);
       if (user == null) {
         throw new UserInputError("Username does not exist");
       }
       if (!await verify(user.password, password)) {
         throw new UserInputError("Incorrect password");
       }
-      return sign({ userId: user.id! }, process.env.JWT_SECRET!);
+      return sign({ username: user.username }, process.env.JWT_SECRET!);
     },
-    makeAdmin: async (_, { username }, { user }: ApolloContext) => {
+    makeAdmin: async (_, { username }, { user, userRepo }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("No authorization token provided")
       }
       if (!user.admin) {
         throw new AuthenticationError("Must be an admin to make another user an admin");
       }
-      const toUpdate = await UserModel.findOne({ username });
+      const toUpdate = await userRepo.findByPk(username);
       if (toUpdate == null) {
         throw new UserInputError("Provided user does not exist");
       }
@@ -76,103 +84,119 @@ const resolvers: Resolvers = {
       await toUpdate.save();
       return toUpdate as User;
     },
-    createPage: async (_, { page }, { user }: ApolloContext) => {
+    createPage: async (_, { page }, { user, sequelize, ...repos }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
-      let newPage = await PageModel.create({
+      const newPage = repos.pageRepo.build({
         ...page,
-        categories: page.categories as Tags[],
-        contributors: [user],
-      });
-      const myPage = dbPageToGraphQL(newPage);
-      if (myPage == null) {
-        throw new ApolloError("Contributors or images not properly loaded from the database");
+        categories: [],
+        images: [],
+      }, { include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
+      // Add page to images provided, throw an error if an image doesn't exist
+      for (let imageId of (page.imageIds ?? [])) {
+        const image = await repos.imageRepo.findByPk(imageId);
+        if (image == null) {
+          throw new UserInputError(`Provided image id ${imageId} does not exist in the database`);
+        }
+        image.pageId = newPage.id;
+        await image.save();
       }
-      return myPage;
+      await newPage.save();
+      // Create a join table entry for each category, creating the category if
+      // it doesn't exist
+      for (let tag of (page.categories ?? [])) {
+        let dbTag = await repos.tagRepo.findByPk(tag.category);
+        if (dbTag == null) {
+          dbTag = await repos.tagRepo.create({ ...tag });
+        }
+        await repos.tagPageRepo.create({
+          tag_id: dbTag.category,
+          page_id: newPage.id,
+        });
+      }
+      // Created a join table entry between the current user (first contributor)
+      // and the page
+      await repos.userPageRepo.create({
+        user_id: user.username,
+        page_id: newPage.id,
+      });
+      // Reload this page with all the new data
+      await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
+      // Convert page to GraphQL object
+      const graphqlPage = dbPageToGraphQL(newPage);
+      return graphqlPage;
     },
-    createImage: async (_, { image, linkedPageId }: createImageArgs, { user }: ApolloContext) => {
+    createImage: async (_, { image }: createImageArgs, { user, imageRepo }: ApolloContext) => {
       const awaitedImage = await image;
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
       console.log(awaitedImage);
-      const page = await PageModel.findById(linkedPageId);
-      if (page == null) {
-        throw new UserInputError("Page ID to associate image with not found.");
-      }
       const stream = awaitedImage.createReadStream();
       const data = await readStream(stream);
-      const myPage = dbPageToGraphQL(page);
-      if (myPage == null) {
-        throw new UserInputError("Page could not be loaded properly from database");
-      }
-      const newImage = await ImageModel.create({
-        fileInfo: { ...awaitedImage },
+      const newImage = await imageRepo.create({
+        ...awaitedImage,
         data,
-        page,
       });
-      page.images = page.images?.concat(newImage) ?? [newImage];
-      console.log(page)
-      await page.save();
-      //can't use object fill here either????
       return {
         id: newImage.id,
-        fileInfo: newImage.fileInfo,
+        fileInfo: {
+          encoding: newImage.encoding,
+          filename: newImage.filename,
+          mimetype: newImage.mimetype,
+        } as File,
         url: `/images/${newImage.id}`,
-        page: myPage,
       } as Image;
     }
   }
 };
 
-function dbPageToGraphQL(page: DocumentType<DBPage>) {
-  console.log("My page: ", page);
-  if (isDocumentArray(page.contributors) && isDocumentArray(page.images)) {
-    const myPage: Page = {
-      // can't use object fill here for some reason?
-      id: page.id,
-      contents: page.contents,
-      categories: page.categories,
-      images: page.images.map(image => ({
-        ...image,
-        url: `/images/${image.id}`,
-      })) as Array<PageImage>,
-      createdAt: page.createdAt!.toUTCString(),
-      updatedAt: page.updatedAt!.toUTCString(),
-      contributors: page.contributors as Array<User>,
-    } as Page;
-    return myPage;
+function dbPageToGraphQL(page: SequelizePage) {
+  const graphqlPage: Page = {
+    contents: page.contents,
+    contributors: page.contributors,
+    id: page.id!,
+    createdAt: page.creationDate.toUTCString(),
+    updatedAt: page.updatedOn.toUTCString(),
+    images: page.images ? page.images.map(image => ({
+      fileInfo: {
+        encoding: image.encoding,
+        filename: image.filename,
+        mimetype: image.mimetype,
+      },
+      id: image.id!,
+      url: `/images/${image.id}`,
+    })) : [],
+    categories: page.categories ? page.categories.map(category => ({
+      category: category.category,
+      id: category.id!
+    })) : [],
   }
-  return undefined;
+  return graphqlPage;
 }
 
-function dbImageToGraphQL(image: DocumentType<DBImage>) {
-  if (isDocument(image.page)) {
-    const page = dbPageToGraphQL(image.page);
-    if (page == null) {
-      return undefined;
-    }
-    return {
-      id: image.id,
-      fileInfo: image.fileInfo,
-      page,
-      url: `/image/${image.id}`
-    } as Image;
-  }
-  return undefined;
+function dbImageToGraphQL(image: SequelizeImage) {
+  return {
+    id: image.id,
+    fileInfo: {
+      encoding: image.encoding,
+      filename: image.filename,
+      mimetype: image.mimetype,
+    } as File,
+    url: `/images/${image.id}`,
+    page: image.page ? dbPageToGraphQL(image.page) : undefined,
+  } as Image;
 }
 
 // Don't know why this isn't built in
-function readStream(stream: ReadStream) {
+async function readStream(stream: ReadStream) {
 
-  return new Promise<string>((resolve, reject) => {
-    let data = "";
-
-    stream.on("data", chunk => data += chunk);
-    stream.on("end", () => resolve(data));
-    stream.on("error", error => reject(error));
-  });
+  const chunks: Array<Buffer> = [];
+  for await (let chunk of stream) {
+    chunks.push(chunk as Buffer);
+  }
+  return Buffer.concat(chunks);
 }
 
 type createImageArgs = {

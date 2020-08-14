@@ -1,22 +1,30 @@
-import { prop, getModelForClass, Ref, plugin } from '@typegoose/typegoose';
-import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
+import { Table, Column, Model, HasMany, CreatedAt, UpdatedAt, BelongsToMany, AllowNull } from 'sequelize-typescript';
 import { User } from './users';
-import { Image } from './images';
-import { Tag } from "./tags";
+import { SequelizeImage } from './images';
+import { SequelizeTag } from "./tags";
+import { UserPage } from './user_page';
+import { TagPage } from './tag_page';
 
+@Table
+class SequelizePage extends Model implements SequelizePage {
+  @CreatedAt
+  creationDate!: Date;
 
-@plugin(require('mongoose-autopopulate'))
-class Page extends TimeStamps {
-  @prop()
-  public contents!: string;
-  @prop({ ref: () => User, autopopulate: true })
-  public contributors!: Ref<User>[];
-  @prop({ ref: () => Tag, autopopulate: true })
-  public categories?: Ref<Tag>[];
-  @prop({ ref: () => Tag, autopopulate: true })
-  public images?: Ref<Image>[];
+  @UpdatedAt
+  updatedOn!: Date;
+
+  @AllowNull(false)
+  @Column
+  contents!: string;
+
+  @BelongsToMany(() => User, () => UserPage)
+  contributors!: User[];
+
+  @HasMany(() => SequelizeImage)
+  images!: SequelizeImage[];
+
+  @BelongsToMany(() => SequelizeTag, () => TagPage)
+  categories!: SequelizeTag[];
 }
 
-const PageModel = getModelForClass(Page);
-
-export { Page, PageModel };
+export { SequelizePage };

@@ -1,14 +1,23 @@
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { Table, Column, Model, PrimaryKey, BelongsToMany, AllowNull } from 'sequelize-typescript';
+import { SequelizePage } from './pages';
+import { UserPage } from './user_page';
 
-class User {
-  @prop()
-  public username!: string;
-  @prop()
-  public password!: string;
-  @prop()
-  public admin!: boolean;
+@Table
+class User extends Model implements User {
+  @PrimaryKey
+  @Column
+  username!: string;
+
+  @AllowNull(false)
+  @Column
+  password!: string;
+
+  @AllowNull(false)
+  @Column
+  admin!: boolean;
+
+  @BelongsToMany(() => SequelizePage, () => UserPage)
+  pages!: SequelizePage[];
 }
 
-const UserModel = getModelForClass(User);
-
-export { UserModel, User };
+export { User };

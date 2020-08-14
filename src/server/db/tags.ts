@@ -1,10 +1,11 @@
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { Table, Column, Model, AllowNull, Unique, PrimaryKey } from 'sequelize-typescript';
 
-class Tag {
-    @prop()
-    public category!: string
+@Table
+class SequelizeTag extends Model implements SequelizeTag {
+  @AllowNull(false)
+  @PrimaryKey
+  @Column
+  category!: string
 }
 
-const TagModel = getModelForClass(Tag);
-
-export { Tag, TagModel };
+export { SequelizeTag };

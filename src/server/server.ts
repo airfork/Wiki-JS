@@ -5,14 +5,19 @@ import serve from 'koa-static-server';
 import koaWebpack from 'koa-webpack';
 import Router from 'koa-router';
 import { verify } from 'jsonwebtoken';
-import { connect } from 'mongoose';
 import config from '../../webpack.config.js';
 import webpack from 'webpack';
 import koaBody from 'koa-bodyparser';
 import { ApolloServer } from 'apollo-server-koa';
+import { Sequelize, Repository } from 'sequelize-typescript';
 
 import { schemaWithResolvers } from './graphql/schema';
-import { UserModel, User as DbUser } from './db/users';
+import { User } from './db/users';
+import { SequelizePage } from './db/pages';
+import { SequelizeTag } from './db/tags';
+import { UserPage } from './db/user_page';
+import { SequelizeImage } from './db/images';
+import { TagPage } from './db/tag_page';
 
 const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
@@ -20,11 +25,18 @@ const router = new Router();
 const compiler = webpack(config);
 
 type jwtClaims = {
-  userId: String,
+  username: string,
 };
 
 export type ApolloContext = {
-  user?: DbUser
+  user?: User,
+  sequelize: Sequelize,
+  pageRepo: Repository<SequelizePage>,
+  imageRepo: Repository<SequelizeImage>,
+  userRepo: Repository<User>,
+  tagRepo: Repository<SequelizeTag>,
+  userPageRepo: Repository<UserPage>,
+  tagPageRepo: Repository<TagPage>,
 };
 
 const generalSetup = async () => {
@@ -33,20 +45,19 @@ const generalSetup = async () => {
   // Connect to DB
   console.info(`Trying to connect to database at ${mongoUrl}...`);
 
-  await connect(mongoUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    user: process.env.MONGO_INITDB_ROOT_USERNAME,
-    pass: process.env.MONGO_INITDB_ROOT_PASSWORD,
-    authSource: 'admin',
-  }).catch(reason => {
-    console.error(reason);
-    process.exit(1);
-  });
-
   console.info("Connected to database!");
 
   app.use(koaBody());
+
+  const sequelize = new Sequelize(process.env.POSTGRES_DB!, process.env.POSTGRES_USER!, process.env.POSTGRES_PASSWORD!, {
+    host: 'localhost',
+    dialect: 'postgres',
+    repositoryMode: true,
+    models: [User, User, SequelizePage, SequelizeTag, SequelizeImage, UserPage, TagPage],
+  });
+
+  await sequelize.authenticate();
+  await sequelize.sync();
 
   // Setup Apollo middleware
   const server = new ApolloServer({
@@ -54,12 +65,32 @@ const generalSetup = async () => {
     context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
 
+      const userPageRepo = sequelize.getRepository(UserPage);
+      const pageRepo = sequelize.getRepository(SequelizePage);
+      const imageRepo = sequelize.getRepository(SequelizeImage);
+      const userRepo = sequelize.getRepository(User);
+      const tagRepo = sequelize.getRepository(SequelizeTag);
+      const tagPageRepo = sequelize.getRepository(TagPage);
+
+      const sequelizeData: ApolloContext = {
+        sequelize,
+        userPageRepo,
+        pageRepo,
+        imageRepo,
+        userRepo,
+        tagRepo,
+        tagPageRepo,
+      };
+
       if (token == null) {
-        return null;
+        return sequelizeData;
       }
 
       const claims = verify(token, process.env.JWT_SECRET!) as jwtClaims;
-      return { user: await UserModel.findById(claims.userId) ?? undefined };
+      return {
+        user: await userRepo.findByPk(claims.username) ?? undefined,
+        ...sequelizeData,
+      };
     }
   });
   server.applyMiddleware({ app });

@@ -1,23 +1,26 @@
-import { Schema } from 'mongoose';
-import { prop, getModelForClass, plugin } from '@typegoose/typegoose';
-import { Page } from './pages';
+import { Table, Column, Model, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import { SequelizePage } from './pages';
 
-type File = {
-  filename: string,
-  mimetype: string,
-  encoding: string,
-};
+@Table
+class SequelizeImage extends Model implements SequelizeImage {
+  @Column
+  data!: Buffer;
 
-@plugin(require('mongoose-autopopulate'))
-class Image {
-  @prop({ ref: () => Page, autopopulate: true })
-  public page!: Page;
-  @prop()
-  public data!: Schema.Types.Buffer;
-  @prop()
-  public fileInfo!: File;
+  @Column
+  filename!: string;
+
+  @Column
+  mimetype!: string;
+
+  @Column
+  encoding!: string;
+
+  @ForeignKey(() => SequelizePage)
+  @Column
+  pageId?: number;
+
+  @BelongsTo(() => SequelizePage)
+  page?: SequelizePage;
 }
 
-const ImageModel = getModelForClass(Image);
-
-export { Image, ImageModel };
+export { SequelizeImage };
