@@ -99,18 +99,15 @@ const resolvers: Resolvers = {
         imagesToUpdate.push(image);
       }
       await newPage.save();
-      // Actually sa
+      // Actually save each image
       for (let image of imagesToUpdate) {
-        image.pageId = newPage.id,
-          await image.save();
+        image.pageId = newPage.id;
+        await image.save();
       }
       // Create a join table entry for each category, creating the category if
       // it doesn't exist
       for (let tag of (page.categories ?? [])) {
-        let dbTag = await repos.tagRepo.findByPk(tag.category);
-        if (dbTag == null) {
-          dbTag = await repos.tagRepo.create({ ...tag });
-        }
+        let [dbTag, _] = await repos.tagRepo.findOrCreate({ where: { category: tag.category } });
         await repos.tagPageRepo.create({
           tag_id: dbTag.category,
           page_id: newPage.id,
