@@ -1,6 +1,7 @@
 import { Wiki } from './pages/Wiki';
 import { Index } from './pages/Index';
 import { Login } from "./pages/Login";
+import Showcase from "./pages/Showcase";
 
 type Route = {
   routeName: string,
@@ -12,7 +13,7 @@ const Routes: Array<Route> = [
   {
     routeName: 'wiki',
     path: '/wiki',
-    component: Wiki,
+    component: Showcase,
   },
   {
     routeName: 'index',
