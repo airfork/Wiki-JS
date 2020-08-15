@@ -6,10 +6,9 @@ import SearchBar from "../components/SearchBar";
 export default function Search() {
 
   return (
-    <React.Fragment>
-      <CssBaseline />
+    <>
       <Header title={"Search"} searchIcon={false} />
       <SearchBar />
-    </React.Fragment>
+    </>
   )
 }

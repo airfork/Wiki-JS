@@ -3,6 +3,13 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from "@material-ui/core/TextField";
 import Toolbar from "@material-ui/core/Toolbar";
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles({
+  input: {
+    height: 40
+  },
+});
 
 export default function SearchBarButton() {
   const searchButton = (
@@ -11,7 +18,8 @@ export default function SearchBarButton() {
     </IconButton>
   );
 
-  const [iconRendered, setIconRendered] = useState(false);
+  const classes = useStyles();
+  const [iconRendered, setIconRendered] = useState(true);
 
   const handleSubmitEvent = (event) => {
     event.preventDefault();
@@ -25,10 +33,11 @@ export default function SearchBarButton() {
 
   return (
     <section onClick={() => setIconRendered(!iconRendered)}>
-      {iconRendered
+      {!iconRendered
         ? <TextField
           variant="outlined"
           margin="dense"
+          size="small"
           required
           fullWidth
           id="search"
@@ -36,6 +45,14 @@ export default function SearchBarButton() {
           value={search}
           onInput={handleSearchChange}
           autoFocus
+          InputProps={{
+            style: {
+              height: '1.75em'
+            }
+          }}
+          InputLabelProps={{
+            shrink: true
+          }}
         />
         : <IconButton>
           <SearchIcon />

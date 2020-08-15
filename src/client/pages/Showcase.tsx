@@ -56,10 +56,10 @@ export default function Showcase() {
   const classes = useStyles();
 
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Header title="Showcase"/>
+        <Header title="Showcase" />
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
@@ -75,6 +75,6 @@ export default function Showcase() {
           </Grid>
         </main>
       </Container>
-    </React.Fragment>
+    </>
   );
 }

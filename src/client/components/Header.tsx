@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import Typography from '@material-ui/core/Typography';
 import Icon from "@material-ui/core/Icon";
-import { SvgIcon } from "@material-ui/core";
+import { SvgIcon, Divider } from "@material-ui/core";
 import SearchBarButton from "./SearchBarIcon";
 
 
@@ -33,7 +33,7 @@ export default function Header(props) {
   const { title, searchIcon } = props;
 
   return (
-    <React.Fragment>
+    <>
       <Toolbar className={classes.toolbar}>
         <Button size="medium" href="/">
           Home
@@ -49,11 +49,11 @@ export default function Header(props) {
           {title}
         </Typography>
         <SearchBarButton />
-        <Button variant="outlined" size="small" href={"/login"}>
+        <Button size="small" href={"/login"}>
           Login
         </Button>
       </Toolbar>
-    </React.Fragment>
+    </>
   );
 }
 
