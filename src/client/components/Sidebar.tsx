@@ -4,7 +4,6 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { RelatedArticle } from "../types";
-import { Theme } from "../Theme";
 
 const useStyles = makeStyles((theme) => ({
   sidebarSection: {
@@ -17,7 +16,7 @@ type SidebarProps = {
 }
 
 export default function Sidebar(props: SidebarProps) {
-  const classes = useStyles(Theme);
+  const classes = useStyles();
   const { related } = props;
 
   return (

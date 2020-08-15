@@ -1,24 +1,13 @@
 import React from 'react';
-import {createMuiTheme, createStyles, fade, makeStyles, Theme} from '@material-ui/core/styles';
+import { createStyles, fade, makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import SearchIcon from '@material-ui/icons/Search';
 import Typography from '@material-ui/core/Typography';
-import {AppBar} from "@material-ui/core";
+import { AppBar } from "@material-ui/core";
 import InputBase from '@material-ui/core/InputBase';
-import purple from '@material-ui/core/colors/purple';
-
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: purple[500],
-    },
-    secondary: {
-      main: '#f44336',
-    },
-  },
-});
-
+import IconButton from '@material-ui/core/IconButton';
+import HomeIcon from '@material-ui/icons/Home'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -78,7 +67,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-
 export default function Header() {
   const classes = useStyles();
 
@@ -86,12 +74,15 @@ export default function Header() {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" href="/">
+            <HomeIcon/>
+          </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
             Wiki
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon/>
             </div>
             <InputBase
               placeholder="Search…"
@@ -99,7 +90,7 @@ export default function Header() {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ 'aria-label': 'search' }}
+              inputProps={{'aria-label': 'search'}}
             />
           </div>
           <Button color="inherit" href="/login">Login</Button>
