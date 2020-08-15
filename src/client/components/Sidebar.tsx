@@ -16,7 +16,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Sidebar(props) {
+type SidebarProps = {
+  related: Array<RelatedArticle>,
+}
+
+export default function Sidebar(props: SidebarProps) {
   const classes = useStyles();
   const { related } = props;
 
@@ -33,7 +37,3 @@ export default function Sidebar(props) {
     </Grid>
   );
 }
-
-Sidebar.propTypes = {
-  related: PropTypes.array,
-};
