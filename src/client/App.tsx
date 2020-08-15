@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Routes from './routes';
 import { createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@material-ui/core';
+import { ApolloProvider } from '@apollo/client';
+import { client } from './main';
 
 
 export default function App() {
@@ -41,17 +43,19 @@ export default function App() {
   );
 
   return (
-    <ThemeProvider theme={Theme}>
-      <CssBaseline/>
-      <Router>
-        <Switch>
-          {Routes.map(route => (
-            <Route path={route.path} key={route.routeName} exact>
-              {React.createElement(route.component)}
-            </Route>
-          ))}
-        </Switch>
-      </Router>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={Theme}>
+        <CssBaseline />
+        <Router>
+          <Switch>
+            {Routes.map(route => (
+              <Route path={route.path} key={route.routeName} exact>
+                {React.createElement(route.component)}
+              </Route>
+            ))}
+          </Switch>
+        </Router>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
