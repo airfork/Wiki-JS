@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
 const useStyles = makeStyles((theme) => ({
@@ -28,21 +28,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SearchBar() {
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
 
   const handleSubmitEvent = (event) => {
     console.log(`Search: ${search}`)
     event.preventDefault();
-  }
+  };
 
   const handleSearchChange = (event) => {
+    console.log(event.target.value);
     setSearch(event.target.value);
-  }
+  };
 
   const classes = useStyles();
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline/>
+      <CssBaseline />
       <div className={classes.paper}>
         <TextField
           variant="outlined"
@@ -52,7 +53,7 @@ export default function SearchBar() {
           id="search"
           label="Search"
           value={search}
-          onInput={handleSearchChange}
+          onChange={handleSearchChange}
           autoFocus
         />
       </div>

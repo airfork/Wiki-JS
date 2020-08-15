@@ -8,8 +8,8 @@ export default function Search() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Header title={"Search"} searchIcon={false}/>
-      <SearchBar/>
+      <Header title={"Search"} searchIcon={false} />
+      <SearchBar />
     </React.Fragment>
   )
 }

@@ -1,21 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import TextField from "@material-ui/core/TextField";
 import Toolbar from "@material-ui/core/Toolbar";
 
-export default function SearchBarButton () {
+export default function SearchBarButton() {
   const searchButton = (
     <IconButton>
       <SearchIcon />
     </IconButton>
   );
 
-  const [renderedComponent, setRenderedComponent] = useState(searchButton);
-  const [iconRendered, setIconRendered] = useState(true)
+  const [iconRendered, setIconRendered] = useState(false);
 
   const handleSubmitEvent = (event) => {
-    console.log(`Search: ${search}`)
     event.preventDefault();
   }
 
@@ -25,10 +23,10 @@ export default function SearchBarButton () {
     setSearch(event.target.value);
   }
 
-  const swapComponent = () => {
-    if (iconRendered) {
-      setRenderedComponent(
-        <TextField
+  return (
+    <section onClick={() => setIconRendered(!iconRendered)}>
+      {iconRendered
+        ? <TextField
           variant="outlined"
           margin="dense"
           required
@@ -39,18 +37,10 @@ export default function SearchBarButton () {
           onInput={handleSearchChange}
           autoFocus
         />
-      );
-      setIconRendered(false);
-      return
-    }
-
-    setRenderedComponent(searchButton);
-    setIconRendered(true);
-  }
-
-  return (
-    <section onClick={swapComponent}>
-      {renderedComponent}
+        : <IconButton>
+          <SearchIcon />
+        </IconButton>
+      }
     </section>
   );
 
