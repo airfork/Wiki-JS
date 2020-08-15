@@ -24,6 +24,11 @@ export default function REditor() {
         editorState={value}
         onEditorStateChange={setValue}
         uploadCallback={uploadCallback}
+        editorStyle={{
+          boxSizing: 'border-box',
+          borderRadius: '2px',
+          border: '1px solid #F1F1F1',
+        }}
       />
       <button onClick={handleSubmit}>Submit</button>
 
