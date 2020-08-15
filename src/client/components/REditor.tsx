@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { EditorState, convertToRaw } from 'draft-js';
-import draftToMarkdown from 'draftjs-to-markdown';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import Markdown from 'markdown-to-jsx';
 import draftToHtml from 'draftjs-to-html';
 
 export default function REditor() {
@@ -29,7 +27,7 @@ export default function REditor() {
       />
       <button onClick={handleSubmit}>Submit</button>
 
-      <div dangerouslySetInnerHTML={{__html: markdown}}/>
+      <div dangerouslySetInnerHTML={{ __html: markdown }} />
     </div>
   );
 }
