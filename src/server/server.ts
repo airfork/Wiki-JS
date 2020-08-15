@@ -64,6 +64,7 @@ const generalSetup = async () => {
     schema: schemaWithResolvers,
     context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
+      console.log(token);
 
       const userPageRepo = sequelize.getRepository(UserPage);
       const pageRepo = sequelize.getRepository(Page);
@@ -86,7 +87,15 @@ const generalSetup = async () => {
         return sequelizeData;
       }
 
-      const claims = verify(token, process.env.JWT_SECRET!) as jwtClaims;
+      console.log('verifying');
+      let claims: jwtClaims;
+      try {
+        claims = verify(token, process.env.JWT_SECRET!) as jwtClaims;
+      } catch (err) {
+        claims = {
+          username: '',
+        }
+      }
       return {
         user: await userRepo.findByPk(claims.username) ?? undefined,
         ...sequelizeData,

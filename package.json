@@ -12,6 +12,7 @@
     "start": "nodemon --config nodemon.js src/server/server.ts",
     "build": "webpack",
     "server-codegen": "graphql-codegen",
+    "client-codegen": "apollo client:codegen --config=apollo.config.js --target=typescript --outputFlat=./src/client/graphql",
     "preinstall": "npx npm-force-resolutions"
   },
   "devDependencies": {
@@ -57,6 +58,7 @@
     "@material-ui/icons": "^4.9.1",
     "@types/draft-js": "^0.10.43",
     "@types/graphql-upload": "^8.0.3",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/koa": "^2.11.3",
     "@types/koa-router": "^7.4.1",
     "@types/koa-static": "^4.0.1",

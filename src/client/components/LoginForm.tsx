@@ -1,16 +1,22 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { gql, useMutation } from '@apollo/client';
+import { login as loginMutation, loginVariables } from '../graphql/login';
+
+export const LOGIN_MUTATION = gql`
+  mutation login($username: String!, $password: String!) {
+    logIn(username: $username, password: $password)
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -33,15 +39,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [login] = useMutation<loginMutation, loginVariables>(
+    LOGIN_MUTATION,
+    {
+      onError(error) {
+        console.log(error);
+      },
+      onCompleted({ logIn }) {
+        localStorage.setItem('accessToken', logIn);
+        console.log(logIn);
+      }
+    }
+  );
 
-  const handleSubmitEvent = (event) => {
-    console.log(`Email: ${email} Password: ${password}`)
+  const handleSubmitEvent = event => {
     event.preventDefault();
+    login({
+      variables: {
+        username: email,
+        password,
+      },
+    });
   }
 
-  const handleEmailChange = (event) => {
+  const handleEmailChange = event => {
     setEmail(event.target.value);
   }
 
@@ -52,10 +75,10 @@ export default function LoginForm() {
   const classes = useStyles();
   return (
     <Container component="main" maxWidth="xs">
-      <CssBaseline/>
+      <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
-          <LockOutlinedIcon/>
+          <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
           Login
