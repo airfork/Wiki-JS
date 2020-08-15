@@ -28,7 +28,7 @@ const Routes: Array<Route> = [
   },
   {
     routeName: 'search',
-    path: '/terr/search',
+    path: '/wiki/search',
     component: Search,
   },
 

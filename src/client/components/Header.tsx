@@ -8,6 +8,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import Typography from '@material-ui/core/Typography';
 import Icon from "@material-ui/core/Icon";
 import { SvgIcon } from "@material-ui/core";
+import SearchBarButton from "./SearchBarIcon";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -47,13 +48,7 @@ export default function Header(props) {
         >
           {title}
         </Typography>
-        {searchIcon === false
-          ? ""
-
-          : <IconButton>
-              <SearchIcon />
-            </IconButton>
-        }
+        <SearchBarButton/>
         <Button variant="outlined" size="small" href={"/login"}>
           Login
         </Button>
