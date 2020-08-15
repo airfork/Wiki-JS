@@ -2,7 +2,6 @@ import { Wiki } from './pages/Wiki';
 import { Index } from './pages/Index';
 import { Login } from "./pages/Login";
 import Showcase from "./pages/Showcase";
-import Search from "./pages/Search";
 
 type Route = {
   routeName: string,
@@ -26,12 +25,6 @@ const Routes: Array<Route> = [
     path: '/login',
     component: Login,
   },
-  {
-    routeName: 'search',
-    path: '/wiki/search',
-    component: Search,
-  },
-
 ];
 
 export default Routes;

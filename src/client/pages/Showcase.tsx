@@ -58,8 +58,8 @@ export default function Showcase() {
   return (
     <>
       <CssBaseline />
-      <Container maxWidth="lg">
-        <Header title="Showcase" />
+      <Container maxWidth="xl">
+        <Header />
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
@@ -68,7 +68,7 @@ export default function Showcase() {
             ))}
           </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>
-            <Main title="From the firehose" posts={posts} />
+            <Main title="C++20" posts={posts} />
             <Sidebar
               related={relatedArticles}
             />

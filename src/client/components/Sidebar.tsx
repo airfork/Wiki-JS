@@ -1,16 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import { RelatedArticle } from "../types";
+import { Theme } from "../Theme";
 
 const useStyles = makeStyles((theme) => ({
-  sidebarAboutBox: {
-    padding: theme.spacing(2),
-    backgroundColor: theme.palette.grey[200],
-  },
   sidebarSection: {
     marginTop: theme.spacing(3),
   },
@@ -21,7 +17,7 @@ type SidebarProps = {
 }
 
 export default function Sidebar(props: SidebarProps) {
-  const classes = useStyles();
+  const classes = useStyles(Theme);
   const { related } = props;
 
   return (
