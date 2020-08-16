@@ -46,7 +46,6 @@ function dbPageToGraphQL(page: Page) {
     })) : [],
     categories: page.categories ? page.categories.map(category => ({
       category: category.category,
-      id: category.id!
     })) : [],
   }
   return graphqlPage;

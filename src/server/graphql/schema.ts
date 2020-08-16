@@ -155,6 +155,40 @@ const resolvers: Resolvers = {
         } as File,
         url: `/images/${newImage.id}`,
       } as Image;
+    },
+    deleteUser: async (_, { username }, { user, userRepo }: ApolloContext) => {
+      if (user == null) {
+        throw new AuthenticationError("Must be signed in to delete a user");
+      }
+      if (!user.admin) {
+        throw new AuthenticationError("Must be an admin to delete a user");
+      }
+      const dbUser = await userRepo.findByPk(username);
+      if (dbUser == null) {
+        throw new UserInputError("Could not find specified username to delete");
+      }
+      await dbUser.destroy();
+      return dbUser as User;
+    },
+    deletePage: async (_, { pageId }, { user, ...repos }: ApolloContext) => {
+      if (user == null) {
+        throw new AuthenticationError("Must be signed in to delete a post");
+      }
+      if (!user.admin) {
+        throw new AuthenticationError("Must be an admin to delete a post");
+      }
+      const dbPage = await repos.pageRepo.findByPk(pageId, {
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
+      });
+      if (dbPage == null) {
+        throw new UserInputError("Could not find specified page to delete");
+      }
+      for (let dbImage of dbPage.images) {
+        await dbImage.destroy();
+      }
+      await dbPage.destroy();
+      console.log(dbPage.categories.map(category => category.id));
+      return dbPageToGraphQL(dbPage);
     }
   }
 };

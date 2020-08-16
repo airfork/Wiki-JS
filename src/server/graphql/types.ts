@@ -38,7 +38,6 @@ export type Page = {
 
 export type Tags = {
   __typename?: 'Tags';
-  id: Scalars['Int'];
   category: Scalars['String'];
 };
 
@@ -92,6 +91,8 @@ export type Mutation = {
   createPage?: Maybe<Page>;
   createImage?: Maybe<Image>;
   createUser?: Maybe<User>;
+  deletePage?: Maybe<Page>;
+  deleteUser?: Maybe<User>;
   logIn: Scalars['String'];
   makeAdmin?: Maybe<User>;
 };
@@ -110,6 +111,16 @@ export type MutationCreateImageArgs = {
 
 export type MutationCreateUserArgs = {
   user: UserInput;
+};
+
+
+export type MutationDeletePageArgs = {
+  pageId: Scalars['Int'];
+};
+
+
+export type MutationDeleteUserArgs = {
+  username: Scalars['String'];
 };
 
 
@@ -265,7 +276,6 @@ export type PageResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type TagsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tags'] = ResolversParentTypes['Tags']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   category?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
@@ -301,6 +311,8 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'page'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image' | 'linkedPageId'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
+  deletePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationDeletePageArgs, 'pageId'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'username'>>;
   logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
   makeAdmin?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
 }>;
