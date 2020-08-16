@@ -38,9 +38,11 @@ type File {
 }
 
 type Query {
-    users: [User]!
-    images: [Image]!
-    pages: [Page]!
+    getPage(pageId: Int!): Page
+    getCurrentUser: User
+    getUsers: [User]!
+    getImages: [Image]!
+    getPages: [Page]!
 }
 
 scalar Upload

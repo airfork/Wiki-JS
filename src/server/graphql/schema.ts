@@ -26,16 +26,25 @@ const schema = loadSchemaSync('schema.graphql', {
 
 const resolvers: Resolvers = {
   Query: {
-    users: async (_, __, { userRepo }: ApolloContext) => {
+    getCurrentUser: async (_, __, { user }: ApolloContext) => {
+      return user as User;
+    },
+    getUsers: async (_, __, { userRepo }: ApolloContext) => {
       return await userRepo.findAll() as Array<User>
     },
-    images: async (_, __, ctx: ApolloContext) => {
+    getImages: async (_, __, ctx: ApolloContext) => {
       const dbImages = await ctx.imageRepo.findAll({
         include: [ctx.pageRepo]
       });
       return dbImages.map(image => dbImageToGraphQL(image));
     },
-    pages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
+    getPage: async (_, { pageId }, ctx: ApolloContext) => {
+      const dbPage = await ctx.pageRepo.findByPk(pageId, {
+        include: [ctx.imageRepo, ctx.userRepo, ctx.tagRepo]
+      });
+      return dbPage ? dbPageToGraphQL(dbPage) : dbPage
+    },
+    getPages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
       const dbPages = await repos.pageRepo.findAll({
         include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
       });
