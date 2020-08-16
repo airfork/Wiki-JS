@@ -66,11 +66,16 @@ export default function REditor() {
       {preview.isPreview
         ? <div dangerouslySetInnerHTML={{ __html: markdown }} />
         : <div>
-            <Editor
-              editorState={value}
-              onEditorStateChange={setValue}
-              uploadCallback={uploadCallback}
-            />
+          <Editor
+            editorState={value}
+            onEditorStateChange={setValue}
+            uploadCallback={uploadCallback}
+            editorStyle={{
+              boxSizing: 'border-box',
+              borderRadius: '2px',
+              border: '1px solid #F1F1F1',
+            }}
+          />
 
             <Fab className={classes.fab} color="secondary" aria-label="add" onClick={() => console.log("🍆💦")}>
               <CreateIcon />
