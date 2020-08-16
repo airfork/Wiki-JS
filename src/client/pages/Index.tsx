@@ -13,11 +13,6 @@ export const Index = () => (
         {/** Only using null assertion here because we know this path exists */}
         <a href={Routes.find(route => route.routeName == 'wiki')!.path}>Wiki</a>
 
-        <div id={"editor"}>
-          <REditor/>
-        </div>
-
-
       </div>
     </Container>
   </React.Fragment>
