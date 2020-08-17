@@ -139,7 +139,6 @@ const resolvers: Resolvers = {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
-      console.log(awaitedImage);
       const stream = awaitedImage.createReadStream();
       const data = await readStream(stream);
       const newImage = await imageRepo.create({
@@ -187,7 +186,6 @@ const resolvers: Resolvers = {
         await dbImage.destroy();
       }
       await dbPage.destroy();
-      console.log(dbPage.categories.map(category => category.id));
       return dbPageToGraphQL(dbPage);
     }
   }

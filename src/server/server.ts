@@ -64,7 +64,6 @@ const generalSetup = async () => {
     schema: schemaWithResolvers,
     context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
-      console.log(token);
 
       const userPageRepo = sequelize.getRepository(UserPage);
       const pageRepo = sequelize.getRepository(Page);
