@@ -38,9 +38,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LoginForm() {
-  const [email, setEmail] = useState("");
+type LoginFormProps = {
+  signUp?: boolean,
+}
+
+export default function LoginForm(props: LoginFormProps) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [login] = useMutation<loginMutation, loginVariables>(
     LOGIN_MUTATION,
     {
@@ -53,23 +58,28 @@ export default function LoginForm() {
       }
     }
   );
+  const confirmError = confirmPassword != '' && confirmPassword != password;
 
   const handleSubmitEvent = event => {
     event.preventDefault();
     login({
       variables: {
-        username: email,
+        username: username,
         password,
       },
     });
   }
 
-  const handleEmailChange = event => {
-    setEmail(event.target.value);
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
   }
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
+  }
+
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(event.target.value);
   }
 
   const classes = useStyles();
@@ -90,9 +100,9 @@ export default function LoginForm() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="Username"
             autoComplete="email"
-            value={email}
+            value={username}
             onInput={handleEmailChange}
             autoFocus
           />
@@ -108,6 +118,23 @@ export default function LoginForm() {
             onInput={handlePasswordChange}
             autoComplete="current-password"
           />
+          {props.signUp
+            ? <TextField
+              variant="outlined"
+              margin="normal"
+              required={true}
+              fullWidth
+              error={confirmError}
+              helperText={confirmError ? 'Must match password' : ''}
+              label="Confirm Password"
+              type="password"
+              id="confirm-password"
+              value={confirmPassword}
+              onInput={handleConfirmPasswordChange}
+              autoComplete="current-password"
+            />
+            : null
+          }
           <Button
             type="submit"
             fullWidth
@@ -115,15 +142,23 @@ export default function LoginForm() {
             color="primary"
             className={classes.submit}
           >
-            Login
+            {props.signUp ? "Sign up" : "Login"}
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
+          {props.signUp
+            ? null
+            : <Grid container>
+              <Grid item xs>
+                <Link href="#" variant="body2">
+                  Forgot password?
+                  </Link>
+              </Grid>
+              <Grid item>
+                <Link href="#" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
             </Grid>
-          </Grid>
+          }
         </form>
       </div>
     </Container>
