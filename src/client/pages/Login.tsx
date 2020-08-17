@@ -4,6 +4,6 @@ import LoginForm from "../components/LoginForm";
 
 export const Login = () => (
   <Container maxWidth={"sm"}>
-    <LoginForm/>
+    <LoginForm />
   </Container>
 );

@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type LoginFormProps = {
+export type LoginFormProps = {
   signUp?: boolean,
 }
 
