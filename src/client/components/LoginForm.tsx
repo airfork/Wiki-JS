@@ -91,7 +91,7 @@ export default function LoginForm(props: LoginFormProps) {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Login
+          {props.signUp ? "Sign Up" : "Login"}
         </Typography>
         <form className={classes.form} noValidate onSubmit={handleSubmitEvent}>
           <TextField
