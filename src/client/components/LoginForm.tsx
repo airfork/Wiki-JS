@@ -11,10 +11,25 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { gql, useMutation } from '@apollo/client';
 import { login as loginMutation, loginVariables } from '../graphql/login';
+import {
+  createAccount as createAccountMutation,
+  createAccountVariables
+} from '../graphql/createAccount';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 
 export const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
     logIn(username: $username, password: $password)
+  }
+`;
+
+export const CREATE_USER_MUTATION = gql`
+  mutation createAccount($username: String!, $password: String!) {
+    createUser(user: {username: $username, password: $password}) {
+      username
+      admin
+    }
   }
 `;
 
@@ -58,6 +73,9 @@ export default function LoginForm(props: LoginFormProps) {
       }
     }
   );
+  const [createAccount] = useMutation<createAccountMutation, createAccountVariables>(
+    CREATE_USER_MUTATION,
+  );
   const confirmError = confirmPassword != '' && confirmPassword != password;
 
   const handleSubmitEvent = event => {
@@ -86,6 +104,9 @@ export default function LoginForm(props: LoginFormProps) {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
+      <Snackbar>
+        <div />
+      </Snackbar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
