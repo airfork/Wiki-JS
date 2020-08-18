@@ -1,5 +1,4 @@
-import { Wiki } from './pages/Wiki';
-import { Index } from './pages/Index';
+import Index from "./pages/Index";
 import { Login } from "./pages/Login";
 import Showcase from "./pages/Showcase";
 import NewArticle from "./pages/NewArticle";
