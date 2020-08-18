@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -8,6 +7,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Hidden from '@material-ui/core/Hidden';
+import { Post } from '../pages/Showcase';
 
 const useStyles = makeStyles({
   card: {
@@ -21,7 +21,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function FeaturedPost(props) {
+type FeaturedPostProps = {
+  post: Post
+}
+
+export default function FeaturedPost(props: FeaturedPostProps) {
   const classes = useStyles();
   const { post } = props;
 
@@ -53,7 +57,3 @@ export default function FeaturedPost(props) {
     </Grid>
   );
 }
-
-FeaturedPost.propTypes = {
-  post: PropTypes.object,
-};
