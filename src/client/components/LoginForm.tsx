@@ -16,7 +16,7 @@ import {
   createAccountVariables
 } from '../graphql/createAccount';
 import Snackbar from '@material-ui/core/Snackbar';
-import Alert from '@material-ui/lab/Alert';
+import Alert, { Color as AlertColor } from '@material-ui/lab/Alert';
 
 export const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -61,6 +61,11 @@ export default function LoginForm(props: LoginFormProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [alertType, setAlertType] = useState<AlertColor>("success");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState("");
+
   const [login] = useMutation<loginMutation, loginVariables>(
     LOGIN_MUTATION,
     {
@@ -100,12 +105,22 @@ export default function LoginForm(props: LoginFormProps) {
     setConfirmPassword(event.target.value);
   }
 
+  const handleAlertClose = (_: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setAlertOpen(false);
+  };
+
   const classes = useStyles();
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <Snackbar>
-        <div />
+      <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
+        <Alert onClose={handleAlertClose} severity={alertType}>
+          {alertText}
+        </Alert>
       </Snackbar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
