@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
+import { Post } from '../pages/Showcase';
 
 const useStyles = makeStyles((theme) => ({
   mainFeaturedPost: {
@@ -35,14 +35,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MainFeaturedPost(props) {
+type MainFeaturedPostProps = {
+  post: Post
+};
+
+export default function MainFeaturedPost(props: MainFeaturedPostProps) {
   const classes = useStyles();
   const { post } = props;
 
   return (
     <Paper className={classes.mainFeaturedPost} style={{ backgroundImage: `url(${post.image})` }}>
       {/* Increase the priority of the hero background image */}
-      {<img style={{ display: 'none' }} src={post.image} alt={post.imageText} />}
+      {<img style={{ display: 'none' }} src={post.image} alt={post.imageTitle} />}
       <div className={classes.overlay} />
       <Grid container>
         <Grid item md={6}>
@@ -62,7 +66,3 @@ export default function MainFeaturedPost(props) {
     </Paper>
   );
 }
-
-MainFeaturedPost.propTypes = {
-  post: PropTypes.object,
-};
