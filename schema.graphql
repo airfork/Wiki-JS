@@ -11,6 +11,7 @@ type PageImage {
 
 type Page {
     id: Int!
+    title: String!
     contents: String!
     createdAt: String!
     updatedAt: String!
@@ -56,6 +57,7 @@ input TagsInput {
 }
 
 input PageInput {
+    title: String!
     contents: String!
     categories: [TagsInput!]
     imageIds: [Int!]

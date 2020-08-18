@@ -1,4 +1,15 @@
-import { Table, Column, Model, HasMany, CreatedAt, UpdatedAt, BelongsToMany, AllowNull } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  HasMany,
+  CreatedAt,
+  UpdatedAt,
+  BelongsToMany,
+  AllowNull,
+  DataType,
+  Length
+} from 'sequelize-typescript';
 import { User } from './users';
 import { Image } from './images';
 import { Tag } from "./tags";
@@ -13,6 +24,11 @@ class Page extends Model implements Page {
 
   @UpdatedAt
   updatedOn!: Date;
+
+  @AllowNull(false)
+  @Length({min: 2, max: 255})
+  @Column
+  title!: string;
 
   @AllowNull(false)
   @Column
@@ -30,6 +46,7 @@ class Page extends Model implements Page {
 
 function dbPageToGraphQL(page: Page) {
   const graphqlPage: GQLPage = {
+    title: page.title,
     contents: page.contents,
     contributors: page.contributors,
     id: page.id!,
