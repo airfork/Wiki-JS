@@ -18,6 +18,13 @@ export type User = {
   admin: Scalars['Boolean'];
 };
 
+export type NewUser = {
+  __typename?: 'NewUser';
+  username: Scalars['String'];
+  admin: Scalars['Boolean'];
+  token: Scalars['String'];
+};
+
 export type PageImage = {
   __typename?: 'PageImage';
   id: Scalars['Int'];
@@ -91,7 +98,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createPage?: Maybe<Page>;
   createImage?: Maybe<Image>;
-  createUser?: Maybe<User>;
+  createUser?: Maybe<NewUser>;
   deletePage?: Maybe<Page>;
   deleteUser?: Maybe<User>;
   logIn: Scalars['String'];
@@ -217,6 +224,7 @@ export type ResolversTypes = ResolversObject<{
   User: ResolverTypeWrapper<User>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  NewUser: ResolverTypeWrapper<NewUser>;
   PageImage: ResolverTypeWrapper<PageImage>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Page: ResolverTypeWrapper<Page>;
@@ -237,6 +245,7 @@ export type ResolversParentTypes = ResolversObject<{
   User: User;
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
+  NewUser: NewUser;
   PageImage: PageImage;
   Int: Scalars['Int'];
   Page: Page;
@@ -255,6 +264,13 @@ export type ResolversParentTypes = ResolversObject<{
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   admin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type NewUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['NewUser'] = ResolversParentTypes['NewUser']> = ResolversObject<{
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  admin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
@@ -311,7 +327,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'page'>>;
   createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image' | 'linkedPageId'>>;
-  createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
+  createUser?: Resolver<Maybe<ResolversTypes['NewUser']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
   deletePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationDeletePageArgs, 'title'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'username'>>;
   logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
@@ -320,6 +336,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   User?: UserResolvers<ContextType>;
+  NewUser?: NewUserResolvers<ContextType>;
   PageImage?: PageImageResolvers<ContextType>;
   Page?: PageResolvers<ContextType>;
   Tags?: TagsResolvers<ContextType>;

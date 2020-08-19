@@ -3,6 +3,12 @@ type User {
     admin: Boolean!
 }
 
+type NewUser {
+    username: String!
+    admin: Boolean!
+    token: String!
+}
+
 type PageImage {
     id: Int!
     fileInfo: File!
@@ -65,7 +71,7 @@ input PageInput {
 type Mutation {
     createPage(page: PageInput!): Page
     createImage(image: Upload!, linkedPageId: ID!): Image
-    createUser(user: UserInput!): User
+    createUser(user: UserInput!): NewUser
     deletePage(title: String!): Page
     deleteUser(username: String!): User
     logIn(username: String!, password: String!): String!

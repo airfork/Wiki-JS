@@ -12,7 +12,8 @@ import {
   User,
   Resolvers,
   Image,
-  File
+  File,
+  NewUser
 } from '../graphql/types';
 import { dbPageToGraphQL } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
@@ -62,7 +63,11 @@ const resolvers: Resolvers = {
         admin: numUsers === 0,
         password: await hash(user.password),
       });
-      return newUser as User;
+      return {
+        username: newUser.username,
+        admin: newUser.admin,
+        token: sign({ username: newUser.username }, process.env.JWT_SECRET!),
+      } as NewUser;
     },
     logIn: async (_, { username, password }, { userRepo }: ApolloContext) => {
       let user = await userRepo.findByPk(username);

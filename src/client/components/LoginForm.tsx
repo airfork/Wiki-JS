@@ -30,6 +30,7 @@ export const CREATE_USER_MUTATION = gql`
     createUser(user: {username: $username, password: $password}) {
       username
       admin
+      token
     }
   }
 `;
@@ -67,6 +68,8 @@ export default function LoginForm(props: LoginFormProps) {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertText, setAlertText] = useState("");
 
+  const [redirectCountdown, setRedirectCountdown] = useState(5);
+
   const history = useHistory();
 
   const [login] = useMutation<loginMutation, loginVariables>(
@@ -85,10 +88,17 @@ export default function LoginForm(props: LoginFormProps) {
   );
   const [createAccount] = useMutation<createAccountMutation, createAccountVariables>(
     CREATE_USER_MUTATION,
+    {
+      onError(error) {
+        setAlertText(error.message);
+        setAlertType('error');
+        setAlertOpen(true);
+      },
+    }
   );
   const confirmError = confirmPassword != '' && confirmPassword != password;
 
-  const handleSubmitEvent = event => {
+  const handleSubmitEvent = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     login({
       variables: {
