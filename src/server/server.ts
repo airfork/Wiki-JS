@@ -1,4 +1,5 @@
 import { config as dotenv } from 'dotenv';
+import validate from 'dotenv-validator';
 import Koa from 'koa';
 import send from 'koa-send';
 import serve from 'koa-static-server';
@@ -39,12 +40,41 @@ export type ApolloContext = {
   tagPageRepo: Repository<TagPage>,
 };
 
+const envDefault = {
+  POSTGRES_DB: '',
+  POSTGRES_USER: '',
+  POSTGRES_PASSWORD: '',
+  JWT_SECRET: '',
+};
+
+const envRules = {
+  POSTGRES_DB: {
+    required: true,
+  },
+  POSTGRES_USER: {
+    required: true,
+  },
+  POSTGRES_PASSWORD: {
+    required: true,
+  },
+  JWT_SECRET: {
+    required: true,
+  }
+};
+
 const generalSetup = async () => {
   // Load .env variables
-  dotenv();
-  // Connect to DB
-  console.info(`Trying to connect to database at ${mongoUrl}...`);
+  const envParsed = dotenv().parsed;
+  process.env = { ...envDefault, ...process.env };
 
+  try {
+    validate({ envDefault, envParsed, envRules });
+  }
+  catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+  // Connect to DB
   console.info("Connected to database!");
 
   app.use(koaBody());
