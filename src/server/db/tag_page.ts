@@ -12,7 +12,7 @@ class TagPage extends Model implements TagPage {
   @ForeignKey(() => Page)
   @PrimaryKey
   @Column
-  page_id!: number;
+  page_id!: string;
 }
 
 export { TagPage };

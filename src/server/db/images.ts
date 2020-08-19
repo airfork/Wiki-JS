@@ -18,7 +18,7 @@ class Image extends Model implements Image {
 
   @ForeignKey(() => Page)
   @Column
-  pageId?: number;
+  pageTitle?: string;
 
   @BelongsTo(() => Page)
   page?: Page;

@@ -8,7 +8,8 @@ import {
   BelongsToMany,
   AllowNull,
   DataType,
-  Length
+  Length,
+  PrimaryKey
 } from 'sequelize-typescript';
 import { User } from './users';
 import { Image } from './images';
@@ -26,12 +27,13 @@ class Page extends Model implements Page {
   updatedOn!: Date;
 
   @AllowNull(false)
-  @Length({min: 2, max: 255})
+  @PrimaryKey
+  @Length({ min: 2 })
   @Column
   title!: string;
 
   @AllowNull(false)
-  @Column
+  @Column(DataType.TEXT)
   contents!: string;
 
   @BelongsToMany(() => User, () => UserPage)
@@ -49,7 +51,6 @@ function dbPageToGraphQL(page: Page) {
     title: page.title,
     contents: page.contents,
     contributors: page.contributors,
-    id: page.id!,
     createdAt: page.creationDate.toUTCString(),
     updatedAt: page.updatedOn.toUTCString(),
     images: page.images ? page.images.map(image => ({

@@ -38,8 +38,8 @@ const resolvers: Resolvers = {
       });
       return dbImages.map(image => dbImageToGraphQL(image));
     },
-    getPage: async (_, { pageId }, ctx: ApolloContext) => {
-      const dbPage = await ctx.pageRepo.findByPk(pageId, {
+    getPage: async (_, { title }, ctx: ApolloContext) => {
+      const dbPage = await ctx.pageRepo.findByPk(title, {
         include: [ctx.imageRepo, ctx.userRepo, ctx.tagRepo]
       });
       return dbPage ? dbPageToGraphQL(dbPage) : dbPage
@@ -110,7 +110,7 @@ const resolvers: Resolvers = {
       await newPage.save();
       // Actually save each image
       for (let image of imagesToUpdate) {
-        image.pageId = newPage.id;
+        image.pageTitle = newPage.title;
         await image.save();
       }
       // Create a join table entry for each category, creating the category if
@@ -119,14 +119,14 @@ const resolvers: Resolvers = {
         let [dbTag, _] = await repos.tagRepo.findOrCreate({ where: { category: tag.category } });
         await repos.tagPageRepo.create({
           tag_id: dbTag.category,
-          page_id: newPage.id,
+          page_id: newPage.title,
         });
       }
       // Created a join table entry between the current user (first contributor)
       // and the page
       await repos.userPageRepo.create({
         user_id: user.username,
-        page_id: newPage.id,
+        page_id: newPage.title,
       });
       // Reload this page with all the new data
       await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
@@ -169,14 +169,14 @@ const resolvers: Resolvers = {
       await dbUser.destroy();
       return dbUser as User;
     },
-    deletePage: async (_, { pageId }, { user, ...repos }: ApolloContext) => {
+    deletePage: async (_, { title }, { user, ...repos }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to delete a post");
       }
       if (!user.admin) {
         throw new AuthenticationError("Must be an admin to delete a post");
       }
-      const dbPage = await repos.pageRepo.findByPk(pageId, {
+      const dbPage = await repos.pageRepo.findByPk(title, {
         include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
       });
       if (dbPage == null) {

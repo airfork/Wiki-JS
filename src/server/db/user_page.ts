@@ -12,7 +12,7 @@ class UserPage extends Model implements UserPage {
   @ForeignKey(() => Page)
   @PrimaryKey
   @Column
-  page_id!: number;
+  page_id!: string;
 }
 
 export { UserPage };

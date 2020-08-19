@@ -10,7 +10,6 @@ type PageImage {
 }
 
 type Page {
-    id: Int!
     title: String!
     contents: String!
     createdAt: String!
@@ -38,7 +37,7 @@ type File {
 }
 
 type Query {
-    getPage(pageId: Int!): Page
+    getPage(title: String!): Page
     getCurrentUser: User
     getUsers: [User]!
     getImages: [Image]!
@@ -67,7 +66,7 @@ type Mutation {
     createPage(page: PageInput!): Page
     createImage(image: Upload!, linkedPageId: ID!): Image
     createUser(user: UserInput!): User
-    deletePage(pageId: Int!): Page
+    deletePage(title: String!): Page
     deleteUser(username: String!): User
     logIn(username: String!, password: String!): String!
     makeAdmin(username: String!): User
