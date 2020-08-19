@@ -17,6 +17,7 @@ import {
 } from '../graphql/createAccount';
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert, { Color as AlertColor } from '@material-ui/lab/Alert';
+import { useHistory } from 'react-router';
 
 export const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -66,15 +67,19 @@ export default function LoginForm(props: LoginFormProps) {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertText, setAlertText] = useState("");
 
+  const history = useHistory();
+
   const [login] = useMutation<loginMutation, loginVariables>(
     LOGIN_MUTATION,
     {
       onError(error) {
-        console.log(error);
+        setAlertText(error.message);
+        setAlertType('error');
+        setAlertOpen(true);
       },
       onCompleted({ logIn }) {
         localStorage.setItem('accessToken', logIn);
-        console.log(logIn);
+        history.push("/wiki");
       }
     }
   );
@@ -118,7 +123,7 @@ export default function LoginForm(props: LoginFormProps) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-        <Alert onClose={handleAlertClose} severity={alertType}>
+        <Alert onClose={handleAlertClose} severity={alertType} variant="filled">
           {alertText}
         </Alert>
       </Snackbar>
