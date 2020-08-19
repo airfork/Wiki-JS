@@ -28,6 +28,7 @@ export type PageImage = {
 export type Page = {
   __typename?: 'Page';
   id: Scalars['Int'];
+  title: Scalars['String'];
   contents: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -81,6 +82,7 @@ export type TagsInput = {
 };
 
 export type PageInput = {
+  title: Scalars['String'];
   contents: Scalars['String'];
   categories?: Maybe<Array<TagsInput>>;
   imageIds?: Maybe<Array<Scalars['Int']>>;
@@ -266,6 +268,7 @@ export type PageImageResolvers<ContextType = any, ParentType extends ResolversPa
 
 export type PageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   contents?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
