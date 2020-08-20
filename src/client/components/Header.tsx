@@ -8,6 +8,7 @@ import AppBar from '@material-ui/core/AppBar';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home'
+import SearchBar from 'material-ui-search-bar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       marginLeft: 0,
       marginRight: theme.spacing(1),
+      height: '3em',
       width: '100%',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
@@ -89,19 +91,7 @@ export default function Header() {
           <Typography className={classes.title} variant="h6" noWrap>
             Wiki
           </Typography>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div>
+          <SearchBar className={classes.search} />
           <Button color="inherit" href="/login">Login</Button>
         </Toolbar>
       </AppBar>
