@@ -2,13 +2,11 @@ import React from 'react';
 import { createStyles, fade, makeStyles, Theme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
-import SearchIcon from '@material-ui/icons/Search';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
-import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home'
-import SearchBar from 'material-ui-search-bar';
+import WikiSearch from './WikiSearch';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,7 +23,11 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'block',
       },
     },
+    searchInput: {
+      color: 'inherit',
+    },
     search: {
+      color: 'inherit',
       position: 'relative',
       borderRadius: theme.shape.borderRadius,
       backgroundColor: fade(theme.palette.common.white, 0.15),
@@ -91,7 +93,11 @@ export default function Header() {
           <Typography className={classes.title} variant="h6" noWrap>
             Wiki
           </Typography>
-          <SearchBar className={classes.search} />
+          <WikiSearch
+            inputClass={classes.searchInput}
+            mainClass={classes.search}
+            iconButtonClass={classes.searchInput}
+          />
           <Button color="inherit" href="/login">Login</Button>
         </Toolbar>
       </AppBar>

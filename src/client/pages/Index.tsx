@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Routes from '../routes';
 import { Button, Container, Typography } from '@material-ui/core';
-import SearchBar from "material-ui-search-bar";
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import WikiSearch from '../components/WikiSearch';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Index() {
-  const [value, setValue] = useState('');
   const classes = useStyles();
 
   return (
@@ -41,16 +40,12 @@ export default function Index() {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <SearchBar
-                value={value}
-                onChange={(newValue) => setValue(newValue)}
-                onRequestSearch={() => console.log(`Search value: ${value}`)}
-              />
+              <WikiSearch />
             </Grid>
             <Grid item xs={12} className={`${classes.alignCenter}`}>
               <Button
-                  color="secondary"
-                  href={Routes.find(route => route.routeName == 'wiki')!.path}
+                color="secondary"
+                href={Routes.find(route => route.routeName == 'wiki')!.path}
               >
                 Visit Showcase
               </Button>
