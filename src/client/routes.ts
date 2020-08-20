@@ -11,7 +11,7 @@ import { SignUp } from './pages/SignUp';
 // }
 
 class Route {
-  constructor(readonly routeName: string, readonly path: string, readonly component: () => JSX.Element) {
+  constructor(readonly routeName: string, readonly path: string, readonly component: React.FunctionComponent) {
     this.routeName = routeName;
     this.path = path;
     this.component = component;

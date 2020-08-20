@@ -49,9 +49,7 @@ export default function App() {
         <Router>
           <Switch>
             {Routes.map(route => (
-              <Route path={route.path} key={route.routeName} exact>
-                {React.createElement(route.component)}
-              </Route>
+              <Route path={route.path} key={route.routeName} exact component={route.component} />
             ))}
           </Switch>
         </Router>
