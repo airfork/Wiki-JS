@@ -128,10 +128,11 @@ export default function LoginForm(props: LoginFormProps) {
   );
   const confirmError = confirmPassword != password;
   const anyError = [confirmError].includes(true);
+  const formDisabled = anyError || countingDown;
 
   const handleSubmitEvent = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (anyError) {
+    if (formDisabled) {
       return;
     }
     if (props.signUp) {
@@ -234,6 +235,7 @@ export default function LoginForm(props: LoginFormProps) {
             fullWidth
             variant="contained"
             color="primary"
+            disabled={formDisabled}
             className={classes.submit}
           >
             {props.signUp ? "Sign up" : "Login"}
