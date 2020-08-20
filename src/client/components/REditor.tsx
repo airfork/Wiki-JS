@@ -3,7 +3,7 @@ import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
-import CreateIcon from '@material-ui/icons/Create';
+import SaveIcon from '@material-ui/icons/Save';
 import { Fab, FormGroup } from "@material-ui/core";
 import { createStyles, fade, makeStyles, Theme } from "@material-ui/core/styles";
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -77,10 +77,10 @@ export default function REditor() {
             }}
           />
 
-            <Fab className={classes.fab} color="secondary" aria-label="add" onClick={() => console.log("🍆💦")}>
-              <CreateIcon />
-            </Fab>
-          </div>
+          <Fab className={classes.fab} color="secondary" aria-label="add" onClick={() => console.log("🍆💦")}>
+            <SaveIcon />
+          </Fab>
+        </div>
       }
     </div>
   );
