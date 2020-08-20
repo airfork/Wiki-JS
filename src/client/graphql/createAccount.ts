@@ -8,9 +8,10 @@
 // ====================================================
 
 export interface createAccount_createUser {
-  __typename: "User";
+  __typename: "NewUser";
   username: string;
   admin: boolean;
+  token: string;
 }
 
 export interface createAccount {

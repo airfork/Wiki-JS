@@ -18,6 +18,9 @@ import {
 import Snackbar from '@material-ui/core/Snackbar';
 import Alert, { Color as AlertColor } from '@material-ui/lab/Alert';
 import { useHistory } from 'react-router';
+import useCountDown from 'react-countdown-hook';
+import { useEffect } from 'react';
+import { useMemo } from 'react';
 
 export const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -66,11 +69,29 @@ export default function LoginForm(props: LoginFormProps) {
 
   const [alertType, setAlertType] = useState<AlertColor>("success");
   const [alertOpen, setAlertOpen] = useState(false);
+  const [alertAction, setAlertAction] = useState<null | React.ReactNode>(null);
   const [alertText, setAlertText] = useState("");
 
-  const [redirectCountdown, setRedirectCountdown] = useState(5);
+  const [timeLeft, { start, pause }] = useCountDown(5000, 1000);
+
+  const [countingDown, setCountingDown] = useState(false);
+  const [redirectTimeout, setRedirectTimeout] = useState<null | NodeJS.Timeout>(null);
 
   const history = useHistory();
+  const historyAction = useMemo(() => (
+    <Button color="inherit" size="small" onClick={() => {
+      pause();
+      history.push("/wiki");
+    }}>
+      Go Now
+    </Button>
+  ), [pause, history]);
+
+  useEffect(() => {
+    if (countingDown) {
+      setAlertText(`Successfully made account. Redirecting to wiki in ${timeLeft / 1000}...`);
+    }
+  }, [countingDown, timeLeft]);
 
   const [login] = useMutation<loginMutation, loginVariables>(
     LOGIN_MUTATION,
@@ -94,18 +115,40 @@ export default function LoginForm(props: LoginFormProps) {
         setAlertType('error');
         setAlertOpen(true);
       },
+      onCompleted({ createUser }) {
+        setCountingDown(true);
+        setAlertType('success');
+        setAlertAction(historyAction);
+        start();
+        localStorage.setItem('accessToken', createUser?.token ?? '');
+        setRedirectTimeout(setTimeout(() => history.push("/wiki"), 5000));
+        setAlertOpen(true);
+      }
     }
   );
-  const confirmError = confirmPassword != '' && confirmPassword != password;
+  const confirmError = confirmPassword != password;
+  const anyError = [confirmError].includes(true);
 
   const handleSubmitEvent = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    login({
-      variables: {
-        username: username,
-        password,
-      },
-    });
+    if (anyError) {
+      return;
+    }
+    if (props.signUp) {
+      createAccount({
+        variables: {
+          username,
+          password,
+        }
+      });
+    } else {
+      login({
+        variables: {
+          username,
+          password,
+        },
+      });
+    }
   }
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,7 +176,7 @@ export default function LoginForm(props: LoginFormProps) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleAlertClose}>
-        <Alert onClose={handleAlertClose} severity={alertType} variant="filled">
+        <Alert onClose={handleAlertClose} severity={alertType} variant="filled" action={alertAction}>
           {alertText}
         </Alert>
       </Snackbar>
@@ -144,7 +187,7 @@ export default function LoginForm(props: LoginFormProps) {
         <Typography component="h1" variant="h5">
           {props.signUp ? "Sign Up" : "Login"}
         </Typography>
-        <form className={classes.form} noValidate onSubmit={handleSubmitEvent}>
+        <form className={classes.form} onSubmit={handleSubmitEvent}>
           <TextField
             variant="outlined"
             margin="normal"
