@@ -101,6 +101,7 @@ export type Mutation = {
   createUser?: Maybe<NewUser>;
   deletePage?: Maybe<Page>;
   deleteUser?: Maybe<User>;
+  updatePage?: Maybe<Page>;
   logIn: Scalars['String'];
   makeAdmin?: Maybe<User>;
 };
@@ -129,6 +130,11 @@ export type MutationDeletePageArgs = {
 
 export type MutationDeleteUserArgs = {
   username: Scalars['String'];
+};
+
+
+export type MutationUpdatePageArgs = {
+  page: PageInput;
 };
 
 
@@ -330,6 +336,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createUser?: Resolver<Maybe<ResolversTypes['NewUser']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
   deletePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationDeletePageArgs, 'title'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'username'>>;
+  updatePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationUpdatePageArgs, 'page'>>;
   logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
   makeAdmin?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
 }>;

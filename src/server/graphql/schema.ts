@@ -192,6 +192,19 @@ const resolvers: Resolvers = {
       }
       await dbPage.destroy();
       return dbPageToGraphQL(dbPage);
+    },
+    updatePage: async (_, { page }, { user, ...repos }: ApolloContext) => {
+      if (user == null) {
+        throw new AuthenticationError("Must be signed in to update a post");
+      }
+      const oldPage = await repos.pageRepo.findByPk(page.title, {
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
+      });
+      if (oldPage == null) {
+        throw new UserInputError("Could not find page with specified title to update");
+      }
+      // TODO: Finish actually writing this function
+      return {} as any;
     }
   }
 };
