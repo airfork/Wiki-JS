@@ -203,6 +203,25 @@ const resolvers: Resolvers = {
       if (oldPage == null) {
         throw new UserInputError("Could not find page with specified title to update");
       }
+      // TODO: Check to see if all new ids exist in DB
+      const imagesToUpdate: Array<DBImage> = [];
+      for (let imageId of page.imageIds ?? []) {
+        const dbImage = await repos.imageRepo.findByPk(imageId);
+        if (dbImage == null) {
+          throw new UserInputError(`Provided image id ${imageId} does not exist in the database`);
+        }
+        imagesToUpdate.push(dbImage);
+      }
+      // Update images from updated page
+      for (let image of imagesToUpdate) {
+        image.pageTitle = oldPage.title;
+        await image.save();
+      }
+      // Delete any images that were in the old page that aren't in the updated one
+      const imagesToDelete = oldPage.images.filter(image => !((page.imageIds ?? []).includes(image.id)));
+      for (let image of imagesToDelete) {
+        await image.destroy();
+      }
       // TODO: Finish actually writing this function
       return {} as any;
     }

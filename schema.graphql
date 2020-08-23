@@ -61,6 +61,9 @@ input TagsInput {
     category: String!
 }
 
+"""
+Input to create a page
+"""
 input PageInput {
     title: String!
     contents: String!
