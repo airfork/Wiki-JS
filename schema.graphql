@@ -52,22 +52,29 @@ type Query {
 
 scalar Upload
 
+"""Input to create a new user"""
 input UserInput {
+    """Name used for logging in"""
     username: String!
+    """Password used for logging in"""
     password: String!
 }
 
+"""Input for a tag associated with a page"""
 input TagsInput {
+    """The category for the tag, e.g. (character, location, etc.)"""
     category: String!
 }
 
-"""
-Input to create a page
-"""
+"""Input to create a page"""
 input PageInput {
+    """The title of the page"""
     title: String!
+    """The actual contents of the page, in any form but likely HTML"""
     contents: String!
+    """The categories that this page falls under"""
     categories: [TagsInput!]
+    """List of image IDs that are associated with this page"""
     imageIds: [Int!]
 }
 
