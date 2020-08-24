@@ -1,6 +1,7 @@
-import { Table, Column, Model, BelongsTo, ForeignKey } from 'sequelize-typescript';
+import { Table, Column, Model, BelongsTo, ForeignKey, BelongsToMany } from 'sequelize-typescript';
 import { Page, dbPageToGraphQL } from './pages';
 import { File, Image as GQLImage } from '../graphql/types';
+import { ImagePage } from "./image_page";
 
 @Table
 class Image extends Model implements Image {
@@ -16,12 +17,8 @@ class Image extends Model implements Image {
   @Column
   encoding!: string;
 
-  @ForeignKey(() => Page)
-  @Column
-  pageTitle?: string;
-
-  @BelongsTo(() => Page)
-  page?: Page;
+  @BelongsToMany(() => Image, () => ImagePage)
+  images!: Image[];
 }
 
 function dbImageToGraphQL(image: Image) {
@@ -33,7 +30,6 @@ function dbImageToGraphQL(image: Image) {
       mimetype: image.mimetype,
     } as File,
     url: `/images/${image.id}`,
-    page: image.page ? dbPageToGraphQL(image.page) : undefined,
   } as GQLImage;
 }
 

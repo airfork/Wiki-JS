@@ -17,6 +17,7 @@ import { Tag } from "./tags";
 import { UserPage } from './user_page';
 import { TagPage } from './tag_page';
 import { Page as GQLPage } from '../graphql/types';
+import { ImagePage } from "./image_page";
 
 @Table
 class Page extends Model implements Page {
@@ -39,7 +40,7 @@ class Page extends Model implements Page {
   @BelongsToMany(() => User, () => UserPage)
   contributors!: User[];
 
-  @HasMany(() => Image)
+  @BelongsToMany(() => Image, () => ImagePage)
   images!: Image[];
 
   @BelongsToMany(() => Tag, () => TagPage)

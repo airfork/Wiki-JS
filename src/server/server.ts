@@ -19,8 +19,8 @@ import { Tag } from './db/tags';
 import { UserPage } from './db/user_page';
 import { Image } from './db/images';
 import { TagPage } from './db/tag_page';
+import { ImagePage } from "./db/image_page";
 
-const mongoUrl = 'mongodb://127.0.0.1:27017/wiki'
 const app = new Koa();
 const router = new Router();
 const compiler = webpack(config);
@@ -38,6 +38,7 @@ export type ApolloContext = {
   tagRepo: Repository<Tag>,
   userPageRepo: Repository<UserPage>,
   tagPageRepo: Repository<TagPage>,
+  imagePageRepo: Repository<ImagePage>
 };
 
 const envDefault = {
@@ -83,7 +84,7 @@ const generalSetup = async () => {
     host: 'localhost',
     dialect: 'postgres',
     repositoryMode: true,
-    models: [User, Page, Tag, Image, UserPage, TagPage],
+    models: [User, Page, Tag, Image, UserPage, TagPage, ImagePage],
   });
 
   await sequelize.authenticate();
@@ -95,6 +96,7 @@ const generalSetup = async () => {
   const userRepo = sequelize.getRepository(User);
   const tagRepo = sequelize.getRepository(Tag);
   const tagPageRepo = sequelize.getRepository(TagPage);
+  const imagePageRepo = sequelize.getRepository(ImagePage);
 
   // Setup Apollo middleware
   const server = new ApolloServer({
@@ -110,6 +112,7 @@ const generalSetup = async () => {
         userRepo,
         tagRepo,
         tagPageRepo,
+        imagePageRepo
       };
 
       if (token == null) {

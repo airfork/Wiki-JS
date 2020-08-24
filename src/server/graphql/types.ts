@@ -48,11 +48,14 @@ export type Tags = {
   category: Scalars['String'];
 };
 
+/** Representation of an image in the database */
 export type Image = {
   __typename?: 'Image';
   id: Scalars['Int'];
   fileInfo: File;
+  /** The page attached to this image */
   page?: Maybe<Page>;
+  /** The URL used to access this image */
   url: Scalars['String'];
 };
 
@@ -78,19 +81,29 @@ export type QueryGetPageArgs = {
 };
 
 
+/** Input to create a new user */
 export type UserInput = {
+  /** Name used for logging in */
   username: Scalars['String'];
+  /** Password used for logging in */
   password: Scalars['String'];
 };
 
+/** Input for a tag associated with a page */
 export type TagsInput = {
+  /** The category for the tag, e.g. (character, location, etc.) */
   category: Scalars['String'];
 };
 
+/** Input to create a page */
 export type PageInput = {
+  /** The title of the page */
   title: Scalars['String'];
+  /** The actual contents of the page, in any form but likely HTML */
   contents: Scalars['String'];
+  /** The categories that this page falls under */
   categories?: Maybe<Array<TagsInput>>;
+  /** List of image IDs that are associated with this page */
   imageIds?: Maybe<Array<Scalars['Int']>>;
 };
 
