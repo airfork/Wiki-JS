@@ -89,18 +89,18 @@ const generalSetup = async () => {
   await sequelize.authenticate();
   await sequelize.sync();
 
+  const userPageRepo = sequelize.getRepository(UserPage);
+  const pageRepo = sequelize.getRepository(Page);
+  const imageRepo = sequelize.getRepository(Image);
+  const userRepo = sequelize.getRepository(User);
+  const tagRepo = sequelize.getRepository(Tag);
+  const tagPageRepo = sequelize.getRepository(TagPage);
+
   // Setup Apollo middleware
   const server = new ApolloServer({
     schema: schemaWithResolvers,
     context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
-
-      const userPageRepo = sequelize.getRepository(UserPage);
-      const pageRepo = sequelize.getRepository(Page);
-      const imageRepo = sequelize.getRepository(Image);
-      const userRepo = sequelize.getRepository(User);
-      const tagRepo = sequelize.getRepository(Tag);
-      const tagPageRepo = sequelize.getRepository(TagPage);
 
       const sequelizeData: ApolloContext = {
         sequelize,
@@ -133,6 +133,16 @@ const generalSetup = async () => {
   });
   server.applyMiddleware({ app });
 
+  router.get("/image/:id", async (ctx, next) => {
+    const image = await imageRepo.findByPk(ctx.params.id);
+    if (image != null) {
+      ctx.type = image.mimetype;
+      ctx.body = image.data;
+      ctx.status = 200;
+    } else {
+      await next();
+    }
+  });
 };
 
 const prodSetup = () => {

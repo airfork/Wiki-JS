@@ -29,10 +29,13 @@ type Tags {
     category: String!
 }
 
+"""Representation of an image in the database"""
 type Image {
     id: Int!
     fileInfo: File!
+    """The page attached to this image"""
     page: Page
+    """The URL used to access this image"""
     url: String!
 }
 
