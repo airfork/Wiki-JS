@@ -21,11 +21,11 @@ const schema = loadSchemaSync('schema.graphql', {
 
 const resolvers: Resolvers = {
   Query: {
-    getCurrentUser: async (_, __, {user}: ApolloContext) => {
+    getCurrentUser: async (_, __, { user }: ApolloContext) => {
       return user as User;
     },
 
-    getUsers: async (_, __, {userRepo}: ApolloContext) => {
+    getUsers: async (_, __, { userRepo }: ApolloContext) => {
       return await userRepo.findAll() as Array<User>
     },
 
@@ -36,14 +36,14 @@ const resolvers: Resolvers = {
       return dbImages.map(image => dbImageToGraphQL(image));
     },
 
-    getPage: async (_, {title}, ctx: ApolloContext) => {
+    getPage: async (_, { title }, ctx: ApolloContext) => {
       const dbPage = await ctx.pageRepo.findByPk(title, {
         include: [ctx.imageRepo, ctx.userRepo, ctx.tagRepo]
       });
       return dbPage ? dbPageToGraphQL(dbPage) : dbPage
     },
 
-    getPages: async (_, __, {sequelize, ...repos}: ApolloContext) => {
+    getPages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
       const dbPages = await repos.pageRepo.findAll({
         include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
       });
@@ -51,7 +51,7 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
-    createUser: async (_, {user}, {userRepo}: ApolloContext) => {
+    createUser: async (_, { user }, { userRepo }: ApolloContext) => {
       if (await userRepo.findByPk(user.username) != null) {
         throw new UserInputError("Username already exists");
       }
@@ -64,11 +64,11 @@ const resolvers: Resolvers = {
       return {
         username: newUser.username,
         admin: newUser.admin,
-        token: sign({username: newUser.username}, process.env.JWT_SECRET!),
+        token: sign({ username: newUser.username }, process.env.JWT_SECRET!),
       } as NewUser;
     },
 
-    logIn: async (_, {username, password}, {userRepo}: ApolloContext) => {
+    logIn: async (_, { username, password }, { userRepo }: ApolloContext) => {
       let user = await userRepo.findByPk(username);
       if (user == null) {
         throw new UserInputError("Username does not exist");
@@ -76,10 +76,10 @@ const resolvers: Resolvers = {
       if (!await verify(user.password, password)) {
         throw new UserInputError("Incorrect password");
       }
-      return sign({username: user.username}, process.env.JWT_SECRET!);
+      return sign({ username: user.username }, process.env.JWT_SECRET!);
     },
 
-    makeAdmin: async (_, {username}, {user, userRepo}: ApolloContext) => {
+    makeAdmin: async (_, { username }, { user, userRepo }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("No authorization token provided")
       }
@@ -95,7 +95,7 @@ const resolvers: Resolvers = {
       return toUpdate as User;
     },
 
-    createPage: async (_, {page}, {user, sequelize, ...repos}: ApolloContext) => {
+    createPage: async (_, { page }, { user, sequelize, ...repos }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
@@ -103,7 +103,7 @@ const resolvers: Resolvers = {
         ...page,
         categories: [],
         images: [],
-      }, {include: [repos.imageRepo, repos.userRepo, repos.tagRepo]});
+      }, { include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
       // Verify that image exist in DB and store them to be updated
       const imagesToUpdate: Array<DBImage> = [];
       for (let imageId of (page.imageIds ?? [])) {
@@ -124,7 +124,7 @@ const resolvers: Resolvers = {
       // Create a join table entry for each category, creating the category if
       // it doesn't exist
       for (let tag of (page.categories ?? [])) {
-        let [dbTag, _] = await repos.tagRepo.findOrCreate({where: {category: tag.category}});
+        let [dbTag, _] = await repos.tagRepo.findOrCreate({ where: { category: tag.category } });
         await repos.tagPageRepo.create({
           tag_id: dbTag.category,
           page_id: newPage.title,
@@ -137,12 +137,12 @@ const resolvers: Resolvers = {
         page_id: newPage.title,
       });
       // Reload this page with all the new data
-      await newPage.reload({include: [repos.userRepo, repos.imageRepo, repos.tagRepo]});
+      await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
       // Convert page to GraphQL object
       return dbPageToGraphQL(newPage);
     },
 
-    createImage: async (_, {image}: createImageArgs, {user, imageRepo}: ApolloContext) => {
+    createImage: async (_, { image }: createImageArgs, { user, imageRepo }: ApolloContext) => {
       const awaitedImage = await image;
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
@@ -164,7 +164,7 @@ const resolvers: Resolvers = {
       } as Image;
     },
 
-    deleteUser: async (_, {username}, {user, userRepo}: ApolloContext) => {
+    deleteUser: async (_, { username }, { user, userRepo }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to delete a user");
       }
@@ -179,7 +179,7 @@ const resolvers: Resolvers = {
       return dbUser as User;
     },
 
-    deletePage: async (_, {title}, {user, ...repos}: ApolloContext) => {
+    deletePage: async (_, { title }, { user, ...repos }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to delete a post");
       }
@@ -199,7 +199,7 @@ const resolvers: Resolvers = {
       return dbPageToGraphQL(dbPage);
     },
 
-    updatePage: async (_, {page}, {user, ...repos}: ApolloContext) => {
+    updatePage: async (_, { page }, { user, ...repos }: ApolloContext) => {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to update a post");
       }
@@ -229,13 +229,20 @@ const resolvers: Resolvers = {
       const imagesToDelete = oldPage.images.filter(image => !((page.imageIds ?? []).includes(image.id)));
       for (let image of imagesToDelete) {
         const entryToDelete = await repos.imagePageRepo.findOne({
-            where: {
-              image_id: image.id,
-              page_id: oldPage.title
-            }
+          where: {
+            image_id: image.id,
+            page_id: oldPage.title
           }
-        )
-       await entryToDelete?.destroy()
+        });
+        await entryToDelete?.destroy();
+      }
+      // Add user to contributors list if they aren't already
+      if (repos.userPageRepo.findOne({
+        where: {
+          user_id: user.username,
+          page_id: oldPage.title,
+        }
+      }) == null) {
 
       }
       // TODO: Finish actually writing this function
