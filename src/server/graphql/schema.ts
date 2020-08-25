@@ -237,14 +237,12 @@ const resolvers: Resolvers = {
         await entryToDelete?.destroy();
       }
       // Add user to contributors list if they aren't already
-      if (repos.userPageRepo.findOne({
+      await repos.userPageRepo.findOrCreate({
         where: {
           user_id: user.username,
           page_id: oldPage.title,
         }
-      }) == null) {
-
-      }
+      });
       // TODO: Finish actually writing this function
       return {} as any;
     }
