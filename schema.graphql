@@ -83,7 +83,7 @@ input PageInput {
 
 type Mutation {
     createPage(page: PageInput!): Page
-    createImage(image: Upload!, linkedPageId: ID!): Image
+    createImage(image: Upload!): Image
     createUser(user: UserInput!): NewUser
     deletePage(title: String!): Page
     deleteUser(username: String!): User

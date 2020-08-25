@@ -127,7 +127,6 @@ export type MutationCreatePageArgs = {
 
 export type MutationCreateImageArgs = {
   image: Scalars['Upload'];
-  linkedPageId: Scalars['ID'];
 };
 
 
@@ -256,7 +255,6 @@ export type ResolversTypes = ResolversObject<{
   TagsInput: TagsInput;
   PageInput: PageInput;
   Mutation: ResolverTypeWrapper<{}>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -277,7 +275,6 @@ export type ResolversParentTypes = ResolversObject<{
   TagsInput: TagsInput;
   PageInput: PageInput;
   Mutation: {};
-  ID: Scalars['ID'];
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
@@ -345,7 +342,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationCreatePageArgs, 'page'>>;
-  createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image' | 'linkedPageId'>>;
+  createImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<MutationCreateImageArgs, 'image'>>;
   createUser?: Resolver<Maybe<ResolversTypes['NewUser']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'user'>>;
   deletePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationDeletePageArgs, 'title'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'username'>>;

@@ -160,7 +160,7 @@ const resolvers: Resolvers = {
           filename: newImage.filename,
           mimetype: newImage.mimetype,
         } as File,
-        url: `/images/${newImage.id}`,
+        url: `/image/${newImage.id}`,
       } as Image;
     },
 
@@ -284,7 +284,6 @@ async function readStream(stream: ReadStream) {
 
 type createImageArgs = {
   image: Promise<FileUpload>,
-  linkedPageId: string,
 }
 
 export const schemaWithResolvers = addResolversToSchema({
