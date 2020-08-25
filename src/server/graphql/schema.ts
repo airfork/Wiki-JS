@@ -243,8 +243,31 @@ const resolvers: Resolvers = {
           page_id: oldPage.title,
         }
       });
-      // TODO: Finish actually writing this function
-      return {} as any;
+      // Create or find any tags, and associate them with our page if they aren't already.
+      for (let tag of (page.categories ?? [])) {
+        let [dbTag, _] = await repos.tagRepo.findOrCreate({ where: { category: tag.category } });
+        await repos.tagPageRepo.findOrCreate({
+          where: {
+            tag_id: dbTag.category,
+            page_id: oldPage.title,
+          }
+        });
+      }
+      // Find tags to remove
+      const categoryTitles = (page.categories ?? []).map(categoryInput => categoryInput.category);
+      const categoriesToDissociate = oldPage.categories.filter(category => !categoryTitles.includes(category.category));
+      // Actually remove the join table entry
+      for (const category of categoriesToDissociate) {
+        const tagPage = await repos.tagPageRepo.findOne({
+          where: {
+            tag_id: category.category,
+            page_id: oldPage.title,
+          }
+        });
+        await tagPage?.destroy();
+      }
+      await oldPage.reload({ include: [repos.imageRepo, repos.userRepo, repos.tagRepo] });
+      return dbPageToGraphQL(oldPage);
     }
   }
 };
