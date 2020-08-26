@@ -5,12 +5,10 @@ import { Page } from './pages';
 @Table
 class UserPage extends Model implements UserPage {
   @ForeignKey(() => User)
-  @PrimaryKey
   @Column
   user_id!: number;
 
   @ForeignKey(() => Page)
-  @PrimaryKey
   @Column
   page_id!: string;
 }

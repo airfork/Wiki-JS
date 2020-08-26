@@ -5,12 +5,10 @@ import { Tag } from './tags';
 @Table
 class TagPage extends Model implements TagPage {
   @ForeignKey(() => Tag)
-  @PrimaryKey
   @Column
   tag_id!: string;
 
   @ForeignKey(() => Page)
-  @PrimaryKey
   @Column
   page_id!: string;
 }
