@@ -27,7 +27,7 @@ export type NewUser = {
 
 export type PageImage = {
   __typename?: 'PageImage';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   fileInfo: File;
   url: Scalars['String'];
 };
@@ -51,10 +51,10 @@ export type Tags = {
 /** Representation of an image in the database */
 export type Image = {
   __typename?: 'Image';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   fileInfo: File;
-  /** The page attached to this image */
-  page?: Maybe<Page>;
+  /** The pages attached to this image */
+  pages: Array<Maybe<Page>>;
   /** The URL used to access this image */
   url: Scalars['String'];
 };
@@ -72,12 +72,18 @@ export type Query = {
   getCurrentUser?: Maybe<User>;
   getUsers: Array<Maybe<User>>;
   getImages: Array<Maybe<Image>>;
+  getImage?: Maybe<Image>;
   getPages: Array<Maybe<Page>>;
 };
 
 
 export type QueryGetPageArgs = {
   title: Scalars['String'];
+};
+
+
+export type QueryGetImageArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -104,7 +110,7 @@ export type PageInput = {
   /** The categories that this page falls under */
   categories?: Maybe<Array<TagsInput>>;
   /** List of image IDs that are associated with this page */
-  imageIds?: Maybe<Array<Scalars['Int']>>;
+  imageIds?: Maybe<Array<Scalars['ID']>>;
 };
 
 export type Mutation = {
@@ -244,7 +250,7 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   NewUser: ResolverTypeWrapper<NewUser>;
   PageImage: ResolverTypeWrapper<PageImage>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Page: ResolverTypeWrapper<Page>;
   Tags: ResolverTypeWrapper<Tags>;
   Image: ResolverTypeWrapper<Image>;
@@ -264,7 +270,7 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   NewUser: NewUser;
   PageImage: PageImage;
-  Int: Scalars['Int'];
+  ID: Scalars['ID'];
   Page: Page;
   Tags: Tags;
   Image: Image;
@@ -291,7 +297,7 @@ export type NewUserResolvers<ContextType = any, ParentType extends ResolversPare
 }>;
 
 export type PageImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageImage'] = ResolversParentTypes['PageImage']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
@@ -314,9 +320,9 @@ export type TagsResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type ImageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   fileInfo?: Resolver<ResolversTypes['File'], ParentType, ContextType>;
-  page?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
+  pages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
@@ -333,6 +339,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getUsers?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   getImages?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
+  getImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryGetImageArgs, 'id'>>;
   getPages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType>;
 }>;
 

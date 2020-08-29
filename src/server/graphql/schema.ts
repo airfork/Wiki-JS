@@ -7,7 +7,7 @@ import { ReadStream } from 'fs';
 import { sign } from 'jsonwebtoken';
 
 import { ApolloContext } from '../server';
-import { dbImageToGraphQL, Image as DBImage } from '../db/images';
+import { dbImageToGraphQL, Image as DBImage, createImageId } from '../db/images';
 import { File, Image, NewUser, Resolvers, User } from './types';
 import { dbPageToGraphQL } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
@@ -34,6 +34,13 @@ const resolvers: Resolvers = {
         include: [ctx.pageRepo]
       });
       return dbImages.map(image => dbImageToGraphQL(image));
+    },
+
+    getImage: async (_, { id }, ctx: ApolloContext) => {
+      const dbImage = await ctx.imageRepo.findByPk(id, {
+        include: [ctx.pageRepo]
+      });
+      return dbImage ? dbImageToGraphQL(dbImage) : dbImage;
     },
 
     getPage: async (_, { title }, ctx: ApolloContext) => {
@@ -114,7 +121,7 @@ const resolvers: Resolvers = {
         imagesToUpdate.push(image);
       }
       await newPage.save();
-      // Actually save each image
+      // Create a join table entry for each image ID
       for (let image of imagesToUpdate) {
         repos.imagePageRepo.create({
           image_id: image.id,
@@ -139,6 +146,7 @@ const resolvers: Resolvers = {
       // Reload this page with all the new data
       await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
       // Convert page to GraphQL object
+      console.log(newPage)
       return dbPageToGraphQL(newPage);
     },
 
@@ -152,6 +160,7 @@ const resolvers: Resolvers = {
       const newImage = await imageRepo.create({
         ...awaitedImage,
         data,
+        id: createImageId(awaitedImage.filename),
       });
       return {
         id: newImage.id,
@@ -161,6 +170,7 @@ const resolvers: Resolvers = {
           mimetype: newImage.mimetype,
         } as File,
         url: `/image/${newImage.id}`,
+        pages: [],
       } as Image;
     },
 

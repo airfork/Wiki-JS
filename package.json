@@ -73,6 +73,7 @@
     "@types/react-draft-wysiwyg": "^1.13.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/sequelize": "^4.28.9",
+    "@types/shortid": "0.0.29",
     "@types/validator": "^13.1.0",
     "apollo-server": "^2.16.1",
     "apollo-server-koa": "^2.16.1",
@@ -101,7 +102,8 @@
     "react-router-dom": "^5.2.0",
     "reflect-metadata": "^0.1.13",
     "sequelize": "5.22.3",
-    "sequelize-typescript": "^1.1.0"
+    "sequelize-typescript": "^1.1.0",
+    "shortid": "^2.2.15"
   },
   "resolutions": {
     "fs-capacitor": "^6.2.0",

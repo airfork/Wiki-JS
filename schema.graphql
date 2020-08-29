@@ -10,7 +10,7 @@ type NewUser {
 }
 
 type PageImage {
-    id: Int!
+    id: ID!
     fileInfo: File!
     url: String!
 }
@@ -31,10 +31,10 @@ type Tags {
 
 """Representation of an image in the database"""
 type Image {
-    id: Int!
+    id: ID!
     fileInfo: File!
-    """The page attached to this image"""
-    page: Page
+    """The pages attached to this image"""
+    pages: [Page]!
     """The URL used to access this image"""
     url: String!
 }
@@ -50,6 +50,7 @@ type Query {
     getCurrentUser: User
     getUsers: [User]!
     getImages: [Image]!
+    getImage(id: ID!): Image
     getPages: [Page]!
 }
 
@@ -78,7 +79,7 @@ input PageInput {
     """The categories that this page falls under"""
     categories: [TagsInput!]
     """List of image IDs that are associated with this page"""
-    imageIds: [Int!]
+    imageIds: [ID!]
 }
 
 type Mutation {
