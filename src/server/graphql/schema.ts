@@ -106,6 +106,9 @@ const resolvers: Resolvers = {
       if (user == null) {
         throw new AuthenticationError("Must be signed in to create a post");
       }
+      if ((page.adminOnly && !user.admin) ?? false) {
+        throw new AuthenticationError("Must be an admin to create an admin-only page");
+      }
       const newPage = repos.pageRepo.build({
         ...page,
         categories: [],
@@ -146,7 +149,6 @@ const resolvers: Resolvers = {
       // Reload this page with all the new data
       await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
       // Convert page to GraphQL object
-      console.log(newPage)
       return dbPageToGraphQL(newPage);
     },
 
@@ -219,7 +221,9 @@ const resolvers: Resolvers = {
       if (oldPage == null) {
         throw new UserInputError("Could not find page with specified title to update");
       }
-      // TODO: Check to see if all new ids exist in DB
+      if (oldPage.adminOnly && !user.admin) {
+        throw new AuthenticationError("Must be an admin to edit an admin-only post");
+      }
       const imagesToUpdate: Array<DBImage> = [];
       for (let imageId of page.imageIds ?? []) {
         const dbImage = await repos.imageRepo.findByPk(imageId);

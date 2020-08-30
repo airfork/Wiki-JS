@@ -20,6 +20,7 @@ type Page {
     contents: String!
     createdAt: String!
     updatedAt: String!
+    adminOnly: Boolean!
     contributors: [User]!
     categories: [Tags]
     images: [PageImage]
@@ -80,6 +81,11 @@ input PageInput {
     categories: [TagsInput!]
     """List of image IDs that are associated with this page"""
     imageIds: [ID!]
+    """
+    Whether or not this page can only be edited by admins.
+    NOTE: This option requires the user creating the post to be an admin
+    """
+    adminOnly: Boolean
 }
 
 type Mutation {

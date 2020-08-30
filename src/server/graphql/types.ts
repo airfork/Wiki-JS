@@ -38,6 +38,7 @@ export type Page = {
   contents: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  adminOnly: Scalars['Boolean'];
   contributors: Array<Maybe<User>>;
   categories?: Maybe<Array<Maybe<Tags>>>;
   images?: Maybe<Array<Maybe<PageImage>>>;
@@ -111,6 +112,11 @@ export type PageInput = {
   categories?: Maybe<Array<TagsInput>>;
   /** List of image IDs that are associated with this page */
   imageIds?: Maybe<Array<Scalars['ID']>>;
+  /**
+   * Whether or not this page can only be edited by admins.
+   * NOTE: This option requires the user creating the post to be an admin
+   */
+  adminOnly?: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
@@ -308,6 +314,7 @@ export type PageResolvers<ContextType = any, ParentType extends ResolversParentT
   contents?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  adminOnly?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   contributors?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   categories?: Resolver<Maybe<Array<Maybe<ResolversTypes['Tags']>>>, ParentType, ContextType>;
   images?: Resolver<Maybe<Array<Maybe<ResolversTypes['PageImage']>>>, ParentType, ContextType>;

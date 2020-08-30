@@ -9,7 +9,8 @@ import {
   AllowNull,
   DataType,
   Length,
-  PrimaryKey
+  PrimaryKey,
+  Default
 } from 'sequelize-typescript';
 import { User } from './users';
 import { Image } from './images';
@@ -37,6 +38,11 @@ class Page extends Model implements Page {
   @Column(DataType.TEXT)
   contents!: string;
 
+  @AllowNull(false)
+  @Default(false)
+  @Column
+  adminOnly!: boolean
+
   @BelongsToMany(() => User, () => UserPage)
   contributors!: User[];
 
@@ -54,6 +60,7 @@ function dbPageToGraphQL(page: Page) {
     contributors: page.contributors,
     createdAt: page.creationDate.toUTCString(),
     updatedAt: page.updatedOn.toUTCString(),
+    adminOnly: page.adminOnly,
     images: page.images ? page.images.map(image => ({
       fileInfo: {
         encoding: image.encoding,
