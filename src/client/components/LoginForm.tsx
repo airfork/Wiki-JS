@@ -126,7 +126,11 @@ export default function LoginForm(props: LoginFormProps) {
       }
     }
   );
-  const confirmError = confirmPassword != password;
+
+  let confirmError = false;
+  if (props.signUp) {
+    confirmError = confirmPassword != password;
+  }
   const anyError = [confirmError].includes(true);
   const formDisabled = anyError || countingDown;
 
