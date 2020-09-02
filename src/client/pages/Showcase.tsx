@@ -9,6 +9,10 @@ import FeaturedPost from "../components/FeaturedPost";
 import Main from "../components/MainContent"
 import Sidebar from "../components/Sidebar";
 import { RelatedArticle } from "../types";
+import { useEffect } from 'react';
+import { IS_LOGGED_IN } from '../main';
+import { useQuery } from '@apollo/client';
+import { isLoggedIn } from '../graphql/isLoggedIn';
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -64,6 +68,13 @@ const relatedArticles: Array<RelatedArticle> = [
 
 export default function Showcase() {
   const classes = useStyles();
+  const { loading, data } = useQuery<isLoggedIn>(IS_LOGGED_IN);
+
+  useEffect(() => {
+    if (!loading) {
+      console.log(data?.isLoggedIn);
+    }
+  }, [loading, data]);
 
   return (
     <>
