@@ -28,20 +28,18 @@ export const IS_LOGGED_IN = gql`
   }
 `;
 
-const cache = new InMemoryCache();
+export const client = new ApolloClient({
+  uri: '/graphql',
+  cache: new InMemoryCache(),
+  link: authLink.concat(createUploadLink()),
+  typeDefs,
+})
 
-cache.writeQuery({
+client.writeQuery({
   query: IS_LOGGED_IN,
   data: {
     isLoggedIn: !!localStorage.getItem("accessToken"),
   }
-})
-
-export const client = new ApolloClient({
-  uri: '/graphql',
-  cache,
-  link: authLink.concat(createUploadLink()),
-  typeDefs
-})
+});
 
 render(<App />, document.getElementById('react-target'));

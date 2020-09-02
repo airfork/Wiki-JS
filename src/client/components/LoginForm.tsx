@@ -103,7 +103,7 @@ export default function LoginForm(props: LoginFormProps) {
       },
       onCompleted({ logIn }) {
         localStorage.setItem('accessToken', logIn);
-        history.push("/wiki");
+        window.location.replace('/wiki');
       }
     }
   );
