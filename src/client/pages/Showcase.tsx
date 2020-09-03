@@ -9,10 +9,6 @@ import FeaturedPost from "../components/FeaturedPost";
 import Main from "../components/MainContent"
 import Sidebar from "../components/Sidebar";
 import { RelatedArticle } from "../types";
-import { useEffect } from 'react';
-import { IS_LOGGED_IN } from '../main';
-import { useQuery } from '@apollo/client';
-import { isLoggedIn } from '../graphql/isLoggedIn';
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {

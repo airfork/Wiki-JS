@@ -121,7 +121,7 @@ export default function LoginForm(props: LoginFormProps) {
         setAlertAction(historyAction);
         start();
         localStorage.setItem('accessToken', createUser?.token ?? '');
-        setRedirectTimeout(setTimeout(() => history.push("/wiki"), 5000));
+        setRedirectTimeout(setTimeout(() => window.location.replace('/wiki'), 5000));
         setAlertOpen(true);
       }
     }
