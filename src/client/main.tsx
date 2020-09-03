@@ -20,11 +20,20 @@ const typeDefs = gql`
   extend type Query {
     isLoggedIn: Boolean!
   }
+  extend type Mutation {
+    logOut: Boolean!
+  }
 `;
 
 export const IS_LOGGED_IN = gql`
   query isLoggedIn {
     isLoggedIn @client
+  }
+`;
+
+export const LOG_OUT = gql`
+  mutation logOut {
+    logOut @client
   }
 `;
 
@@ -35,11 +44,24 @@ export const client = new ApolloClient({
   typeDefs,
 })
 
+
+const logout = () => {
+  localStorage.removeItem("accessToken");
+  return true;
+}
+
 client.writeQuery({
   query: IS_LOGGED_IN,
   data: {
     isLoggedIn: !!localStorage.getItem("accessToken"),
   }
 });
+
+client.writeQuery({
+  query: LOG_OUT,
+  data: {
+    logOut: logout(),
+  }
+})
 
 render(<App />, document.getElementById('react-target'));

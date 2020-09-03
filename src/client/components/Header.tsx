@@ -7,6 +7,10 @@ import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home'
 import WikiSearch from './WikiSearch';
+import { useQuery, useMutation } from '@apollo/client';
+import { isLoggedIn } from '../graphql/isLoggedIn';
+import { IS_LOGGED_IN, LOG_OUT, client } from '../main';
+import { logOut } from '../graphql/logOut';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -82,6 +86,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Header() {
   const classes = useStyles();
+  const { data, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
+  const [logOut] = useMutation<logOut>(LOG_OUT);
 
   return (
     <div className={classes.root}>
@@ -98,7 +104,14 @@ export default function Header() {
             mainClass={classes.search}
             iconButtonClass={classes.searchInput}
           />
-          <Button color="inherit" href="/login">Login</Button>
+          {
+            data?.isLoggedIn
+              ? <Button color="inherit"
+                onClick={async () => { logOut(); await client.resetStore(); }}>
+                Logout
+                </Button>
+              : <Button color="inherit" href="/login">Login</Button>
+          }
         </Toolbar>
       </AppBar>
     </div>

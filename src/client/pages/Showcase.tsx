@@ -68,13 +68,6 @@ const relatedArticles: Array<RelatedArticle> = [
 
 export default function Showcase() {
   const classes = useStyles();
-  const { loading, data } = useQuery<isLoggedIn>(IS_LOGGED_IN);
-
-  useEffect(() => {
-    if (!loading) {
-      console.log(data?.isLoggedIn);
-    }
-  }, [loading, data]);
 
   return (
     <>
