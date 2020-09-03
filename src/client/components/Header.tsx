@@ -106,10 +106,13 @@ export default function Header() {
           />
           {
             data?.isLoggedIn
-              ? <Button color="inherit"
-                onClick={async () => { logOut(); await client.resetStore(); }}>
-                Logout
-                </Button>
+              ? <div>
+                  <Button color="inherit" href="/wiki/create">Create</Button>
+                  <Button color="inherit"
+                          onClick={async () => { await logOut(); await client.resetStore(); }}>
+                    Logout
+                  </Button>
+                </div>
               : <Button color="inherit" href="/login">Login</Button>
           }
         </Toolbar>
