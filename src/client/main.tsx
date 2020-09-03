@@ -60,7 +60,7 @@ client.writeQuery({
 client.writeQuery({
   query: LOG_OUT,
   data: {
-    logOut: logout(),
+    logOut: () => logout(),
   }
 })
 
