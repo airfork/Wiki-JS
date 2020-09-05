@@ -42,20 +42,20 @@ export type ApolloContext = {
 };
 
 const envDefault = {
-  POSTGRES_DB: '',
-  POSTGRES_USER: '',
-  POSTGRES_PASSWORD: '',
+  MYSQL_DATABASE: '',
+  MYSQL_USER: '',
+  MYSQL_ROOT_PASSWORD: '',
   JWT_SECRET: '',
 };
 
 const envRules = {
-  POSTGRES_DB: {
+  MYSQL_DATABASE: {
     required: true,
   },
-  POSTGRES_USER: {
+  MYSQL_USER: {
     required: true,
   },
-  POSTGRES_PASSWORD: {
+  MYSQL_ROOT_PASSWORD: {
     required: true,
   },
   JWT_SECRET: {
@@ -80,33 +80,34 @@ const generalSetup = async () => {
 
   app.use(koaBody());
 
-  const sequelize = new Sequelize(process.env.POSTGRES_DB!, process.env.POSTGRES_USER!, process.env.POSTGRES_PASSWORD!, {
+  const sequelize = new Sequelize(process.env.MYSQL_DATABASE!, process.env.MYSQL_USER!, process.env.MYSQL_ROOT_PASSWORD, {
     host: 'localhost',
-    dialect: 'postgres',
+    dialect: 'mysql',
     repositoryMode: true,
     models: [User, Page, Tag, Image, UserPage, TagPage, ImagePage],
   });
 
   await sequelize.authenticate();
   await sequelize.sync();
-  await sequelize.query(
-    `CREATE OR REPLACE FUNCTION cleanupImages() RETURNS TRIGGER AS $cleanup$
-         BEGIN
-          DELETE FROM "Images" WHERE
-          id NOT IN (SELECT DISTINCT image_id FROM "ImagePages")
-          AND "createdAt" < NOW() - INTERVAL '1 Week';
-      
-          RETURN NEW;
-         END;
-        $cleanup$ LANGUAGE plpgsql;
-        
-        DROP TRIGGER IF EXISTS triggerCleanupImage ON "ImagePages";
-        
-        CREATE TRIGGER triggerCleanupImage AFTER INSERT
-        ON "ImagePages" FOR EACH STATEMENT
-        EXECUTE PROCEDURE cleanupImages();
-    `
-  )
+  await sequelize.query('SET GLOBAL event_scheduler=ON;');
+  // await sequelize.query(
+  //   `CREATE OR REPLACE FUNCTION cleanupImages() RETURNS TRIGGER AS $cleanup$
+  //        BEGIN
+  //         DELETE FROM "Images" WHERE
+  //         id NOT IN (SELECT DISTINCT image_id FROM "ImagePages")
+  //         AND "createdAt" < NOW() - INTERVAL '1 Week';
+  //
+  //         RETURN NEW;
+  //        END;
+  //       $cleanup$ LANGUAGE plpgsql;
+  //
+  //       DROP TRIGGER IF EXISTS triggerCleanupImage ON "ImagePages";
+  //
+  //       CREATE TRIGGER triggerCleanupImage AFTER INSERT
+  //       ON "ImagePages" FOR EACH STATEMENT
+  //       EXECUTE PROCEDURE cleanupImages();
+  //   `
+  // )
 
   const userPageRepo = sequelize.getRepository(UserPage);
   const pageRepo = sequelize.getRepository(Page);

@@ -1,7 +1,14 @@
 version: '3.5'
 services:
-    postgres:
-        image: postgres
-        env_file: ../.env
+    db:
+        image: mariadb
+        restart: always
         ports:
-            - 5432:5432
+            - "3306:3306"
+        env_file: ../.env
+
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+            - 9000:8080
