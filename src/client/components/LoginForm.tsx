@@ -81,7 +81,7 @@ export default function LoginForm(props: LoginFormProps) {
   const historyAction = useMemo(() => (
     <Button color="inherit" size="small" onClick={() => {
       pause();
-      history.push("/wiki");
+      window.location.replace('/wiki');
     }}>
       Go Now
     </Button>
