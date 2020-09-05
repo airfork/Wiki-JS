@@ -29,6 +29,13 @@ type FeaturedPostProps = {
 export default function FeaturedPost(props: FeaturedPostProps) {
   const classes = useStyles();
   const { post } = props;
+  let updatedAt = ''
+  if (post?.updatedAt) {
+    const updatedDate = new Date(post.updatedAt);
+    const dateTimeFormat = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit' })
+    const [{ value: month },,{ value: day },,{ value: year }] = dateTimeFormat .formatToParts(updatedDate)
+    updatedAt = `${month}, ${day} ${year}`;
+  }
 
   return (
     <Grid item xs={12} md={6}>
@@ -40,7 +47,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
                 {post?.title}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
-                {post?.updatedAt}
+                {updatedAt}
               </Typography>
               <Typography variant="subtitle1" paragraph>
                 {post?.contents}

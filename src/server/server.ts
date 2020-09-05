@@ -90,24 +90,15 @@ const generalSetup = async () => {
   await sequelize.authenticate();
   await sequelize.sync();
   await sequelize.query('SET GLOBAL event_scheduler=ON;');
-  // await sequelize.query(
-  //   `CREATE OR REPLACE FUNCTION cleanupImages() RETURNS TRIGGER AS $cleanup$
-  //        BEGIN
-  //         DELETE FROM "Images" WHERE
-  //         id NOT IN (SELECT DISTINCT image_id FROM "ImagePages")
-  //         AND "createdAt" < NOW() - INTERVAL '1 Week';
-  //
-  //         RETURN NEW;
-  //        END;
-  //       $cleanup$ LANGUAGE plpgsql;
-  //
-  //       DROP TRIGGER IF EXISTS triggerCleanupImage ON "ImagePages";
-  //
-  //       CREATE TRIGGER triggerCleanupImage AFTER INSERT
-  //       ON "ImagePages" FOR EACH STATEMENT
-  //       EXECUTE PROCEDURE cleanupImages();
-  //   `
-  // )
+  await sequelize.query(
+    `CREATE OR REPLACE EVENT cleanupImages
+          ON SCHEDULE EVERY 1 DAY
+          DO
+            DELETE FROM Images WHERE
+              id NOT IN (SELECT DISTINCT image_id FROM ImagePages)
+              AND createdAt < NOW() - INTERVAL 1 WEEK;
+    `
+  )
 
   const userPageRepo = sequelize.getRepository(UserPage);
   const pageRepo = sequelize.getRepository(Page);

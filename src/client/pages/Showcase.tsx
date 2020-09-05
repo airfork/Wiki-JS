@@ -73,8 +73,6 @@ export default function Showcase() {
   const classes = useStyles();
   const {loading, error, data} = useQuery<getPages>(GET_PAGES);
 
-  console.log(data);
-
   return (
     <>
       <CssBaseline />
