@@ -9,7 +9,6 @@ import HomeIcon from '@material-ui/icons/Home'
 import WikiSearch from './WikiSearch';
 import { useQuery } from '@apollo/client';
 import { isLoggedIn } from '../graphql/isLoggedIn';
-import { client } from '../main';
 import { IS_LOGGED_IN, logout } from '../auth';
 
 const useStyles = makeStyles((theme: Theme) =>

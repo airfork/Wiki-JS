@@ -3,6 +3,7 @@ import { Login } from "./pages/Login";
 import Showcase from "./pages/Showcase";
 import NewArticle from "./pages/NewArticle";
 import { SignUp } from './pages/SignUp';
+import React from "react";
 
 // type Route = {
 //   routeName: string,

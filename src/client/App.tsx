@@ -4,6 +4,7 @@ import Routes from './routes';
 import { createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@material-ui/core';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './main';
+import NotFound from "./pages/NotFound";
 
 
 export default function App() {
@@ -51,6 +52,7 @@ export default function App() {
             {Routes.map(route => (
               <Route path={route.path} key={route.routeName} exact component={route.component} />
             ))}
+            <Route component={NotFound} />
           </Switch>
         </Router>
       </ThemeProvider>
