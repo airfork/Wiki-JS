@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Hidden from '@material-ui/core/Hidden';
 import { Post } from '../pages/Showcase';
+import { getPages_getPages } from "../graphql/getPages";
 
 const useStyles = makeStyles({
   card: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles({
 });
 
 type FeaturedPostProps = {
-  post: Post
+  post: getPages_getPages | null,
 }
 
 export default function FeaturedPost(props: FeaturedPostProps) {
@@ -36,22 +37,25 @@ export default function FeaturedPost(props: FeaturedPostProps) {
           <div className={classes.cardDetails}>
             <CardContent>
               <Typography component="h2" variant="h5">
-                {post.title}
+                {post?.title}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
-                {post.date}
+                {post?.updatedAt}
               </Typography>
               <Typography variant="subtitle1" paragraph>
-                {post.description}
+                {post?.contents}
               </Typography>
               <Typography variant="subtitle1" color="primary">
                 Continue reading...
               </Typography>
             </CardContent>
           </div>
-          <Hidden xsDown>
-            <CardMedia className={classes.cardMedia} image={post.image} title={post.imageTitle} />
-          </Hidden>
+          {/*<Hidden xsDown>*/}
+          {/*  {post.image*/}
+          {/*  ? <CardMedia className={classes.cardMedia} image={post.image} title={post.imageTitle} />*/}
+          {/*  : <p/>*/}
+          {/*  }*/}
+          {/*</Hidden>*/}
         </Card>
       </CardActionArea>
     </Grid>

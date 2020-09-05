@@ -9,6 +9,9 @@ import FeaturedPost from "../components/FeaturedPost";
 import Main from "../components/MainContent"
 import Sidebar from "../components/Sidebar";
 import { RelatedArticle } from "../types";
+import { useQuery } from "@apollo/client";
+import gql from 'graphql-tag';
+import { getPages } from "../graphql/getPages";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -20,19 +23,27 @@ export type Post = {
   title: string,
   date: string,
   description: string,
-  image: string,
-  imageTitle: string,
+  image?: string,
+  imageTitle?: string,
   linkText?: string,
 }
+
+const GET_PAGES = gql`
+  query getPages {
+      getPages {
+          title
+          contents
+          updatedAt
+      }
+  }
+`;
 
 const mainFeaturedPost: Post = {
   title: 'Title of a longer featured blog post',
   date: 'Nov 13',
   description:
     "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
-  image: 'https://source.unsplash.com/random',
-  imageTitle: 'main image description',
-  linkText: 'Continue reading…',
+  linkText: 'Continue Reading'
 };
 
 const featuredPosts: Array<Post> = [
@@ -41,16 +52,12 @@ const featuredPosts: Array<Post> = [
     date: 'Nov 12',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageTitle: 'Image Text',
   },
   {
     title: 'Post title',
     date: 'Nov 11',
     description:
       'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageTitle: 'Image Text',
   },
 ];
 
@@ -64,6 +71,9 @@ const relatedArticles: Array<RelatedArticle> = [
 
 export default function Showcase() {
   const classes = useStyles();
+  const {loading, error, data} = useQuery<getPages>(GET_PAGES);
+
+  console.log(data);
 
   return (
     <>
@@ -73,9 +83,12 @@ export default function Showcase() {
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
-            {featuredPosts.map((post) => (
-              <FeaturedPost key={post.title} post={post} />
-            ))}
+            {!loading
+            ?  data?.getPages.map((post) => (
+                <FeaturedPost key={post?.title} post={post} />
+              ))
+              : null
+            }
           </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>
             <Main title="C++20" posts={posts} />
