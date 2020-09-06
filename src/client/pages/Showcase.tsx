@@ -71,7 +71,7 @@ const relatedArticles: Array<RelatedArticle> = [
 
 export default function Showcase() {
   const classes = useStyles();
-  const {loading, error, data} = useQuery<getPages>(GET_PAGES);
+  const { loading, error, data } = useQuery<getPages>(GET_PAGES);
 
   return (
     <>
@@ -81,11 +81,10 @@ export default function Showcase() {
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
-            {!loading
-            ?  data?.getPages.map((post) => (
+            {!loading &&
+              data?.getPages.map((post) => (
                 <FeaturedPost key={post?.title} post={post} />
               ))
-              : null
             }
           </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>

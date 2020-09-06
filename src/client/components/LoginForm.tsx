@@ -217,8 +217,8 @@ export default function LoginForm(props: LoginFormProps) {
             onInput={handlePasswordChange}
             autoComplete="current-password"
           />
-          {props.signUp
-            ? <TextField
+          {props.signUp &&
+            <TextField
               variant="outlined"
               margin="normal"
               required={true}
@@ -232,7 +232,6 @@ export default function LoginForm(props: LoginFormProps) {
               onInput={handleConfirmPasswordChange}
               autoComplete="current-password"
             />
-            : null
           }
           <Button
             type="submit"
@@ -244,9 +243,8 @@ export default function LoginForm(props: LoginFormProps) {
           >
             {props.signUp ? "Sign up" : "Login"}
           </Button>
-          {props.signUp
-            ? null
-            : <Grid container>
+          {!props.signUp &&
+            <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
                   Forgot password?
