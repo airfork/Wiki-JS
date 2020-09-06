@@ -67,6 +67,10 @@ export type File = {
   encoding: Scalars['String'];
 };
 
+export type PageFilter = {
+  titleIncludes?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getPage?: Maybe<Page>;
@@ -85,6 +89,11 @@ export type QueryGetPageArgs = {
 
 export type QueryGetImageArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryGetPagesArgs = {
+  pageFilter?: Maybe<PageFilter>;
 };
 
 
@@ -261,6 +270,7 @@ export type ResolversTypes = ResolversObject<{
   Tags: ResolverTypeWrapper<Tags>;
   Image: ResolverTypeWrapper<Image>;
   File: ResolverTypeWrapper<File>;
+  PageFilter: PageFilter;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UserInput: UserInput;
@@ -281,6 +291,7 @@ export type ResolversParentTypes = ResolversObject<{
   Tags: Tags;
   Image: Image;
   File: File;
+  PageFilter: PageFilter;
   Query: {};
   Upload: Scalars['Upload'];
   UserInput: UserInput;
@@ -347,7 +358,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getUsers?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   getImages?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
   getImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryGetImageArgs, 'id'>>;
-  getPages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType>;
+  getPages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType, RequireFields<QueryGetPagesArgs, never>>;
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {

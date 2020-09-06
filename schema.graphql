@@ -46,13 +46,17 @@ type File {
     encoding: String!
 }
 
+input PageFilter {
+    titleIncludes: String
+}
+
 type Query {
     getPage(title: String!): Page
     getCurrentUser: User
     getUsers: [User]!
     getImages: [Image]!
     getImage(id: ID!): Image
-    getPages: [Page]!
+    getPages(pageFilter: PageFilter): [Page]!
 }
 
 scalar Upload

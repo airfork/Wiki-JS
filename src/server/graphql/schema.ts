@@ -11,6 +11,7 @@ import { dbImageToGraphQL, Image as DBImage, createImageId } from '../db/images'
 import { File, Image, NewUser, Resolvers, User } from './types';
 import { dbPageToGraphQL } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
+import { Op } from 'sequelize';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -50,9 +51,14 @@ const resolvers: Resolvers = {
       return dbPage ? dbPageToGraphQL(dbPage) : dbPage
     },
 
-    getPages: async (_, __, { sequelize, ...repos }: ApolloContext) => {
+    getPages: async (_, { pageFilter }, { sequelize, ...repos }: ApolloContext) => {
       const dbPages = await repos.pageRepo.findAll({
-        include: [repos.imageRepo, repos.userRepo, repos.tagRepo]
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo],
+        where: pageFilter?.titleIncludes ? {
+          title: {
+            [Op.like]: `%${pageFilter.titleIncludes}%`
+          }
+        } : undefined
       });
       return dbPages.map(page => dbPageToGraphQL(page));
     }
