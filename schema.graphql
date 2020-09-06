@@ -56,7 +56,7 @@ type Query {
     getUsers: [User]!
     getImages: [Image]!
     getImage(id: ID!): Image
-    getPages(pageFilter: PageFilter): [Page]!
+    getPages(pageFilter: PageFilter): [Page!]!
 }
 
 scalar Upload

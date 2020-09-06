@@ -23,17 +23,17 @@ const useStyles = makeStyles({
 });
 
 type FeaturedPostProps = {
-  post: getPages_getPages | null,
+  post: getPages_getPages,
 }
 
 export default function FeaturedPost(props: FeaturedPostProps) {
   const classes = useStyles();
   const { post } = props;
   let updatedAt = ''
-  if (post?.updatedAt) {
+  if (post.updatedAt) {
     const updatedDate = new Date(post.updatedAt);
     const dateTimeFormat = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit' })
-    const [{ value: month },,{ value: day },,{ value: year }] = dateTimeFormat .formatToParts(updatedDate)
+    const [{ value: month }, , { value: day }, , { value: year }] = dateTimeFormat.formatToParts(updatedDate)
     updatedAt = `${month}, ${day} ${year}`;
   }
 
@@ -44,13 +44,13 @@ export default function FeaturedPost(props: FeaturedPostProps) {
           <div className={classes.cardDetails}>
             <CardContent>
               <Typography component="h2" variant="h5">
-                {post?.title}
+                {post.title}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
                 {updatedAt}
               </Typography>
               <Typography variant="subtitle1" paragraph>
-                {post?.contents}
+                {post.contents}
               </Typography>
               <Typography variant="subtitle1" color="primary">
                 Continue reading...

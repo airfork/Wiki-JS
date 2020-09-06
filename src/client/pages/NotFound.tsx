@@ -42,9 +42,6 @@ export default function NotFound() {
   return (
     <Status code={404}>
       <Container maxWidth="md" className={classes.centered}>
-        <Typography variant="h2" className={classes.textSpacing}>
-          Error:
-        </Typography>
         <Typography variant="h4" className={classes.textSpacing}>
           We can't seem to find the page you're looking for.
         </Typography>

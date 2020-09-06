@@ -4,16 +4,18 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: getPages
+// GraphQL query operation: searchQuery
 // ====================================================
 
-export interface getPages_getPages {
+export interface searchQuery_getPages {
   __typename: "Page";
   title: string;
-  contents: string;
-  updatedAt: string;
 }
 
-export interface getPages {
-  getPages: getPages_getPages[];
+export interface searchQuery {
+  getPages: searchQuery_getPages[];
+}
+
+export interface searchQueryVariables {
+  titleIncludes?: string | null;
 }

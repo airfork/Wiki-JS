@@ -78,7 +78,7 @@ export type Query = {
   getUsers: Array<Maybe<User>>;
   getImages: Array<Maybe<Image>>;
   getImage?: Maybe<Image>;
-  getPages: Array<Maybe<Page>>;
+  getPages: Array<Page>;
 };
 
 
@@ -358,7 +358,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getUsers?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   getImages?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
   getImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryGetImageArgs, 'id'>>;
-  getPages?: Resolver<Array<Maybe<ResolversTypes['Page']>>, ParentType, ContextType, RequireFields<QueryGetPagesArgs, never>>;
+  getPages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryGetPagesArgs, never>>;
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
