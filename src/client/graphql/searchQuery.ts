@@ -7,13 +7,18 @@
 // GraphQL query operation: searchQuery
 // ====================================================
 
-export interface searchQuery_getPages {
+export interface searchQuery_getFilteredPages_inTitle {
   __typename: "Page";
   title: string;
 }
 
+export interface searchQuery_getFilteredPages {
+  __typename: "FilteredPages";
+  inTitle: searchQuery_getFilteredPages_inTitle[];
+}
+
 export interface searchQuery {
-  getPages: searchQuery_getPages[];
+  getFilteredPages: searchQuery_getFilteredPages;
 }
 
 export interface searchQueryVariables {

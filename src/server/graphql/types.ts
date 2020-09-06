@@ -71,6 +71,13 @@ export type PageFilter = {
   titleIncludes?: Maybe<Scalars['String']>;
 };
 
+export type FilteredPages = {
+  __typename?: 'FilteredPages';
+  inTitle: Array<Page>;
+  inTags: Array<Page>;
+  inContent: Array<Page>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getPage?: Maybe<Page>;
@@ -79,6 +86,7 @@ export type Query = {
   getImages: Array<Maybe<Image>>;
   getImage?: Maybe<Image>;
   getPages: Array<Page>;
+  getFilteredPages: FilteredPages;
 };
 
 
@@ -93,6 +101,11 @@ export type QueryGetImageArgs = {
 
 
 export type QueryGetPagesArgs = {
+  pageFilter?: Maybe<PageFilter>;
+};
+
+
+export type QueryGetFilteredPagesArgs = {
   pageFilter?: Maybe<PageFilter>;
 };
 
@@ -271,6 +284,7 @@ export type ResolversTypes = ResolversObject<{
   Image: ResolverTypeWrapper<Image>;
   File: ResolverTypeWrapper<File>;
   PageFilter: PageFilter;
+  FilteredPages: ResolverTypeWrapper<FilteredPages>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UserInput: UserInput;
@@ -292,6 +306,7 @@ export type ResolversParentTypes = ResolversObject<{
   Image: Image;
   File: File;
   PageFilter: PageFilter;
+  FilteredPages: FilteredPages;
   Query: {};
   Upload: Scalars['Upload'];
   UserInput: UserInput;
@@ -352,6 +367,13 @@ export type FileResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
+export type FilteredPagesResolvers<ContextType = any, ParentType extends ResolversParentTypes['FilteredPages'] = ResolversParentTypes['FilteredPages']> = ResolversObject<{
+  inTitle?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType>;
+  inTags?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType>;
+  inContent?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryGetPageArgs, 'title'>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
@@ -359,6 +381,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getImages?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
   getImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryGetImageArgs, 'id'>>;
   getPages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryGetPagesArgs, never>>;
+  getFilteredPages?: Resolver<ResolversTypes['FilteredPages'], ParentType, ContextType, RequireFields<QueryGetFilteredPagesArgs, never>>;
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -384,6 +407,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Tags?: TagsResolvers<ContextType>;
   Image?: ImageResolvers<ContextType>;
   File?: FileResolvers<ContextType>;
+  FilteredPages?: FilteredPagesResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;

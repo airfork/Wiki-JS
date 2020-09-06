@@ -61,6 +61,29 @@ const resolvers: Resolvers = {
         } : undefined
       });
       return dbPages.map(page => dbPageToGraphQL(page));
+    },
+
+    getFilteredPages: async (_, { pageFilter }, repos: ApolloContext) => {
+      const inTags = [];
+      const inTitleDb = await repos.pageRepo.findAll({
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo],
+        where: {
+          title: {
+            [Op.like]: `%${pageFilter?.titleIncludes}%`
+          }
+        }
+      });
+      const inTitle = inTitleDb.map(page => dbPageToGraphQL(page));
+      const inContentDb = await repos.pageRepo.findAll({
+        include: [repos.imageRepo, repos.userRepo, repos.tagRepo],
+        where: {
+          contents: {
+            [Op.like]: `%${pageFilter?.titleIncludes}%`
+          }
+        }
+      });
+      const inContent = inContentDb.map(page => dbPageToGraphQL(page));
+      return { inContent: inContent, inTags: [], inTitle: inTitle }
     }
   },
   Mutation: {

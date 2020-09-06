@@ -1,21 +1,26 @@
 import React, { useState } from 'react';
 import SearchBar from 'material-ui-search-bar';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { gql, useQuery } from '@apollo/client';
 import { searchQuery, searchQueryVariables } from '../graphql/searchQuery';
-import { useEffect } from 'react';
+import TextField from '@material-ui/core/TextField';
 
 type WikiSearchProps = {
   mainClass?: string;
   inputClass?: string;
-  iconButtonClass?: string;
 }
 
 const SEARCH_QUERY = gql`
   query searchQuery($titleIncludes: String) {
-    getPages(pageFilter: {
+    getFilteredPages(pageFilter: {
       titleIncludes: $titleIncludes
     }) {
-      title
+      inTitle {
+        title
+      }
+      inContent {
+        title
+      }
     }
   }
 `;
@@ -28,17 +33,21 @@ export default function WikiSearch(props: WikiSearchProps) {
     },
     skip: searchVal === ''
   });
-  useEffect(() => {
-    console.log(data);
-  }, [data])
+
   return (
-    <SearchBar
-      classes={{
-        root: props.mainClass,
-        input: props.inputClass,
-        iconButton: props.iconButtonClass,
-      }}
-      onChange={newValue => setSearchVal(newValue)}
+    <Autocomplete
+      className={props.mainClass}
+      options={data?.getFilteredPages.inTitle.map(page => page.title) ?? []}
+      renderInput={params =>
+        <TextField
+          {...params}
+          className={props.inputClass}
+          margin="normal"
+          variant="outlined"
+          placeholder="Search"
+        />
+      }
+      onInputChange={(_, value) => setSearchVal(value)}
     />
   )
 }

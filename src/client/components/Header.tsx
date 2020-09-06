@@ -37,10 +37,9 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         backgroundColor: fade(theme.palette.common.white, 0.25),
       },
-      marginLeft: 0,
       marginRight: theme.spacing(1),
-      height: '3em',
       width: '100%',
+      height: '3em',
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
         width: 'auto',
@@ -53,18 +52,6 @@ const useStyles = makeStyles((theme: Theme) =>
         marginLeft: theme.spacing(1),
         width: 'auto',
       },
-    },
-    searchIcon: {
-      padding: theme.spacing(0, 2),
-      height: '100%',
-      position: 'absolute',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
     },
     inputInput: {
       padding: theme.spacing(1, 1, 1, 0),
@@ -100,7 +87,6 @@ export default function Header() {
           <WikiSearch
             inputClass={classes.searchInput}
             mainClass={classes.search}
-            iconButtonClass={classes.searchInput}
           />
           {
             data?.isLoggedIn

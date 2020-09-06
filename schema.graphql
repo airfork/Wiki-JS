@@ -50,6 +50,12 @@ input PageFilter {
     titleIncludes: String
 }
 
+type FilteredPages {
+    inTitle: [Page!]!
+    inTags: [Page!]!
+    inContent: [Page!]!
+}
+
 type Query {
     getPage(title: String!): Page
     getCurrentUser: User
@@ -57,6 +63,7 @@ type Query {
     getImages: [Image]!
     getImage(id: ID!): Image
     getPages(pageFilter: PageFilter): [Page!]!
+    getFilteredPages(pageFilter: PageFilter): FilteredPages!
 }
 
 scalar Upload
