@@ -86,6 +86,7 @@ export default function Header(props: HeaderProps) {
           <div>
             <WikiSearch
               mainClass={classes.search}
+              searchSize="dense"
             />
           </div>
           {

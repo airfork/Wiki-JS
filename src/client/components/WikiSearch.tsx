@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 
 type WikiSearchProps = {
   mainClass?: string;
+  searchSize?: 'dense' | 'none' | 'normal';
 }
 
 const SEARCH_QUERY = gql`
@@ -40,7 +41,7 @@ export default function WikiSearch(props: WikiSearchProps) {
         <TextField
           {...params}
           className={props.mainClass}
-          margin="normal"
+          margin={props.searchSize}
           variant="outlined"
           placeholder="Search"
         />
