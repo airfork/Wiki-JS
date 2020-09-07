@@ -23,9 +23,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(3),
   },
   fab: {
-    position: 'absolute',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    top: 'auto',
+    right: 20,
+    bottom: 20,
+    left: 'auto',
+    position: 'fixed',
   },
 }));
 
@@ -40,11 +42,11 @@ export type Post = {
 
 const GET_PAGES = gql`
   query getPages {
-      getPages {
-          title
-          contents
-          updatedAt
-      }
+    getPages {
+        title
+        contents
+        updatedAt
+    }
   }
 `;
 
@@ -56,23 +58,6 @@ const mainFeaturedPost: Post = {
   linkText: 'Continue Reading'
 };
 
-const featuredPosts: Array<Post> = [
-  {
-    title: 'Featured post',
-    date: 'Nov 12',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-  },
-  {
-    title: 'Post title',
-    date: 'Nov 11',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-  },
-];
-
-const posts = [];
-
 const relatedArticles: Array<RelatedArticle> = [
   { title: 'Related post 1', url: '#' },
   { title: 'Related post 2', url: '#' },
@@ -82,7 +67,7 @@ const relatedArticles: Array<RelatedArticle> = [
 export default function Showcase() {
   const classes = useStyles();
   const { loading, data } = useQuery<getPages>(GET_PAGES);
-  const { loading: userLoading, data: userData, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
+  const { data: userData, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
   const history = useHistory();
 
   return (
@@ -100,7 +85,7 @@ export default function Showcase() {
             }
           </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>
-            <Main title="C++20" posts={posts} />
+            <Main title="C++20" posts={[]} />
             <Sidebar
               related={relatedArticles}
             />
