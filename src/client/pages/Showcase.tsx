@@ -88,8 +88,8 @@ export default function Showcase() {
   return (
     <>
       <CssBaseline />
+      <Header logoutAction={refetch} />
       <Container maxWidth="xl">
-        <Header logoutAction={refetch} />
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
