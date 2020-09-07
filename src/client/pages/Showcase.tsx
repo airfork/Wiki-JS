@@ -109,7 +109,7 @@ export default function Showcase() {
       </Container>
       <Tooltip title="Create page">
         <Fab
-          color="primary"
+          color="secondary"
           className={classes.fab}
           disabled={!userData?.isLoggedIn ?? true}
           onClick={() => history.push("/wiki/create")}>
