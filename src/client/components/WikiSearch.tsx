@@ -7,7 +7,6 @@ import TextField from '@material-ui/core/TextField';
 
 type WikiSearchProps = {
   mainClass?: string;
-  inputClass?: string;
 }
 
 const SEARCH_QUERY = gql`
@@ -36,18 +35,18 @@ export default function WikiSearch(props: WikiSearchProps) {
 
   return (
     <Autocomplete
-      className={props.mainClass}
       options={data?.getFilteredPages.inTitle.map(page => page.title) ?? []}
       renderInput={params =>
         <TextField
           {...params}
-          className={props.inputClass}
+          className={props.mainClass}
           margin="normal"
           variant="outlined"
           placeholder="Search"
         />
       }
       onInputChange={(_, value) => setSearchVal(value)}
+      noOptionsText="No pages found"
     />
   )
 }

@@ -12,10 +12,20 @@ import { RelatedArticle } from "../types";
 import { useQuery } from "@apollo/client";
 import gql from 'graphql-tag';
 import { getPages } from "../graphql/getPages";
+import { isLoggedIn } from '../graphql/isLoggedIn';
+import { IS_LOGGED_IN } from '../auth';
+import { Fab, Tooltip } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     marginTop: theme.spacing(3),
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
   },
 }));
 
@@ -71,13 +81,15 @@ const relatedArticles: Array<RelatedArticle> = [
 
 export default function Showcase() {
   const classes = useStyles();
-  const { loading, error, data } = useQuery<getPages>(GET_PAGES);
+  const { loading, data } = useQuery<getPages>(GET_PAGES);
+  const { loading: userLoading, data: userData, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
+  const history = useHistory();
 
   return (
     <>
       <CssBaseline />
       <Container maxWidth="xl">
-        <Header />
+        <Header logoutAction={refetch} />
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
@@ -95,6 +107,15 @@ export default function Showcase() {
           </Grid>
         </main>
       </Container>
+      <Tooltip title="Create page">
+        <Fab
+          color="primary"
+          className={classes.fab}
+          disabled={!userData?.isLoggedIn ?? true}
+          onClick={() => history.push("/wiki/create")}>
+          <AddIcon />
+        </Fab>
+      </Tooltip>
     </>
   );
 }

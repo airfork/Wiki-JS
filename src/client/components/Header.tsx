@@ -26,9 +26,6 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'block',
       },
     },
-    searchInput: {
-      color: 'inherit',
-    },
     search: {
       color: 'inherit',
       position: 'relative',
@@ -37,12 +34,11 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         backgroundColor: fade(theme.palette.common.white, 0.25),
       },
-      marginRight: theme.spacing(1),
-      width: '100%',
-      height: '3em',
+      backgroundClip: 'content-box',
+      paddingRight: theme.spacing(2),
+      width: theme.spacing(30),
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
-        width: 'auto',
       },
     },
     rightSide: {
@@ -69,8 +65,11 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+type HeaderProps = {
+  logoutAction?: () => void,
+}
 
-export default function Header() {
+export default function Header(props: HeaderProps) {
   const classes = useStyles();
   const { data, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
 
@@ -84,16 +83,16 @@ export default function Header() {
           <Typography className={classes.title} variant="h6" noWrap>
             Wiki
           </Typography>
-          <WikiSearch
-            inputClass={classes.searchInput}
-            mainClass={classes.search}
-          />
+          <div>
+            <WikiSearch
+              mainClass={classes.search}
+            />
+          </div>
           {
             data?.isLoggedIn
               ? <div>
-                <Button color="inherit" href="/wiki/create">Create</Button>
                 <Button color="inherit"
-                  onClick={() => { logout(); refetch(); }}>
+                  onClick={() => { logout(); refetch(); props.logoutAction?.(); }}>
                   Logout
                   </Button>
               </div>
