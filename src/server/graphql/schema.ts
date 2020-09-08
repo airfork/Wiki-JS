@@ -8,7 +8,7 @@ import { sign } from 'jsonwebtoken';
 
 import { ApolloContext } from '../server';
 import { dbImageToGraphQL, Image as DBImage, createImageId } from '../db/images';
-import { Favorite, File, Image, NewUser, Resolvers, User } from './types';
+import { File, Image, NewUser, Resolvers, User } from './types';
 import { dbPageToGraphQL } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
 import { Op } from 'sequelize';
@@ -189,6 +189,30 @@ const resolvers: Resolvers = {
       await newPage.reload({ include: [repos.userRepo, repos.imageRepo, repos.tagRepo] });
       // Convert page to GraphQL object
       return dbPageToGraphQL(newPage);
+    },
+
+    favoritePage: async (_, { pageTitle, sticky }, { user, pageRepo, ...repos }: ApolloContext) => {
+      if (user == null) {
+        throw new AuthenticationError("Must be signed in to favorite a post");
+      }
+      if (!user.admin) {
+        throw new AuthenticationError("Must be an admin to favorite a post");
+      }
+      const dbPage = await pageRepo.findByPk(pageTitle, {
+        include: [repos.imageRepo, repos.tagRepo, repos.userRepo]
+      });
+      if (dbPage == null) {
+        throw new UserInputError("Specified page does not exist");
+      }
+      const dbFavorite = await repos.favoritesRepo.create({
+        page_id: pageTitle,
+        sticky,
+      });
+      await dbFavorite.reload({ include: [pageRepo] });
+      return {
+        sticky: dbFavorite.sticky,
+        page: dbPageToGraphQL(dbFavorite.page),
+      };
     },
 
     createImage: async (_, { image }: createImageArgs, { user, imageRepo }: ApolloContext) => {

@@ -15,6 +15,6 @@ class Favorites extends Model implements Favorites {
 
   @BelongsTo(() => Page)
   page!: Page;
-}
+};
 
-export { Favorites }
+export { Favorites };

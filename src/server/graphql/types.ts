@@ -158,6 +158,7 @@ export type Mutation = {
   updatePage?: Maybe<Page>;
   logIn: Scalars['String'];
   makeAdmin?: Maybe<User>;
+  favoritePage?: Maybe<Favorite>;
 };
 
 
@@ -199,6 +200,12 @@ export type MutationLogInArgs = {
 
 export type MutationMakeAdminArgs = {
   username: Scalars['String'];
+};
+
+
+export type MutationFavoritePageArgs = {
+  pageTitle: Scalars['String'];
+  sticky?: Maybe<Scalars['Boolean']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -413,6 +420,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updatePage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<MutationUpdatePageArgs, 'page'>>;
   logIn?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationLogInArgs, 'username' | 'password'>>;
   makeAdmin?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationMakeAdminArgs, 'username'>>;
+  favoritePage?: Resolver<Maybe<ResolversTypes['Favorite']>, ParentType, ContextType, RequireFields<MutationFavoritePageArgs, 'pageTitle'>>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{

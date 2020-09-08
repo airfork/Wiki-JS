@@ -114,4 +114,5 @@ type Mutation {
     updatePage(page: PageInput!): Page
     logIn(username: String!, password: String!): String!
     makeAdmin(username: String!): User
+    favoritePage(pageTitle: String!, sticky: Boolean): Favorite
 }
