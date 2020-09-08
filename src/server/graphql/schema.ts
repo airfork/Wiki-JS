@@ -7,11 +7,13 @@ import { ReadStream } from 'fs';
 import { sign } from 'jsonwebtoken';
 
 import { ApolloContext } from '../server';
-import { dbImageToGraphQL, Image as DBImage, createImageId } from '../db/images';
+import { dbImageToGraphQL, Image as DBImage, createImageId, ImageQueries } from '../db/images';
 import { File, Image, NewUser, Resolvers, User } from './types';
-import { dbPageToGraphQL } from '../db/pages';
+import { dbPageToGraphQL, PageQueries } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
 import { Op } from 'sequelize';
+import { UserQueries } from '../db/users';
+import { FavoriteQueries } from '../db/favorites';
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -22,79 +24,10 @@ const schema = loadSchemaSync('schema.graphql', {
 
 const resolvers: Resolvers = {
   Query: {
-    getCurrentUser: async (_, __, { user }: ApolloContext) => {
-      return user as User;
-    },
-
-    getUsers: async (_, __, { userRepo }: ApolloContext) => {
-      return await userRepo.findAll() as Array<User>
-    },
-
-    getImages: async (_, __, ctx: ApolloContext) => {
-      const dbImages = await ctx.imageRepo.findAll({
-        include: [ctx.pageRepo]
-      });
-      return dbImages.map(image => dbImageToGraphQL(image));
-    },
-
-    getImage: async (_, { id }, ctx: ApolloContext) => {
-      const dbImage = await ctx.imageRepo.findByPk(id, {
-        include: [ctx.pageRepo]
-      });
-      return dbImage ? dbImageToGraphQL(dbImage) : dbImage;
-    },
-
-    getPage: async (_, { title }, ctx: ApolloContext) => {
-      const dbPage = await ctx.pageRepo.findByPk(title, {
-        include: [ctx.imageRepo, ctx.userRepo, ctx.tagRepo]
-      });
-      return dbPage ? dbPageToGraphQL(dbPage) : dbPage
-    },
-
-    getPages: async (_, { pageFilter }, { sequelize, ...repos }: ApolloContext) => {
-      const dbPages = await repos.pageRepo.findAll({
-        include: [repos.imageRepo, repos.userRepo, repos.tagRepo],
-        where: pageFilter?.titleIncludes ? {
-          title: {
-            [Op.like]: `%${pageFilter.titleIncludes}%`
-          }
-        } : undefined
-      });
-      return dbPages.map(page => dbPageToGraphQL(page));
-    },
-
-    getFilteredPages: async (_, { pageFilter }, repos: ApolloContext) => {
-      const inTags = [];
-      const inTitleDb = await repos.pageRepo.findAll({
-        include: [repos.imageRepo, repos.userRepo, repos.tagRepo],
-        where: {
-          title: {
-            [Op.like]: `%${pageFilter?.titleIncludes}%`
-          }
-        }
-      });
-      const inTitle = inTitleDb.map(page => dbPageToGraphQL(page));
-      const inContentDb = await repos.pageRepo.findAll({
-        include: [repos.imageRepo, repos.userRepo, repos.tagRepo],
-        where: {
-          contents: {
-            [Op.like]: `%${pageFilter?.titleIncludes}%`
-          }
-        }
-      });
-      const inContent = inContentDb.map(page => dbPageToGraphQL(page));
-      return { inContent: inContent, inTags: [], inTitle: inTitle }
-    },
-
-    getFavorites: async (_, __, { favoritesRepo, ...repos }: ApolloContext) => {
-      const dbFavorites = await favoritesRepo.findAll({
-        include: [repos.pageRepo]
-      });
-      return dbFavorites.map(favorite => ({
-        sticky: favorite.sticky,
-        page: dbPageToGraphQL(favorite.page)
-      }));
-    }
+    ...UserQueries,
+    ...ImageQueries,
+    ...PageQueries,
+    ...FavoriteQueries,
   },
   Mutation: {
     createUser: async (_, { user }, { userRepo }: ApolloContext) => {
@@ -204,7 +137,7 @@ const resolvers: Resolvers = {
       if (dbPage == null) {
         throw new UserInputError("Specified page does not exist");
       }
-      const dbFavorite = await repos.favoritesRepo.create({
+      const dbFavorite = await repos.favoriteRepo.create({
         page_id: pageTitle,
         sticky,
       });

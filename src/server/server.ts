@@ -20,7 +20,7 @@ import { UserPage } from './db/user_page';
 import { Image } from './db/images';
 import { TagPage } from './db/tag_page';
 import { ImagePage } from "./db/image_page";
-import { Favorites } from "./db/favorites";
+import { Favorite } from "./db/favorites";
 
 const app = new Koa();
 const router = new Router();
@@ -40,7 +40,7 @@ export type ApolloContext = {
   userPageRepo: Repository<UserPage>,
   tagPageRepo: Repository<TagPage>,
   imagePageRepo: Repository<ImagePage>,
-  favoritesRepo: Repository<Favorites>,
+  favoriteRepo: Repository<Favorite>,
 };
 
 const envDefault = {
@@ -86,7 +86,7 @@ const generalSetup = async () => {
     host: 'localhost',
     dialect: 'mysql',
     repositoryMode: true,
-    models: [User, Page, Tag, Image, UserPage, TagPage, ImagePage, Favorites],
+    models: [User, Page, Tag, Image, UserPage, TagPage, ImagePage, Favorite],
   });
 
   await sequelize.authenticate();
@@ -109,7 +109,7 @@ const generalSetup = async () => {
   const tagRepo = sequelize.getRepository(Tag);
   const tagPageRepo = sequelize.getRepository(TagPage);
   const imagePageRepo = sequelize.getRepository(ImagePage);
-  const favoritesRepo = sequelize.getRepository(Favorites);
+  const favoriteRepo = sequelize.getRepository(Favorite);
 
   // Setup Apollo middleware
   const server = new ApolloServer({
@@ -126,7 +126,7 @@ const generalSetup = async () => {
         tagRepo,
         tagPageRepo,
         imagePageRepo,
-        favoritesRepo,
+        favoriteRepo,
       };
 
       if (token == null) {

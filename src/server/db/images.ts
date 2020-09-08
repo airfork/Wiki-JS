@@ -1,8 +1,13 @@
 import { Table, Column, Model, BelongsToMany, PrimaryKey } from 'sequelize-typescript';
-import { File, Image as GQLImage } from '../graphql/types';
+import { File, Image as GQLImage, QueryResolvers, MutationResolvers } from '../graphql/types';
 import { ImagePage } from "./image_page";
 import { generate } from "shortid";
 import { Page, dbPageToGraphQL } from './pages';
+import { ApolloContext } from '../server';
+import { FileUpload } from 'graphql-upload';
+import { AuthenticationError } from 'apollo-server-koa';
+import { Image as GraphQLImage } from '../graphql/types';
+import { ReadStream } from 'fs';
 
 @Table
 class Image extends Model implements Image {
@@ -46,4 +51,60 @@ function createImageId(filename: String) {
   return parts.join('.');
 }
 
-export { Image, dbImageToGraphQL, createImageId };
+const ImageQueries: QueryResolvers = {
+  getImages: async (_, __, ctx: ApolloContext) => {
+    const dbImages = await ctx.imageRepo.findAll({
+      include: [ctx.pageRepo]
+    });
+    return dbImages.map(image => dbImageToGraphQL(image));
+  },
+
+  getImage: async (_, { id }, ctx: ApolloContext) => {
+    const dbImage = await ctx.imageRepo.findByPk(id, {
+      include: [ctx.pageRepo]
+    });
+    return dbImage ? dbImageToGraphQL(dbImage) : dbImage;
+  },
+}
+
+type createImageArgs = {
+  image: Promise<FileUpload>,
+}
+
+const ImageMutations: MutationResolvers = {
+  createImage: async (_, { image }: createImageArgs, { user, imageRepo }: ApolloContext) => {
+    const awaitedImage = await image;
+    if (user == null) {
+      throw new AuthenticationError("Must be signed in to create a post");
+    }
+    const stream = awaitedImage.createReadStream();
+    const data = await readStream(stream);
+    const newImage = await imageRepo.create({
+      ...awaitedImage,
+      data,
+      id: createImageId(awaitedImage.filename),
+    });
+    return {
+      id: newImage.id,
+      fileInfo: {
+        encoding: newImage.encoding,
+        filename: newImage.filename,
+        mimetype: newImage.mimetype,
+      } as File,
+      url: `/image/${newImage.id}`,
+      pages: [],
+    } as GraphQLImage;
+  },
+}
+
+// Don't know why this isn't built in
+async function readStream(stream: ReadStream) {
+
+  const chunks: Array<Buffer> = [];
+  for await (let chunk of stream) {
+    chunks.push(chunk as Buffer);
+  }
+  return Buffer.concat(chunks);
+}
+
+export { Image, ImageQueries, ImageMutations, dbImageToGraphQL, createImageId };
