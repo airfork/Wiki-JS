@@ -56,14 +56,8 @@ type FilteredPages {
     inContent: [Page!]!
 }
 
-type FavoritePage {
-    title: String!
-    contents: String!
-    updatedAt: String!
-}
-
 type Favorite {
-    page: FavoritePage!
+    page: Page!
     sticky: Boolean!
 }
 

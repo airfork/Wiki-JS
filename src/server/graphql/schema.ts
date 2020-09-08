@@ -86,8 +86,15 @@ const resolvers: Resolvers = {
       return { inContent: inContent, inTags: [], inTitle: inTitle }
     },
 
-    // getFavorites: async (_, __, {sequelize, ...repos}: ApolloContext ) => {
-    // }
+    getFavorites: async (_, __, { favoritesRepo, ...repos }: ApolloContext) => {
+      const dbFavorites = await favoritesRepo.findAll({
+        include: [repos.pageRepo]
+      });
+      return dbFavorites.map(favorite => ({
+        sticky: favorite.sticky,
+        page: dbPageToGraphQL(favorite.page)
+      }));
+    }
   },
   Mutation: {
     createUser: async (_, { user }, { userRepo }: ApolloContext) => {
