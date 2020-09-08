@@ -80,7 +80,7 @@ export default function Showcase() {
           <Grid container spacing={4}>
             {!loading &&
               data?.getPages.map((post) => (
-                <FeaturedPost key={post.title} post={post} />
+                <FeaturedPost key={post?.title} post={post} />
               ))
             }
           </Grid>

@@ -78,6 +78,19 @@ export type FilteredPages = {
   inContent: Array<Page>;
 };
 
+export type FavoritePage = {
+  __typename?: 'FavoritePage';
+  title: Scalars['String'];
+  contents: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type Favorite = {
+  __typename?: 'Favorite';
+  page: FavoritePage;
+  sticky: Scalars['Boolean'];
+};
+
 export type Query = {
   __typename?: 'Query';
   getPage?: Maybe<Page>;
@@ -87,6 +100,7 @@ export type Query = {
   getImage?: Maybe<Image>;
   getPages: Array<Page>;
   getFilteredPages: FilteredPages;
+  getFavorites: Array<Favorite>;
 };
 
 
@@ -285,6 +299,8 @@ export type ResolversTypes = ResolversObject<{
   File: ResolverTypeWrapper<File>;
   PageFilter: PageFilter;
   FilteredPages: ResolverTypeWrapper<FilteredPages>;
+  FavoritePage: ResolverTypeWrapper<FavoritePage>;
+  Favorite: ResolverTypeWrapper<Favorite>;
   Query: ResolverTypeWrapper<{}>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   UserInput: UserInput;
@@ -307,6 +323,8 @@ export type ResolversParentTypes = ResolversObject<{
   File: File;
   PageFilter: PageFilter;
   FilteredPages: FilteredPages;
+  FavoritePage: FavoritePage;
+  Favorite: Favorite;
   Query: {};
   Upload: Scalars['Upload'];
   UserInput: UserInput;
@@ -374,6 +392,19 @@ export type FilteredPagesResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 }>;
 
+export type FavoritePageResolvers<ContextType = any, ParentType extends ResolversParentTypes['FavoritePage'] = ResolversParentTypes['FavoritePage']> = ResolversObject<{
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  contents?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
+export type FavoriteResolvers<ContextType = any, ParentType extends ResolversParentTypes['Favorite'] = ResolversParentTypes['Favorite']> = ResolversObject<{
+  page?: Resolver<ResolversTypes['FavoritePage'], ParentType, ContextType>;
+  sticky?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+}>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryGetPageArgs, 'title'>>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
@@ -382,6 +413,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getImage?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType, RequireFields<QueryGetImageArgs, 'id'>>;
   getPages?: Resolver<Array<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryGetPagesArgs, never>>;
   getFilteredPages?: Resolver<ResolversTypes['FilteredPages'], ParentType, ContextType, RequireFields<QueryGetFilteredPagesArgs, never>>;
+  getFavorites?: Resolver<Array<ResolversTypes['Favorite']>, ParentType, ContextType>;
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -408,6 +440,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Image?: ImageResolvers<ContextType>;
   File?: FileResolvers<ContextType>;
   FilteredPages?: FilteredPagesResolvers<ContextType>;
+  FavoritePage?: FavoritePageResolvers<ContextType>;
+  Favorite?: FavoriteResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;

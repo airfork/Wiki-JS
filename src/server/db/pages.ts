@@ -10,7 +10,7 @@ import {
   DataType,
   Length,
   PrimaryKey,
-  Default
+  Default, HasOne, BelongsTo
 } from 'sequelize-typescript';
 import { User } from './users';
 import { Image } from './images';
@@ -19,6 +19,7 @@ import { UserPage } from './user_page';
 import { TagPage } from './tag_page';
 import { Page as GQLPage } from '../graphql/types';
 import { ImagePage } from "./image_page";
+import { Favorites } from "./favorites";
 
 @Table
 class Page extends Model implements Page {
@@ -51,6 +52,9 @@ class Page extends Model implements Page {
 
   @BelongsToMany(() => Tag, () => TagPage)
   categories!: Tag[];
+
+  @HasOne(() => Favorites)
+  favorite!: Favorites;
 }
 
 function dbPageToGraphQL(page: Page) {

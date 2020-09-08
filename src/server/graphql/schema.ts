@@ -8,7 +8,7 @@ import { sign } from 'jsonwebtoken';
 
 import { ApolloContext } from '../server';
 import { dbImageToGraphQL, Image as DBImage, createImageId } from '../db/images';
-import { File, Image, NewUser, Resolvers, User } from './types';
+import { Favorite, File, Image, NewUser, Resolvers, User } from './types';
 import { dbPageToGraphQL } from '../db/pages';
 import { FileUpload } from 'graphql-upload';
 import { Op } from 'sequelize';
@@ -84,7 +84,10 @@ const resolvers: Resolvers = {
       });
       const inContent = inContentDb.map(page => dbPageToGraphQL(page));
       return { inContent: inContent, inTags: [], inTitle: inTitle }
-    }
+    },
+
+    // getFavorites: async (_, __, {sequelize, ...repos}: ApolloContext ) => {
+    // }
   },
   Mutation: {
     createUser: async (_, { user }, { userRepo }: ApolloContext) => {

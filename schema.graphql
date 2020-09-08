@@ -56,6 +56,17 @@ type FilteredPages {
     inContent: [Page!]!
 }
 
+type FavoritePage {
+    title: String!
+    contents: String!
+    updatedAt: String!
+}
+
+type Favorite {
+    page: FavoritePage!
+    sticky: Boolean!
+}
+
 type Query {
     getPage(title: String!): Page
     getCurrentUser: User
@@ -64,6 +75,7 @@ type Query {
     getImage(id: ID!): Image
     getPages(pageFilter: PageFilter): [Page!]!
     getFilteredPages(pageFilter: PageFilter): FilteredPages!
+    getFavorites: [Favorite!]!
 }
 
 scalar Upload

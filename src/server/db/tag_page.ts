@@ -1,4 +1,4 @@
-import { Table, Model, Column, ForeignKey, PrimaryKey } from 'sequelize-typescript';
+import { Table, Model, Column, ForeignKey } from 'sequelize-typescript';
 import { Page } from './pages';
 import { Tag } from './tags';
 
