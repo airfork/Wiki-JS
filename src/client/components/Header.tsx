@@ -10,6 +10,7 @@ import WikiSearch from './WikiSearch';
 import { useQuery } from '@apollo/client';
 import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN, logout } from '../auth';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,8 +19,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
+      [theme.breakpoints.down('xs')]: {
+        flexGrow: 1,
+      }
     },
     title: {
+      paddingTop: '20%',
       flexGrow: 1,
       display: 'none',
       [theme.breakpoints.up('sm')]: {
@@ -34,34 +39,14 @@ const useStyles = makeStyles((theme: Theme) =>
       '&:hover': {
         backgroundColor: fade(theme.palette.common.white, 0.25),
       },
-      backgroundClip: 'content-box',
-      paddingRight: theme.spacing(2),
       width: theme.spacing(30),
       [theme.breakpoints.up('sm')]: {
         marginLeft: theme.spacing(1),
       },
     },
-    rightSide: {
-      marginLeft: 0,
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-      },
-    },
-    inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
-      },
-    },
+    loginButton: {
+      paddingLeft: theme.spacing(2),
+    }
   }),
 );
 
@@ -77,30 +62,35 @@ export default function Header(props: HeaderProps) {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" href="/">
-            <HomeIcon />
-          </IconButton>
-          <Typography className={classes.title} variant="h6" noWrap>
-            Wiki
-          </Typography>
-          <div>
-            <WikiSearch
-              mainClass={classes.search}
-              searchSize="dense"
-            />
-          </div>
-          {
-            data?.isLoggedIn
-              ? <div>
+          <Grid container>
+            <Grid item>
+              <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" href="/">
+                <HomeIcon />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <Typography className={classes.title} variant="h6">
+                Wiki
+            </Typography>
+            </Grid>
+          </Grid>
+          <WikiSearch
+            mainClass={classes.search}
+            searchSize="dense"
+          />
+          <div className={classes.loginButton}>
+            {
+              data?.isLoggedIn
+                ?
                 <Button color="inherit"
                   onClick={() => { logout(); refetch(); props.logoutAction?.(); }}>
                   Logout
                   </Button>
-              </div>
-              : <Button color="inherit" href="/login">Login</Button>
-          }
+                : <Button color="inherit" href="/login">Login</Button>
+            }
+          </div>
         </Toolbar>
       </AppBar>
-    </div>
+    </div >
   );
 }
