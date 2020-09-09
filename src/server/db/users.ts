@@ -4,7 +4,7 @@ import { UserPage } from './user_page';
 import { QueryResolvers, MutationResolvers, NewUser } from '../graphql/types';
 import { ApolloContext } from '../server';
 import { AuthenticationError, UserInputError } from 'apollo-server-koa';
-import { hash } from 'argon2';
+import { hash, verify } from 'argon2';
 import { sign } from 'jsonwebtoken';
 
 @Table
@@ -77,6 +77,17 @@ const UserMutations: MutationResolvers = {
     }
     await dbUser.destroy();
     return dbUser as User;
+  },
+
+  logIn: async (_, { username, password }, { userRepo }: ApolloContext) => {
+    let user = await userRepo.findByPk(username);
+    if (user == null) {
+      throw new UserInputError("Username does not exist");
+    }
+    if (!await verify(user.password, password)) {
+      throw new UserInputError("Incorrect password");
+    }
+    return sign({ username: user.username }, process.env.JWT_SECRET!);
   },
 }
 
