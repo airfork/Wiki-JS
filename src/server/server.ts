@@ -100,7 +100,33 @@ const generalSetup = async () => {
               id NOT IN (SELECT DISTINCT image_id FROM ImagePages)
               AND createdAt < NOW() - INTERVAL 1 WEEK;
     `
-  )
+  );
+  await sequelize.query(`
+  DELIMITER $
+  CREATE OR REPLACE PROCEDURE setNewFavorites(num_pages INT)
+  BEGIN
+  SET @_page_count = num_pages;
+  PREPARE stmt FROM "INSERT INTO Favorites (page_id, createdAt, updatedAT) SELECT title, NOW(), NOW() FROM Pages ORDER BY RAND() LIMIT ?;";
+  EXECUTE stmt USING @_page_count;
+  DEALLOCATE PREPARE stmt;
+  END$
+  DELIMITER ;
+  `);
+
+  await sequelize.query(`
+  DELIMITER $
+  CREATE OR REPLACE EVENT replaceFavorites
+  ON SCHEDULE EVERY 1 DAY
+  DO
+  BEGIN
+  DELETE FROM Favorites WHERE sticky=0 AND createdAt < NOW() - INTERVAL 1 DAY;
+  SELECT @stickyFavs:=COUNT(id) FROM Favorites;
+  SET @newEntries = 4 - @stickyFavs;
+  CALL setNewFavorites(@newEntries);
+  END$
+  DELIMITER ;
+  `);
+
 
   const userPageRepo = sequelize.getRepository(UserPage);
   const pageRepo = sequelize.getRepository(Page);
