@@ -102,19 +102,16 @@ const generalSetup = async () => {
     `
   );
   await sequelize.query(`
-  DELIMITER $
   CREATE OR REPLACE PROCEDURE setNewFavorites(num_pages INT)
   BEGIN
   SET @_page_count = num_pages;
-  PREPARE stmt FROM "INSERT INTO Favorites (page_id, createdAt, updatedAT) SELECT title, NOW(), NOW() FROM Pages ORDER BY RAND() LIMIT ?;";
+  PREPARE stmt FROM 'INSERT INTO Favorites (page_id, createdAt, updatedAT) SELECT title, NOW(), NOW() FROM Pages ORDER BY RAND() LIMIT ?;';
   EXECUTE stmt USING @_page_count;
   DEALLOCATE PREPARE stmt;
-  END$
-  DELIMITER ;
+  END
   `);
 
   await sequelize.query(`
-  DELIMITER $
   CREATE OR REPLACE EVENT replaceFavorites
   ON SCHEDULE EVERY 1 DAY
   DO
@@ -123,8 +120,7 @@ const generalSetup = async () => {
   SELECT @stickyFavs:=COUNT(id) FROM Favorites;
   SET @newEntries = 4 - @stickyFavs;
   CALL setNewFavorites(@newEntries);
-  END$
-  DELIMITER ;
+  END
   `);
 
 
