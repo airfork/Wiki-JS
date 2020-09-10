@@ -123,33 +123,23 @@ const generalSetup = async () => {
   END
   `);
 
-
-  const userPageRepo = sequelize.getRepository(UserPage);
-  const pageRepo = sequelize.getRepository(Page);
-  const imageRepo = sequelize.getRepository(Image);
-  const userRepo = sequelize.getRepository(User);
-  const tagRepo = sequelize.getRepository(Tag);
-  const tagPageRepo = sequelize.getRepository(TagPage);
-  const imagePageRepo = sequelize.getRepository(ImagePage);
-  const favoriteRepo = sequelize.getRepository(Favorite);
+  const sequelizeData: ApolloContext = {
+    sequelize,
+    userPageRepo: sequelize.getRepository(UserPage),
+    pageRepo: sequelize.getRepository(Page),
+    imageRepo: sequelize.getRepository(Image),
+    userRepo: sequelize.getRepository(User),
+    tagRepo: sequelize.getRepository(Tag),
+    tagPageRepo: sequelize.getRepository(TagPage),
+    imagePageRepo: sequelize.getRepository(ImagePage),
+    favoriteRepo: sequelize.getRepository(Favorite),
+  };
 
   // Setup Apollo middleware
   const server = new ApolloServer({
     schema: schemaWithResolvers,
     context: async (req): Promise<ApolloContext | null> => {
       const token: string | null = req.ctx.request.header.authorization;
-
-      const sequelizeData: ApolloContext = {
-        sequelize,
-        userPageRepo,
-        pageRepo,
-        imageRepo,
-        userRepo,
-        tagRepo,
-        tagPageRepo,
-        imagePageRepo,
-        favoriteRepo,
-      };
 
       if (token == null) {
         return sequelizeData;
@@ -165,7 +155,7 @@ const generalSetup = async () => {
         }
       }
       return {
-        user: await userRepo.findByPk(claims.username) ?? undefined,
+        user: await sequelizeData.userRepo.findByPk(claims.username) ?? undefined,
         ...sequelizeData,
       };
     }
@@ -173,7 +163,7 @@ const generalSetup = async () => {
   server.applyMiddleware({ app });
 
   router.get("/image/:id", async (ctx, next) => {
-    const image = await imageRepo.findByPk(ctx.params.id);
+    const image = await sequelizeData.imageRepo.findByPk(ctx.params.id);
     if (image != null) {
       ctx.type = image.mimetype;
       ctx.body = image.data;

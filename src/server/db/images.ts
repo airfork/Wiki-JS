@@ -1,4 +1,4 @@
-import { Table, Column, Model, BelongsToMany, PrimaryKey } from 'sequelize-typescript';
+import { Table, Column, Model, BelongsToMany, PrimaryKey, DataType } from 'sequelize-typescript';
 import { File, Image as GQLImage, QueryResolvers, MutationResolvers } from '../graphql/types';
 import { ImagePage } from "./image_page";
 import { generate } from "shortid";
@@ -15,7 +15,7 @@ class Image extends Model implements Image {
   @Column
   id!: string;
 
-  @Column
+  @Column(DataType.BLOB("long"))
   data!: Buffer;
 
   @Column
