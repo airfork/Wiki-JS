@@ -43,11 +43,11 @@ export type Post = {
 const GET_FAVORITES = gql`
   query getFavorites {
     getFavorites {
-        page {
-            title
-            contents
-            updatedAt
-        }
+      page {
+          title
+          contents
+          updatedAt
+      }
     }
   }
 `;
@@ -80,17 +80,17 @@ export default function Showcase() {
       <Header logoutAction={refetch} />
       <Container maxWidth="xl">
         <main>
-          <MainFeaturedPost fav={mainFeaturedPost} />
+          {mainFeaturedPost && <MainFeaturedPost fav={mainFeaturedPost} />}
           <Grid container spacing={4}>
-            {!loading &&
-                <FeaturedPost key={firstFeatured.page.title} fav={firstFeatured} />
+            {firstFeatured &&
+              <FeaturedPost key={firstFeatured.page.title} fav={firstFeatured} />
             }
-            {!loading &&
-                <FeaturedPost key={secondFeatured.page.title} fav={secondFeatured} />
+            {secondFeatured &&
+              <FeaturedPost key={secondFeatured.page.title} fav={secondFeatured} />
             }
           </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>
-            <Main title={longFeatured?.page.title} fav={longFeatured} />
+            {longFeatured && <Main title={longFeatured?.page.title} fav={longFeatured} />}
             <Sidebar
               related={relatedArticles}
             />
