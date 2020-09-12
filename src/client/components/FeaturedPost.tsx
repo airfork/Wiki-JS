@@ -9,6 +9,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Hidden from '@material-ui/core/Hidden';
 import { Post } from '../pages/Showcase';
 import { getPages_getPages } from "../graphql/getPages";
+import { getFavorites_getFavorites } from "../graphql/getFavorites";
 
 const useStyles = makeStyles({
   card: {
@@ -23,12 +24,13 @@ const useStyles = makeStyles({
 });
 
 type FeaturedPostProps = {
-  post: getPages_getPages,
+  fav: getFavorites_getFavorites,
 }
 
 export default function FeaturedPost(props: FeaturedPostProps) {
   const classes = useStyles();
-  const { post } = props;
+  const { fav } = props;
+  const post = fav.page;
   let updatedAt = ''
   if (post.updatedAt) {
     const updatedDate = new Date(post.updatedAt);
@@ -50,7 +52,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
                 {updatedAt}
               </Typography>
               <Typography variant="subtitle1" paragraph>
-                {post.contents}
+                {post.contents.substr(0,100) + '...'}
               </Typography>
               <Typography variant="subtitle1" color="primary">
                 Continue reading...

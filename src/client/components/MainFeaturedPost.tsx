@@ -5,6 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import { Post } from '../pages/Showcase';
+import { getPages_getPages } from "../graphql/getPages";
+import { getFavorites_getFavorites } from "../graphql/getFavorites";
 
 const useStyles = makeStyles((theme) => ({
   mainFeaturedPost: {
@@ -36,33 +38,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type MainFeaturedPostProps = {
-  post: Post
+  fav: getFavorites_getFavorites
 };
 
 export default function MainFeaturedPost(props: MainFeaturedPostProps) {
   const classes = useStyles();
-  const { post } = props;
+  const { fav } = props;
+  const post = fav?.page;
 
   return (
-    <Paper className={classes.mainFeaturedPost} style={{ backgroundImage: `url(${post.image})` }}>
-      {/* Increase the priority of the hero background image */}
-      {<img style={{ display: 'none' }} src={post.image} alt={post.imageTitle} />}
+    <Paper className={classes.mainFeaturedPost}>
       <div className={classes.overlay} />
       <Grid container>
         <Grid item md={6}>
           <div className={classes.mainFeaturedPostContent}>
             <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-              {post.title}
+              {post?.title}
             </Typography>
             <Typography variant="h5" color="inherit" paragraph>
-              {post.description}
+              {post?.contents.substr(0, 100) + '...'}
             </Typography>
-            {post.linkText
-            ? <Link variant="subtitle1" href="#">
-              {post.linkText}
+            <Link variant="subtitle1" href="#">
+              Continue Reading
             </Link>
-              : <p/>
-            }
           </div>
         </Grid>
       </Grid>

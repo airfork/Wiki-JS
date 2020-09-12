@@ -12,9 +12,15 @@ export interface searchQuery_getFilteredPages_inTitle {
   title: string;
 }
 
+export interface searchQuery_getFilteredPages_inContent {
+  __typename: "Page";
+  title: string;
+}
+
 export interface searchQuery_getFilteredPages {
   __typename: "FilteredPages";
   inTitle: searchQuery_getFilteredPages_inTitle[];
+  inContent: searchQuery_getFilteredPages_inContent[];
 }
 
 export interface searchQuery {

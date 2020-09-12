@@ -11,7 +11,7 @@ import Sidebar from "../components/Sidebar";
 import { RelatedArticle } from "../types";
 import { useQuery } from "@apollo/client";
 import gql from 'graphql-tag';
-import { getPages } from "../graphql/getPages";
+import { getFavorites, getFavorites_getFavorites } from "../graphql/getFavorites";
 import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN } from '../auth';
 import { Fab, Tooltip } from '@material-ui/core';
@@ -40,23 +40,22 @@ export type Post = {
   linkText?: string,
 }
 
-const GET_PAGES = gql`
-  query getPages {
-    getPages {
-        title
-        contents
-        updatedAt
+const GET_FAVORITES = gql`
+  query getFavorites {
+    getFavorites {
+        page {
+            title
+            contents
+            updatedAt
+        }
     }
   }
 `;
 
-const mainFeaturedPost: Post = {
-  title: 'Title of a longer featured blog post',
-  date: 'Nov 13',
-  description:
-    "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
-  linkText: 'Continue Reading'
-};
+let mainFeaturedPost: getFavorites_getFavorites;
+let firstFeatured: getFavorites_getFavorites;
+let secondFeatured: getFavorites_getFavorites;
+let longFeatured: getFavorites_getFavorites;
 
 const relatedArticles: Array<RelatedArticle> = [
   { title: 'Related post 1', url: '#' },
@@ -66,9 +65,14 @@ const relatedArticles: Array<RelatedArticle> = [
 
 export default function Showcase() {
   const classes = useStyles();
-  const { loading, data } = useQuery<getPages>(GET_PAGES);
+  const { loading, data } = useQuery<getFavorites>(GET_FAVORITES);
   const { data: userData, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
   const history = useHistory();
+  if (!loading) {
+    if (data) {
+      [mainFeaturedPost, firstFeatured, secondFeatured, longFeatured] = data.getFavorites;
+    }
+  }
 
   return (
     <>
@@ -76,16 +80,17 @@ export default function Showcase() {
       <Header logoutAction={refetch} />
       <Container maxWidth="xl">
         <main>
-          <MainFeaturedPost post={mainFeaturedPost} />
+          <MainFeaturedPost fav={mainFeaturedPost} />
           <Grid container spacing={4}>
             {!loading &&
-              data?.getPages.map((post) => (
-                <FeaturedPost key={post?.title} post={post} />
-              ))
+                <FeaturedPost key={firstFeatured.page.title} fav={firstFeatured} />
+            }
+            {!loading &&
+                <FeaturedPost key={secondFeatured.page.title} fav={secondFeatured} />
             }
           </Grid>
           <Grid container spacing={5} className={classes.mainGrid}>
-            <Main title="C++20" posts={[]} />
+            <Main title={longFeatured?.page.title} fav={longFeatured} />
             <Sidebar
               related={relatedArticles}
             />
