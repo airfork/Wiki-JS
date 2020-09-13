@@ -23,7 +23,11 @@ class Favorite extends Model implements Favorite {
 const FavoriteQueries: QueryResolvers = {
   getFavorites: async (_, __, { favoriteRepo, ...repos }: ApolloContext) => {
     const dbFavorites = await favoriteRepo.findAll({
-      include: [repos.pageRepo]
+      include: [repos.pageRepo],
+      order: [
+        ['sticky', 'DESC'],
+        ['updatedAt', 'ASC']
+      ]
     });
     return dbFavorites.map(favorite => ({
       sticky: favorite.sticky,
