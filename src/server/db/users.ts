@@ -82,10 +82,10 @@ const UserMutations: MutationResolvers = {
   logIn: async (_, { username, password }, { userRepo }: ApolloContext) => {
     let user = await userRepo.findByPk(username);
     if (user == null) {
-      throw new UserInputError("Username does not exist");
+      throw new UserInputError("Incorrect username or password");
     }
     if (!await verify(user.password, password)) {
-      throw new UserInputError("Incorrect password");
+      throw new UserInputError("Incorrect username or password");
     }
     return sign({ username: user.username }, process.env.JWT_SECRET!);
   },
