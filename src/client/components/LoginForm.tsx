@@ -21,6 +21,8 @@ import { useHistory } from 'react-router';
 import useCountDown from 'react-countdown-hook';
 import { useEffect } from 'react';
 import { useMemo } from 'react';
+import { IS_LOGGED_IN } from '../auth';
+import { client } from '../main';
 
 export const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -103,8 +105,9 @@ export default function LoginForm(props: LoginFormProps) {
       },
       onCompleted({ logIn }) {
         localStorage.setItem('accessToken', logIn);
-        window.location.replace('/wiki');
-      }
+        client.writeQuery({ query: IS_LOGGED_IN, data: { isLoggedIn: true } })
+        history.push('/wiki');
+      },
     }
   );
   const [createAccount] = useMutation<createAccountMutation, createAccountVariables>(
@@ -121,7 +124,8 @@ export default function LoginForm(props: LoginFormProps) {
         setAlertAction(historyAction);
         start();
         localStorage.setItem('accessToken', createUser?.token ?? '');
-        setRedirectTimeout(setTimeout(() => window.location.replace('/wiki'), 5000));
+        client.writeQuery({ query: IS_LOGGED_IN, data: { isLoggedIn: true } })
+        setRedirectTimeout(setTimeout(() => history.push('/wiki'), 5000));
         setAlertOpen(true);
       }
     }
