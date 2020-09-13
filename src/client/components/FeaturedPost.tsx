@@ -42,30 +42,34 @@ export default function FeaturedPost(props: FeaturedPostProps) {
   return (
     <Grid item xs={12} md={6}>
       <CardActionArea component="a" href="#">
-        <Card className={classes.card}>
-          <div className={classes.cardDetails}>
-            <CardContent>
-              <Typography component="h2" variant="h5">
-                {post.title}
-              </Typography>
-              <Typography variant="subtitle1" color="textSecondary">
-                {updatedAt}
-              </Typography>
-              <Typography variant="subtitle1" paragraph>
-                {post.contents.substr(0,100) + '...'}
-              </Typography>
-              <Typography variant="subtitle1" color="primary">
-                Continue reading...
-              </Typography>
-            </CardContent>
-          </div>
-          {/*<Hidden xsDown>*/}
-          {/*  {post.image*/}
-          {/*  ? <CardMedia className={classes.cardMedia} image={post.image} title={post.imageTitle} />*/}
-          {/*  : <p/>*/}
-          {/*  }*/}
-          {/*</Hidden>*/}
-        </Card>
+          <Card className={classes.card}>
+            <Grid container spacing={5} className={classes.cardDetails}>
+              <Grid item xs={12}>
+                <CardContent>
+                  <Typography component="h2" variant="h5" noWrap={true}>
+                    {post.title}
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {updatedAt}
+                  </Typography>
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" paragraph>
+                      {post.contents.substr(0,200) + '...'}
+                    </Typography>
+                  </Grid>
+                  <Typography variant="subtitle1" color="primary">
+                    Continue reading...
+                  </Typography>
+                </CardContent>
+              </Grid>
+            </Grid>
+            {/*<Hidden xsDown>*/}
+            {/*  {post.image*/}
+            {/*  ? <CardMedia className={classes.cardMedia} image={post.image} title={post.imageTitle} />*/}
+            {/*  : <p/>*/}
+            {/*  }*/}
+            {/*</Hidden>*/}
+          </Card>
       </CardActionArea>
     </Grid>
   );

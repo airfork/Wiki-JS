@@ -4,8 +4,6 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
-import { Post } from '../pages/Showcase';
-import { getPages_getPages } from "../graphql/getPages";
 import { getFavorites_getFavorites } from "../graphql/getFavorites";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,13 +48,13 @@ export default function MainFeaturedPost(props: MainFeaturedPostProps) {
     <Paper className={classes.mainFeaturedPost}>
       <div className={classes.overlay} />
       <Grid container>
-        <Grid item md={6}>
+        <Grid item xs={12} md={6} xl={8}>
           <div className={classes.mainFeaturedPostContent}>
             <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-              {post?.title}
+              {post?.title.substr(0, 100)}
             </Typography>
             <Typography variant="h5" color="inherit" paragraph>
-              {post?.contents.substr(0, 100) + '...'}
+              {post?.contents.substr(0, 200) + '...'}
             </Typography>
             <Link variant="subtitle1" href="#">
               Continue Reading
