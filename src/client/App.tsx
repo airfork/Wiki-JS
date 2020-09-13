@@ -5,6 +5,7 @@ import { createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@mate
 import { ApolloProvider } from '@apollo/client';
 import { client } from './main';
 import NotFound from "./pages/NotFound";
+import { GlobalOperations } from './components/GlobalOperations';
 
 
 export default function App() {
@@ -46,15 +47,17 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={Theme}>
-        <CssBaseline />
-        <Router>
-          <Switch>
-            {Routes.map(route => (
-              <Route path={route.path} key={route.routeName} exact component={route.component} />
-            ))}
-            <Route component={NotFound} />
-          </Switch>
-        </Router>
+        <GlobalOperations>
+          <CssBaseline />
+          <Router>
+            <Switch>
+              {Routes.map(route => (
+                <Route path={route.path} key={route.routeName} exact component={route.component} />
+              ))}
+              <Route component={NotFound} />
+            </Switch>
+          </Router>
+        </GlobalOperations>
       </ThemeProvider>
     </ApolloProvider>
   );

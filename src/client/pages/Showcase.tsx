@@ -73,6 +73,7 @@ export default function Showcase() {
       [mainFeaturedPost, firstFeatured, secondFeatured, longFeatured] = data.getFavorites;
     }
   }
+  const fabDisabled = !userData?.isLoggedIn ?? true;
 
   return (
     <>
@@ -97,11 +98,11 @@ export default function Showcase() {
           </Grid>
         </main>
       </Container>
-      <Tooltip title="Create page">
+      <Tooltip title={fabDisabled ? "" : "Create page"}>
         <Fab
           color="secondary"
           className={classes.fab}
-          disabled={!userData?.isLoggedIn ?? true}
+          disabled={fabDisabled}
           onClick={() => history.push("/wiki/create")}
         >
           <AddIcon />

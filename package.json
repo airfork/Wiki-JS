@@ -58,6 +58,7 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
+    "@rehooks/local-storage": "^2.4.0",
     "@types/apollo-upload-client": "^14.1.0",
     "@types/draft-js": "^0.10.43",
     "@types/draftjs-to-html": "^0.8.0",
@@ -106,7 +107,8 @@
     "reflect-metadata": "^0.1.13",
     "sequelize": "5.22.3",
     "sequelize-typescript": "^1.1.0",
-    "shortid": "^2.2.15"
+    "shortid": "^2.2.15",
+    "use-local-storage-state": "^4.0.0"
   },
   "resolutions": {
     "fs-capacitor": "^6.2.0",
