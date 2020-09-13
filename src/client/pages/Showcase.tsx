@@ -102,7 +102,8 @@ export default function Showcase() {
           color="secondary"
           className={classes.fab}
           disabled={!userData?.isLoggedIn ?? true}
-          onClick={() => history.push("/wiki/create")}>
+          onClick={() => history.push("/wiki/create")}
+        >
           <AddIcon />
         </Fab>
       </Tooltip>

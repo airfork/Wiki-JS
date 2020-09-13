@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import WikiSearch from '../components/WikiSearch';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,7 +48,8 @@ export default function Index() {
             <Grid item xs={12} className={`${classes.alignCenter}`}>
               <Button
                 color="secondary"
-                href={Routes.find(route => route.routeName == 'wiki')!.path}
+                component={Link}
+                to={Routes.find(route => route.routeName == 'wiki')!.path}
               >
                 Visit Showcase
               </Button>

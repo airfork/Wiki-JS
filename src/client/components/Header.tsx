@@ -11,6 +11,7 @@ import { useQuery } from '@apollo/client';
 import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN, logout } from '../auth';
 import { Grid } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,7 +65,14 @@ export default function Header(props: HeaderProps) {
         <Toolbar>
           <Grid container>
             <Grid item>
-              <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" href="/">
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="menu"
+                component={Link}
+                to="/"
+              >
                 <HomeIcon />
               </IconButton>
             </Grid>
@@ -86,7 +94,7 @@ export default function Header(props: HeaderProps) {
                   onClick={() => { logout(); refetch(); props.logoutAction?.(); }}>
                   Logout
                   </Button>
-                : <Button color="inherit" href="/login">Login</Button>
+                : <Button color="inherit" component={Link} to="/login">Login</Button>
             }
           </div>
         </Toolbar>
