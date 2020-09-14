@@ -5,6 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import { getFavorites_getFavorites } from "../graphql/getFavorites";
+import CardActionArea from "@material-ui/core/CardActionArea";
 
 const useStyles = makeStyles((theme) => ({
   mainFeaturedPost: {
@@ -53,23 +54,25 @@ export default function MainFeaturedPost(props: MainFeaturedPostProps) {
   const post = fav?.page;
 
   return (
-    <Paper className={classes.mainFeaturedPost}>
-      <div className={classes.overlay} />
-      <Grid container>
-        <Grid item xs={12} md={6} xl={8}>
-          <div className={classes.mainFeaturedPostContent}>
-            <Typography component="h1" variant="h3" color="inherit" gutterBottom style={{ wordBreak: 'break-word' }}>
-              {post?.title.substr(0, 100)}
-            </Typography>
-            <Typography variant="h5" color="inherit" paragraph style={{ wordBreak: 'break-word' }}>
-              {stripHtml(post?.contents).substr(0, 200) + '...'}
-            </Typography>
-            <Link variant="subtitle1" href={encodeURI(`/wiki/${post?.title}`)}>
-              Continue Reading
-            </Link>
-          </div>
+    <CardActionArea component="a" href={encodeURI(`/wiki/${post?.title}`)}>
+      <Paper className={classes.mainFeaturedPost}>
+        <div className={classes.overlay} />
+        <Grid container>
+          <Grid item xs={12} md={6} xl={8}>
+            <div className={classes.mainFeaturedPostContent}>
+              <Typography component="h1" variant="h3" color="inherit" gutterBottom style={{ wordBreak: 'break-word' }}>
+                {post?.title.substr(0, 100)}
+              </Typography>
+              <Typography variant="h5" color="inherit" paragraph style={{ wordBreak: 'break-word' }}>
+                {stripHtml(post?.contents).substr(0, 200) + '...'}
+              </Typography>
+              <Typography variant="subtitle1" color="primary">
+                Continue Reading
+              </Typography>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </CardActionArea>
   );
 }

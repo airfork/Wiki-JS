@@ -66,7 +66,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
                     </Typography>
                   </Grid>
                   <Typography variant="subtitle1" color="primary">
-                    Continue reading...
+                    Continue Reading
                   </Typography>
                 </CardContent>
               </Grid>
