@@ -39,6 +39,14 @@ type MainFeaturedPostProps = {
   fav: getFavorites_getFavorites
 };
 
+function stripHtml(html: string | null): string {
+  if (!html) {
+    return "";
+  }
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || "";
+}
+
 export default function MainFeaturedPost(props: MainFeaturedPostProps) {
   const classes = useStyles();
   const { fav } = props;
@@ -54,9 +62,9 @@ export default function MainFeaturedPost(props: MainFeaturedPostProps) {
               {post?.title.substr(0, 100)}
             </Typography>
             <Typography variant="h5" color="inherit" paragraph style={{ wordBreak: 'break-word' }}>
-              {post?.contents.substr(0, 200) + '...'}
+              {stripHtml(post?.contents).substr(0, 200) + '...'}
             </Typography>
-            <Link variant="subtitle1" href="#">
+            <Link variant="subtitle1" href={encodeURI(`/wiki/${post?.title}`)}>
               Continue Reading
             </Link>
           </div>

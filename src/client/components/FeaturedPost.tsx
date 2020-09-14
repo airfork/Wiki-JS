@@ -27,6 +27,14 @@ type FeaturedPostProps = {
   fav: getFavorites_getFavorites,
 }
 
+function stripHtml(html: string | null): string {
+  if (!html) {
+    return "";
+  }
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || "";
+}
+
 export default function FeaturedPost(props: FeaturedPostProps) {
   const classes = useStyles();
   const { fav } = props;
@@ -41,7 +49,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
 
   return (
     <Grid item xs={12} md={6}>
-      <CardActionArea component="a" href="#">
+      <CardActionArea component="a" href={encodeURI(`/wiki/${post.title}`)}>
           <Card className={classes.card}>
             <Grid container spacing={5} className={classes.cardDetails}>
               <Grid item xs={12}>
@@ -54,7 +62,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
                   </Typography>
                   <Grid item xs={12}>
                     <Typography variant="subtitle1" paragraph>
-                      {post.contents.substr(0,200) + '...'}
+                      {stripHtml(post.contents).substr(0,200) + '...'}
                     </Typography>
                   </Grid>
                   <Typography variant="subtitle1" color="primary">

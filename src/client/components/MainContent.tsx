@@ -5,11 +5,11 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Markdown from './Markdown';
 import { getFavorites_getFavorites } from "../graphql/getFavorites";
+import sanitizeHtml from "sanitize-html";
 
 const useStyles = makeStyles((theme) => ({
-  markdown: {
-    ...theme.typography.body2,
-    padding: theme.spacing(3, 0),
+  bottomSpacing: {
+    marginBottom: "1rem"
   },
 }));
 
@@ -27,8 +27,10 @@ export default function Main(props: MainContextProps) {
       <Typography variant="h6" gutterBottom>
         {title}
       </Typography>
-      <Divider />
-      {fav?.page.contents}
+      <Divider className={classes.bottomSpacing} />
+      {fav?.page &&
+      <Typography variant="body1" dangerouslySetInnerHTML={{ __html: sanitizeHtml(fav.page.contents) }}/>
+      }
     </Grid>
   );
 }

@@ -4,6 +4,7 @@ import Showcase from "./pages/Showcase";
 import NewArticle from "./pages/NewArticle";
 import { SignUp } from './pages/SignUp';
 import React from "react";
+import ViewArticle from "./pages/VewArticle";
 
 // type Route = {
 //   routeName: string,
@@ -24,7 +25,8 @@ const Routes: Array<Route> = [
   new Route('index', '/', Index),
   new Route('login', '/login', Login),
   new Route('signup', '/signup', SignUp),
-  new Route('newArticle', '/wiki/create', NewArticle)
+  new Route('newArticle', '/wiki/create', NewArticle),
+  new Route('viewArticle', '/wiki/:title', ViewArticle)
 ];
 
 export default Routes;

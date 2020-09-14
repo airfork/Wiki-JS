@@ -14,20 +14,11 @@ import gql from 'graphql-tag';
 import { getFavorites, getFavorites_getFavorites } from "../graphql/getFavorites";
 import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN } from '../auth';
-import { Fab, Tooltip } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import { useHistory } from 'react-router';
+import CreateFab from "../components/CreateFab";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     marginTop: theme.spacing(3),
-  },
-  fab: {
-    top: 'auto',
-    right: 20,
-    bottom: 20,
-    left: 'auto',
-    position: 'fixed',
   },
 }));
 
@@ -66,14 +57,12 @@ const relatedArticles: Array<RelatedArticle> = [
 export default function Showcase() {
   const classes = useStyles();
   const { loading, data } = useQuery<getFavorites>(GET_FAVORITES);
-  const { data: userData, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
-  const history = useHistory();
+  const { refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
   if (!loading) {
     if (data) {
       [mainFeaturedPost, firstFeatured, secondFeatured, longFeatured] = data.getFavorites;
     }
   }
-  const fabDisabled = !userData?.isLoggedIn ?? true;
 
   return (
     <>
@@ -98,16 +87,7 @@ export default function Showcase() {
           </Grid>
         </main>
       </Container>
-      <Tooltip title={fabDisabled ? "" : "Create page"}>
-        <Fab
-          color="secondary"
-          className={classes.fab}
-          disabled={fabDisabled}
-          onClick={() => history.push("/wiki/create")}
-        >
-          <AddIcon />
-        </Fab>
-      </Tooltip>
+      <CreateFab/>
     </>
   );
 }
