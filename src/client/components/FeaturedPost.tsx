@@ -10,6 +10,7 @@ import Hidden from '@material-ui/core/Hidden';
 import { Post } from '../pages/Showcase';
 import { getPages_getPages } from "../graphql/getPages";
 import { getFavorites_getFavorites } from "../graphql/getFavorites";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles({
   card: {
@@ -39,6 +40,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
   const classes = useStyles();
   const { fav } = props;
   const post = fav.page;
+  const history = useHistory();
   let updatedAt = ''
   if (post.updatedAt) {
     const updatedDate = new Date(post.updatedAt);
@@ -49,7 +51,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
 
   return (
     <Grid item xs={12} md={6}>
-      <CardActionArea component="a" href={encodeURI(`/wiki/${post.title}`)}>
+      <CardActionArea component="a" onClick={() => history.push(encodeURI(`/wiki/${post.title}`))}>
           <Card className={classes.card}>
             <Grid container spacing={5} className={classes.cardDetails}>
               <Grid item xs={12}>
