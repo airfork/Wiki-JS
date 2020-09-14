@@ -46,10 +46,10 @@ export default function FeaturedPost(props: FeaturedPostProps) {
             <Grid container spacing={5} className={classes.cardDetails}>
               <Grid item xs={12}>
                 <CardContent>
-                  <Typography component="h2" variant="h5" noWrap={true}>
+                  <Typography component="h2" variant="h5" noWrap={true} style={{ wordBreak: 'break-word' }}>
                     {post.title}
                   </Typography>
-                  <Typography variant="subtitle1" color="textSecondary">
+                  <Typography variant="subtitle1" color="textSecondary" style={{ wordBreak: 'break-word' }}>
                     {updatedAt}
                   </Typography>
                   <Grid item xs={12}>

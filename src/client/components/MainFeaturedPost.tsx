@@ -50,10 +50,10 @@ export default function MainFeaturedPost(props: MainFeaturedPostProps) {
       <Grid container>
         <Grid item xs={12} md={6} xl={8}>
           <div className={classes.mainFeaturedPostContent}>
-            <Typography component="h1" variant="h3" color="inherit" gutterBottom>
+            <Typography component="h1" variant="h3" color="inherit" gutterBottom style={{ wordBreak: 'break-word' }}>
               {post?.title.substr(0, 100)}
             </Typography>
-            <Typography variant="h5" color="inherit" paragraph>
+            <Typography variant="h5" color="inherit" paragraph style={{ wordBreak: 'break-word' }}>
               {post?.contents.substr(0, 200) + '...'}
             </Typography>
             <Link variant="subtitle1" href="#">
