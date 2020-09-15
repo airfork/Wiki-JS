@@ -4,6 +4,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { gql, useQuery } from '@apollo/client';
 import { searchQuery, searchQueryVariables } from '../graphql/searchQuery';
 import TextField from '@material-ui/core/TextField';
+import { useHistory } from 'react-router';
 
 type WikiSearchProps = {
   mainClass?: string;
@@ -33,6 +34,7 @@ export default function WikiSearch(props: WikiSearchProps) {
     },
     skip: searchVal === ''
   });
+  const history = useHistory();
 
   return (
     <Autocomplete
@@ -47,6 +49,11 @@ export default function WikiSearch(props: WikiSearchProps) {
         />
       }
       onInputChange={(_, value) => setSearchVal(value)}
+      onChange={(_, value) => {
+        if (value != null) {
+          history.push(`/wiki/${value}`)
+        }
+      }}
       noOptionsText="No pages found"
     />
   )
