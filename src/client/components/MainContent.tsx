@@ -29,7 +29,7 @@ export default function Main(props: MainContextProps) {
       </Typography>
       <Divider className={classes.bottomSpacing} />
       {fav?.page &&
-      <Typography variant="body1" dangerouslySetInnerHTML={{ __html: sanitizeHtml(fav.page.contents) }}/>
+        <Typography variant="body1" dangerouslySetInnerHTML={{ __html: sanitizeHtml(fav.page.contents) }} />
       }
     </Grid>
   );

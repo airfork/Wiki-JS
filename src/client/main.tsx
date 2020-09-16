@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, gql, ApolloLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { createUploadLink } from 'apollo-upload-client';
 import App from './App';
@@ -12,7 +12,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : undefined,
+      authorization: token,
     }
   };
 });
@@ -26,7 +26,7 @@ const typeDefs = gql`
 export const client = new ApolloClient({
   uri: '/graphql',
   cache: new InMemoryCache(),
-  link: authLink.concat(createUploadLink()),
+  link: ApolloLink.from([authLink, createUploadLink()]),
   typeDefs,
 });
 

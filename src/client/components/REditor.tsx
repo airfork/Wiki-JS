@@ -5,9 +5,34 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import draftToHtml from 'draftjs-to-html';
 import SaveIcon from '@material-ui/icons/Save';
 import { Fab, FormGroup } from "@material-ui/core";
-import { createStyles, fade, makeStyles, Theme } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import { gql, useMutation } from "@apollo/client";
+import { createPost, createPostVariables } from "../graphql/createPost";
+import { generate } from "shortid";
+import { useHistory } from "react-router";
+
+const CREATE_POST = gql`
+  mutation createPost($title: String!, $contents: String!) {
+    createPage(page: {
+      title: $title,
+      contents: $contents,
+    }) {
+      adminOnly
+      categories {
+        category
+      }
+      contents
+      contributors {
+        username
+      }
+      title
+      createdAt
+      updatedAt
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,15 +52,33 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function REditor() {
   const classes = useStyles();
 
+  const [title, setTitle] = useState(generate());
   const [value, setValue] = useState(EditorState.createEmpty());
-  const [markdown, setMarkdown] = useState("<h2>Nothing Here</h2>");
+  const [markdown, setMarkdown] = useState("");
   const [preview, setPreview] = useState({
     isPreview: false,
     sliderText: 'Preview Output'
-  })
+  });
+  const history = useHistory();
+  const [createPost] = useMutation<createPost, createPostVariables>(CREATE_POST, {
+    onCompleted: ({ createPage }) => {
+      if (createPage != null) {
+        history.push(`/wiki/${createPage.title}`);
+      }
+    }
+  });
 
-  const uploadCallback = async file => {
+  const uploadCallback = async _ => {
     return {}
+  };
+  const savePost = () => {
+    const rawContentState = convertToRaw(value.getCurrentContent());
+    createPost({
+      variables: {
+        contents: draftToHtml(rawContentState),
+        title,
+      }
+    });
   };
 
   const handleSlideChange = () => {
@@ -67,7 +110,7 @@ export default function REditor() {
       </FormGroup>
       {preview.isPreview
         ? <div dangerouslySetInnerHTML={{ __html: markdown }} />
-        : <div>
+        : <>
           <Editor
             editorState={value}
             onEditorStateChange={setValue}
@@ -78,11 +121,14 @@ export default function REditor() {
               border: '1px solid #F1F1F1',
             }}
           />
-
-          <Fab className={classes.fab} color="secondary" aria-label="add" onClick={() => console.log("🍆💦")}>
+          <Fab
+            className={classes.fab}
+            color="secondary"
+            aria-label="add"
+            onClick={savePost}>
             <SaveIcon />
           </Fab>
-        </div>
+        </>
       }
     </div>
   );

@@ -45,27 +45,27 @@ export default function ViewArticle(props) {
     variables: { title },
   });
 
-  if(!loading && !data?.getPage) {
-    return <NotFound/>;
+  if (!loading && !data?.getPage) {
+    return <NotFound />;
   }
 
-  return(
+  return (
     <div>
-      <Header/>
+      <Header />
       <Container maxWidth="lg" className={classes.topSpacing}>
         <Grid container spacing={5}>
           <Grid item xs={12}>
-            <Typography variant="h2">
+            <Typography variant="h2" style={{ wordBreak: 'break-word' }}>
               {data?.getPage?.title}
             </Typography>
             <Divider className={classes.bottomSpacing} />
             {data?.getPage &&
-            <Typography variant="body1" dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.getPage.contents) }}/>
+              <Typography variant="body1" dangerouslySetInnerHTML={{ __html: sanitizeHtml(data.getPage.contents) }} />
             }
           </Grid>
         </Grid>
       </Container>
-      <CreateFab/>
+      <CreateFab />
     </div>
   )
 }
