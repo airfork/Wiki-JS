@@ -124,7 +124,7 @@ const PageQueries: QueryResolvers = {
       }
     });
     const inContent = inContentDb.map(page => dbPageToGraphQL(page));
-    return { inContent: inContent, inTags: [], inTitle: inTitle }
+    return { inContent, inTags: [], inTitle }
   },
 }
 
