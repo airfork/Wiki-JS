@@ -53,7 +53,7 @@ export default function WikiSearch(props: WikiSearchProps) {
       onInputChange={(_, value) => setSearchVal(value)}
       onChange={(_, value) => {
         if (value != null) {
-          history.push(`/wiki/${value}`)
+          history.push(`/wiki/${value}`);
         }
       }}
       onClose={() => {

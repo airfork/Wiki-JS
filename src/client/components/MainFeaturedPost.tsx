@@ -56,7 +56,7 @@ export default function MainFeaturedPost(props: MainFeaturedPostProps) {
   const history = useHistory();
 
   return (
-    <CardActionArea component="a" onClick={() => history.push(encodeURI(`/wiki/${post?.title}`))}>
+    <CardActionArea component="a" onClick={() => history.push(`/wiki/${post?.title}`)}>
       <Paper className={classes.mainFeaturedPost}>
         <div className={classes.overlay} />
         <Grid container>

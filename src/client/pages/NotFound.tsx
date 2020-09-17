@@ -1,7 +1,9 @@
-import React from 'react';
-import { Route } from "react-router";
+import React, { useState } from 'react';
+import { Route, useHistory } from "react-router";
 import { Container, Link, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { gql, useQuery } from "@apollo/client";
+import { getRandomPage } from "../graphql/getRandomPage";
 
 function Status({ code, children }) {
   return (
@@ -36,8 +38,22 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+const GET_RANDOM = gql`
+    query getRandomPage {
+        getRandomPage {
+            title
+        }
+    }
+`;
+
 export default function NotFound() {
   const classes = useStyles();
+  const history = useHistory();
+  const { data } = useQuery<getRandomPage>(GET_RANDOM);
+  let random = '';
+  if (data && data.getRandomPage) {
+    random = data.getRandomPage.title;
+  }
 
   return (
     <Status code={404}>
@@ -52,13 +68,13 @@ export default function NotFound() {
           Here are some helpful links:
         </Typography>
         <Typography>
-          <Link href="/" className={classes.block}>
+          <Link href="" onClick={() => history.push(encodeURI('/'))} className={classes.block}>
             Search
           </Link>
-          <Link href="/wiki" className={classes.block}>
+          <Link href="" onClick={() => history.push(encodeURI('/wiki'))} className={classes.block}>
             Visit Showcase
           </Link>
-          <Link href="#" className={classes.block}>
+          <Link href="" onClick={() => history.push(encodeURI(`/wiki/${random}`))} className={classes.block}>
             Random Article
           </Link>
         </Typography>

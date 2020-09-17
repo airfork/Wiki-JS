@@ -63,6 +63,7 @@ type Favorite {
 
 type Query {
     getPage(title: String!): Page
+    getRandomPage: Page
     getCurrentUser: User
     getUsers: [User]!
     getImages: [Image]!

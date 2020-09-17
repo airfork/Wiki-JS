@@ -92,6 +92,13 @@ const PageQueries: QueryResolvers = {
     return dbPage ? dbPageToGraphQL(dbPage) : dbPage
   },
 
+  getRandomPage: async (_, __, { pageRepo, sequelize }: ApolloContext) => {
+    const dbPage = await pageRepo.findOne({
+      order: sequelize.random(),
+    });
+    return dbPage ? dbPageToGraphQL(dbPage) : dbPage;
+  },
+
   getPages: async (_, { pageFilter }, { sequelize, ...repos }: ApolloContext) => {
     const dbPages = await repos.pageRepo.findAll({
       include: [repos.imageRepo, repos.userRepo, repos.tagRepo],

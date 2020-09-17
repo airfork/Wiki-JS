@@ -51,7 +51,7 @@ export default function FeaturedPost(props: FeaturedPostProps) {
 
   return (
     <Grid item xs={12} md={6}>
-      <CardActionArea component="a" onClick={() => history.push(encodeURI(`/wiki/${post.title}`))}>
+      <CardActionArea component="a" onClick={() => history.push(`/wiki/${post.title}`)}>
           <Card className={classes.card}>
             <Grid container spacing={5} className={classes.cardDetails}>
               <Grid item xs={12}>

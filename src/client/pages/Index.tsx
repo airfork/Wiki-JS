@@ -7,6 +7,8 @@ import Grid from '@material-ui/core/Grid';
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import WikiSearch from '../components/WikiSearch';
 import { Link } from 'react-router-dom';
+import { gql, useQuery } from "@apollo/client";
+import { getRandomPage } from "../graphql/getRandomPage";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,20 +25,39 @@ const useStyles = makeStyles((theme: Theme) =>
     alignCenter: {
       textAlign: 'center'
     },
+    alignRight: {
+      textAlign: "right"
+    },
+    alignLeft: {
+      textAlign: "left"
+    },
     bottomPadding: {
       paddingBottom: "1rem"
     },
   }),
 );
 
+const GET_RANDOM = gql`
+    query getRandomPage {
+        getRandomPage {
+            title
+        }
+    }
+`;
+
 export default function Index() {
   const classes = useStyles();
+  const { data } = useQuery<getRandomPage>(GET_RANDOM);
+  let random = '';
+  if (data && data.getRandomPage) {
+    random = data.getRandomPage.title;
+  }
 
   return (
     <Container maxWidth={"lg"}>
       <div>
         <Container maxWidth={"sm"}>
-          <Grid container spacing={2} justify={"center"} className={`${classes.centered}`}>
+          <Grid container spacing={2} justify="center" className={`${classes.centered}`}>
             <Grid item xs={12}>
               <Typography variant="h2" className={`${classes.alignCenter} ${classes.bottomPadding}`}>
                 WikiName
@@ -45,14 +66,27 @@ export default function Index() {
             <Grid item xs={12}>
               <WikiSearch />
             </Grid>
-            <Grid item xs={12} className={`${classes.alignCenter}`}>
-              <Button
-                color="secondary"
-                component={Link}
-                to={Routes.find(route => route.routeName == 'wiki')!.path}
-              >
-                Visit Showcase
-              </Button>
+            <Grid item xs={12}>
+              <Grid container justify="space-between">
+                <Grid item xs={6} className={classes.alignLeft}>
+                  <Button
+                    color="secondary"
+                    component={Link}
+                    to={Routes.find(route => route.routeName == 'wiki')!.path}
+                  >
+                    Visit Showcase
+                  </Button>
+                </Grid>
+                <Grid item xs={6} className={classes.alignRight}>
+                  <Button
+                    color="secondary"
+                    component={Link}
+                    to={Routes.find(route => route.routeName == 'wiki')!.path + `/${random}`}
+                  >
+                    Something Interesting
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Container>

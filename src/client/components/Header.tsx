@@ -12,6 +12,7 @@ import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN, logout } from '../auth';
 import { Grid } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,6 +59,7 @@ type HeaderProps = {
 export default function Header(props: HeaderProps) {
   const classes = useStyles();
   const { data, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
+  const history = useHistory();
 
   return (
     <div className={classes.root}>
@@ -70,8 +72,7 @@ export default function Header(props: HeaderProps) {
                 className={classes.menuButton}
                 color="inherit"
                 aria-label="menu"
-                component={Link}
-                to="/"
+                onClick={() => history.push('/')}
               >
                 <HomeIcon />
               </IconButton>

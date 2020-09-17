@@ -87,6 +87,7 @@ export type Favorite = {
 export type Query = {
   __typename?: 'Query';
   getPage?: Maybe<Page>;
+  getRandomPage?: Maybe<Page>;
   getCurrentUser?: Maybe<User>;
   getUsers: Array<Maybe<User>>;
   getImages: Array<Maybe<Image>>;
@@ -398,6 +399,7 @@ export type FavoriteResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType, RequireFields<QueryGetPageArgs, 'title'>>;
+  getRandomPage?: Resolver<Maybe<ResolversTypes['Page']>, ParentType, ContextType>;
   getCurrentUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   getUsers?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   getImages?: Resolver<Array<Maybe<ResolversTypes['Image']>>, ParentType, ContextType>;
