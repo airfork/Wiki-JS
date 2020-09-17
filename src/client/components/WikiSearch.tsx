@@ -28,6 +28,7 @@ const SEARCH_QUERY = gql`
 
 export default function WikiSearch(props: WikiSearchProps) {
   const [searchVal, setSearchVal] = useState('');
+  const [randomKey, setRandomKey] = useState(Math.random());
   const { data } = useQuery<searchQuery, searchQueryVariables>(SEARCH_QUERY, {
     variables: {
       titleIncludes: searchVal,
@@ -38,6 +39,7 @@ export default function WikiSearch(props: WikiSearchProps) {
 
   return (
     <Autocomplete
+      key={randomKey}
       options={data?.getFilteredPages.inTitle.map(page => page.title) ?? []}
       renderInput={params =>
         <TextField
@@ -53,6 +55,9 @@ export default function WikiSearch(props: WikiSearchProps) {
         if (value != null) {
           history.push(`/wiki/${value}`)
         }
+      }}
+      onClose={() => {
+        setRandomKey(Math.random());
       }}
       noOptionsText="No pages found"
     />
