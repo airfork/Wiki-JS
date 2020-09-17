@@ -29,4 +29,6 @@ const Routes: Array<Route> = [
   new Route('viewArticle', '/wiki/:title', ViewArticle)
 ];
 
+export const routesMap = Object.fromEntries(Routes.map(route => [route.routeName, route]));
+
 export default Routes;

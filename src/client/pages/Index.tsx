@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Routes from '../routes';
+import Routes, { routesMap } from '../routes';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
@@ -73,7 +73,7 @@ export default function Index() {
                   <Button
                     color="secondary"
                     component={Link}
-                    to={Routes.find(route => route.routeName == 'wiki')!.path}
+                    to={routesMap['wiki'].path}
                   >
                     Visit Showcase
                   </Button>
@@ -82,10 +82,10 @@ export default function Index() {
                   <Button
                     color="secondary"
                     onClick={() => {
-                      history.push(Routes.find(route => route.routeName == 'wiki')!.path + `/${random}`);
+                      history.push(`${routesMap['wiki'].path}/${random}`);
                       refetch();
                     }}
-                    >
+                  >
                     Something Interesting
                   </Button>
                 </Grid>
