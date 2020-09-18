@@ -12,6 +12,7 @@ import { gql, useMutation } from "@apollo/client";
 import { createPost, createPostVariables } from "../graphql/createPost";
 import { generate } from "shortid";
 import { useHistory } from "react-router";
+import Routes from "../routes";
 
 const CREATE_POST = gql`
   mutation createPost($title: String!, $contents: String!) {
@@ -63,7 +64,7 @@ export default function REditor() {
   const [createPost] = useMutation<createPost, createPostVariables>(CREATE_POST, {
     onCompleted: ({ createPage }) => {
       if (createPage != null) {
-        history.push(`/wiki/${createPage.title}`);
+        history.push(`${Routes.wiki.path}/${createPage.title}`);
       }
     }
   });

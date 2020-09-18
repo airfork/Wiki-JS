@@ -5,6 +5,7 @@ import { gql, useQuery } from '@apollo/client';
 import { searchQuery, searchQueryVariables } from '../graphql/searchQuery';
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from 'react-router';
+import Routes from '../routes';
 
 type WikiSearchProps = {
   mainClass?: string;
@@ -72,7 +73,7 @@ export default function WikiSearch(props: WikiSearchProps) {
       onInputChange={(_, value) => setSearchVal(value)}
       onChange={(_, value) => {
         if (value != null) {
-          history.push(`/wiki/${value}`);
+          history.push(`${Routes.wiki.path}/${value}`);
         }
       }}
       onClose={() => {

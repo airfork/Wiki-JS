@@ -51,8 +51,8 @@ export default function App() {
           <CssBaseline />
           <Router>
             <Switch>
-              {Routes.map(route => (
-                <Route path={route.path} key={route.routeName} exact component={route.component} />
+              {Object.entries(Routes).map(([routeName, route]) => (
+                <Route path={route.path} key={routeName} exact component={route.component} />
               ))}
               <Route component={NotFound} />
             </Switch>

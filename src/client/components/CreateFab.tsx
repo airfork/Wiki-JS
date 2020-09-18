@@ -6,6 +6,7 @@ import { isLoggedIn } from "../graphql/isLoggedIn";
 import { IS_LOGGED_IN } from "../auth";
 import { useHistory } from "react-router";
 import { makeStyles } from "@material-ui/core/styles";
+import Routes from "../routes";
 
 const useStyles = makeStyles((theme) => ({
   fab: {
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CreateFab() {
   const classes = useStyles();
-  const { data: userData} = useQuery<isLoggedIn>(IS_LOGGED_IN);
+  const { data: userData } = useQuery<isLoggedIn>(IS_LOGGED_IN);
   const history = useHistory();
   const fabDisabled = !userData?.isLoggedIn ?? true;
 
@@ -27,12 +28,12 @@ export default function CreateFab() {
     return null;
   }
 
-  return(
+  return (
     <Tooltip title={"Create page"}>
       <Fab
         color="secondary"
         className={classes.fab}
-        onClick={() => history.push("/wiki/create")}
+        onClick={() => history.push(`${Routes.wiki.path}/create`)}
       >
         <AddIcon />
       </Fab>

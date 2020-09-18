@@ -23,6 +23,7 @@ import { useEffect } from 'react';
 import { useMemo } from 'react';
 import { IS_LOGGED_IN } from '../auth';
 import { client } from '../main';
+import Routes from '../routes';
 
 export const LOGIN_MUTATION = gql`
   mutation login($username: String!, $password: String!) {
@@ -83,7 +84,7 @@ export default function LoginForm(props: LoginFormProps) {
   const historyAction = useMemo(() => (
     <Button color="inherit" size="small" onClick={() => {
       pause();
-      window.location.replace('/wiki');
+      window.location.replace(Routes.wiki.path);
     }}>
       Go Now
     </Button>
@@ -106,7 +107,7 @@ export default function LoginForm(props: LoginFormProps) {
       onCompleted({ logIn }) {
         localStorage.setItem('accessToken', logIn);
         client.writeQuery({ query: IS_LOGGED_IN, data: { isLoggedIn: true } })
-        history.push('/wiki');
+        history.push(Routes.wiki.path);
       },
     }
   );
@@ -125,7 +126,7 @@ export default function LoginForm(props: LoginFormProps) {
         start();
         localStorage.setItem('accessToken', createUser?.token ?? '');
         client.writeQuery({ query: IS_LOGGED_IN, data: { isLoggedIn: true } })
-        setRedirectTimeout(setTimeout(() => history.push('/wiki'), 5000));
+        setRedirectTimeout(setTimeout(() => history.push(Routes.wiki.path), 5000));
         setAlertOpen(true);
       }
     }

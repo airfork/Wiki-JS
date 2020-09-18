@@ -13,22 +13,19 @@ import ViewArticle from "./pages/VewArticle";
 // }
 
 class Route {
-  constructor(readonly routeName: string, readonly path: string, readonly component: React.FunctionComponent) {
-    this.routeName = routeName;
+  constructor(readonly path: string, readonly component: React.FunctionComponent) {
     this.path = path;
     this.component = component;
   }
 }
 
-const Routes: Array<Route> = [
-  new Route('wiki', '/wiki', Showcase),
-  new Route('index', '/', Index),
-  new Route('login', '/login', Login),
-  new Route('signup', '/signup', SignUp),
-  new Route('newArticle', '/wiki/create', NewArticle),
-  new Route('viewArticle', '/wiki/:title', ViewArticle)
-];
-
-export const routesMap = Object.fromEntries(Routes.map(route => [route.routeName, route]));
+const Routes = {
+  wiki: new Route('/wiki', Showcase),
+  index: new Route('/', Index),
+  login: new Route('/login', Login),
+  signup: new Route('/signup', SignUp),
+  create: new Route('/wiki/create', NewArticle),
+  title: new Route('/wiki/:title', ViewArticle)
+}
 
 export default Routes;

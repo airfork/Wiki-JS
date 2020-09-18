@@ -11,6 +11,7 @@ import { Post } from '../pages/Showcase';
 import { getPages_getPages } from "../graphql/getPages";
 import { getFavorites_getFavorites } from "../graphql/getFavorites";
 import { useHistory } from "react-router";
+import Routes from '../routes';
 
 const useStyles = makeStyles({
   card: {
@@ -51,35 +52,35 @@ export default function FeaturedPost(props: FeaturedPostProps) {
 
   return (
     <Grid item xs={12} md={6}>
-      <CardActionArea component="a" onClick={() => history.push(`/wiki/${post.title}`)}>
-          <Card className={classes.card}>
-            <Grid container spacing={5} className={classes.cardDetails}>
-              <Grid item xs={12}>
-                <CardContent>
-                  <Typography component="h2" variant="h5" noWrap={true} style={{ wordBreak: 'break-word' }}>
-                    {post.title}
+      <CardActionArea component="a" onClick={() => history.push(`${Routes.wiki.path}/${post.title}`)}>
+        <Card className={classes.card}>
+          <Grid container spacing={5} className={classes.cardDetails}>
+            <Grid item xs={12}>
+              <CardContent>
+                <Typography component="h2" variant="h5" noWrap={true} style={{ wordBreak: 'break-word' }}>
+                  {post.title}
+                </Typography>
+                <Typography variant="subtitle1" color="textSecondary" style={{ wordBreak: 'break-word' }}>
+                  {updatedAt}
+                </Typography>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1" paragraph>
+                    {stripHtml(post.contents).substr(0, 200) + '...'}
                   </Typography>
-                  <Typography variant="subtitle1" color="textSecondary" style={{ wordBreak: 'break-word' }}>
-                    {updatedAt}
+                </Grid>
+                <Typography variant="subtitle1" color="primary">
+                  Continue Reading
                   </Typography>
-                  <Grid item xs={12}>
-                    <Typography variant="subtitle1" paragraph>
-                      {stripHtml(post.contents).substr(0,200) + '...'}
-                    </Typography>
-                  </Grid>
-                  <Typography variant="subtitle1" color="primary">
-                    Continue Reading
-                  </Typography>
-                </CardContent>
-              </Grid>
+              </CardContent>
             </Grid>
-            {/*<Hidden xsDown>*/}
-            {/*  {post.image*/}
-            {/*  ? <CardMedia className={classes.cardMedia} image={post.image} title={post.imageTitle} />*/}
-            {/*  : <p/>*/}
-            {/*  }*/}
-            {/*</Hidden>*/}
-          </Card>
+          </Grid>
+          {/*<Hidden xsDown>*/}
+          {/*  {post.image*/}
+          {/*  ? <CardMedia className={classes.cardMedia} image={post.image} title={post.imageTitle} />*/}
+          {/*  : <p/>*/}
+          {/*  }*/}
+          {/*</Hidden>*/}
+        </Card>
       </CardActionArea>
     </Grid>
   );

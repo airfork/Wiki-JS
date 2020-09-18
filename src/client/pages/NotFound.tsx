@@ -4,6 +4,7 @@ import { Container, Link, Typography } from "@material-ui/core";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { gql, useQuery } from "@apollo/client";
 import { getRandomPage } from "../graphql/getRandomPage";
+import Routes from '../routes';
 
 function Status({ code, children }) {
   return (
@@ -68,13 +69,13 @@ export default function NotFound() {
           Here are some helpful links:
         </Typography>
         <Typography>
-          <Link href="" onClick={() => history.push(encodeURI('/'))} className={classes.block}>
+          <Link href="" onClick={() => history.push(encodeURI(Routes.index.path))} className={classes.block}>
             Search
           </Link>
-          <Link href="" onClick={() => history.push(encodeURI('/wiki'))} className={classes.block}>
+          <Link href="" onClick={() => history.push(encodeURI(Routes.wiki.path))} className={classes.block}>
             Visit Showcase
           </Link>
-          <Link href="" onClick={() => history.push(encodeURI(`/wiki/${random}`))} className={classes.block}>
+          <Link href="" onClick={() => history.push(encodeURI(`${Routes.wiki.path}/${random}`))} className={classes.block}>
             Random Article
           </Link>
         </Typography>

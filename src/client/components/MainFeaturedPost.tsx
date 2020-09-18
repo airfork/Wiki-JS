@@ -7,6 +7,7 @@ import Link from '@material-ui/core/Link';
 import { getFavorites_getFavorites } from "../graphql/getFavorites";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import { useHistory } from "react-router";
+import Routes from '../routes';
 
 const useStyles = makeStyles((theme) => ({
   mainFeaturedPost: {
@@ -56,7 +57,7 @@ export default function MainFeaturedPost(props: MainFeaturedPostProps) {
   const history = useHistory();
 
   return (
-    <CardActionArea component="a" onClick={() => history.push(`/wiki/${post?.title}`)}>
+    <CardActionArea component="a" onClick={() => history.push(`${Routes.wiki.path}/${post?.title}`)}>
       <Paper className={classes.mainFeaturedPost}>
         <div className={classes.overlay} />
         <Grid container>
