@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Route, useHistory } from "react-router";
 import { Container, Link, Typography } from "@material-ui/core";
+import { Link as RouterLink } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { gql, useQuery } from "@apollo/client";
 import { getRandomPage } from "../graphql/getRandomPage";
@@ -69,13 +70,13 @@ export default function NotFound() {
           Here are some helpful links:
         </Typography>
         <Typography>
-          <Link href="" onClick={() => history.push(encodeURI(Routes.index.path))} className={classes.block}>
+          <Link component={RouterLink} to={Routes.index.path} className={classes.block}>
             Search
           </Link>
-          <Link href="" onClick={() => history.push(encodeURI(Routes.wiki.path))} className={classes.block}>
+          <Link component={RouterLink} to={Routes.wiki.path} className={classes.block}>
             Visit Showcase
           </Link>
-          <Link href="" onClick={() => history.push(encodeURI(`${Routes.wiki.path}/${random}`))} className={classes.block}>
+          <Link component={RouterLink} to={Routes.wiki.path} className={classes.block}>
             Random Article
           </Link>
         </Typography>
