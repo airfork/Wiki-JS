@@ -76,7 +76,7 @@ export default function NotFound() {
           <Link component={RouterLink} to={Routes.wiki.path} className={classes.block}>
             Visit Showcase
           </Link>
-          <Link component={RouterLink} to={Routes.wiki.path} className={classes.block}>
+          <Link component={RouterLink} to={`${Routes.wiki.path}/${random}`} className={classes.block}>
             Random Article
           </Link>
         </Typography>
