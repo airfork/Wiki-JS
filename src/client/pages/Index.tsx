@@ -8,7 +8,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import WikiSearch from '../components/WikiSearch';
 import { Link, useHistory } from 'react-router-dom';
 import { gql, useQuery } from "@apollo/client";
-import { getRandomPage } from "../graphql/getRandomPage";
+import { randomPage } from "../graphql/randomPage";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,7 +47,7 @@ const GET_RANDOM = gql`
 
 export default function Index() {
   const classes = useStyles();
-  const { data, refetch } = useQuery<getRandomPage>(GET_RANDOM);
+  const { data, refetch } = useQuery<randomPage>(GET_RANDOM);
   const history = useHistory();
   let random = '';
   if (data && data.getRandomPage) {
