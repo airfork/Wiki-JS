@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const GET_RANDOM = gql`
-    query getRandomPage {
+    query randomPage {
         getRandomPage {
             title
         }
