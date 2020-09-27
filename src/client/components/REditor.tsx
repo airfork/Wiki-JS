@@ -13,6 +13,7 @@ import { createPost, createPostVariables } from "../graphql/createPost";
 import { generate } from "shortid";
 import { useHistory } from "react-router";
 import Routes from "../routes";
+import { uploadImage, uploadImageVariables } from "../graphql/uploadImage";
 
 const CREATE_POST = gql`
   mutation createPost($title: String!, $contents: String!) {
@@ -31,6 +32,15 @@ const CREATE_POST = gql`
       title
       createdAt
       updatedAt
+    }
+  }
+`;
+
+const UPLOAD_IMAGE = gql`
+  mutation uploadImage($file: Upload!) {
+    createImage(image: $file) {
+      id
+      url
     }
   }
 `;
@@ -56,10 +66,7 @@ export default function REditor() {
   const [title, setTitle] = useState(generate());
   const [value, setValue] = useState(EditorState.createEmpty());
   const [markdown, setMarkdown] = useState("");
-  const [preview, setPreview] = useState({
-    isPreview: false,
-    sliderText: 'Preview Output'
-  });
+  const [isPreview, setIsPreview] = useState(false);
   const history = useHistory();
   const [createPost] = useMutation<createPost, createPostVariables>(CREATE_POST, {
     onCompleted: ({ createPage }) => {
@@ -68,9 +75,18 @@ export default function REditor() {
       }
     }
   });
-
-  const uploadCallback = async _ => {
-    return {}
+  const [uploadImage] = useMutation<uploadImage, uploadImageVariables>(UPLOAD_IMAGE);
+  const uploadCallback = async (file: File) => {
+    const newImage = await uploadImage({
+      variables: {
+        file,
+      }
+    });
+    return {
+      data: {
+        link: newImage.data?.createImage?.url
+      }
+    }
   };
   const savePost = () => {
     const rawContentState = convertToRaw(value.getCurrentContent());
@@ -83,18 +99,10 @@ export default function REditor() {
   };
 
   const handleSlideChange = () => {
-    if (preview.isPreview) {
-      setPreview({
-        ...preview,
-        isPreview: false,
-        sliderText: 'Preview Output'
-      });
+    if (isPreview) {
+      setIsPreview(false);
     } else {
-      setPreview({
-        ...preview,
-        isPreview: true,
-        sliderText: 'View Editor'
-      });
+      setIsPreview(true);
 
       const rawContentState = convertToRaw(value.getCurrentContent());
       setMarkdown(draftToHtml(rawContentState));
@@ -105,11 +113,11 @@ export default function REditor() {
     <div className={classes.editor}>
       <FormGroup row>
         <FormControlLabel
-          control={<Switch name="checkedA" checked={preview.isPreview} onChange={handleSlideChange} />}
-          label={preview.sliderText}
+          control={<Switch name="checkedA" checked={isPreview} onChange={handleSlideChange} />}
+          label={isPreview ? 'View Editor' : 'Preview Output'}
         />
       </FormGroup>
-      {preview.isPreview
+      {isPreview
         ? <div dangerouslySetInnerHTML={{ __html: markdown }} />
         : <>
           <Editor
