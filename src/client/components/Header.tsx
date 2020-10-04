@@ -6,23 +6,45 @@ import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home'
+import SettingsIcon from '@material-ui/icons/Settings';
 import WikiSearch from './WikiSearch';
 import { useQuery } from '@apollo/client';
 import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN, logout } from '../auth';
-import { Grid } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Avatar, Grid } from '@material-ui/core';
+import { Link as RouterLink, Link } from 'react-router-dom';
+import MenuIcon from "@material-ui/icons/Menu";
+import Routes from "../routes";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
     },
+    small: {
+      width: theme.spacing(4),
+      height: theme.spacing(4),
+      marginLeft: "10px",
+      "&:hover": {
+        backgroundColor: "rgba(0, 0, 0, 0.04)",
+      }
+    },
     menuButton: {
       marginRight: theme.spacing(2),
       [theme.breakpoints.down('xs')]: {
         flexGrow: 1,
       }
+    },
+    appBar: {
+      [theme.breakpoints.up('sm')]: {
+        // width: `calc(100% - ${drawerWidth}px)`,
+        // marginLeft: drawerWidth,
+        zIndex: theme.zIndex.drawer + 1,
+      },
+    },
+    green: {
+      color: '#fff',
+      backgroundColor: theme.palette.primary.main,
     },
     title: {
       paddingTop: '20%',
@@ -53,6 +75,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 type HeaderProps = {
   logoutAction?: () => void,
+  fixed?: boolean,
+  toggle?: JSX.Element,
 }
 
 export default function Header(props: HeaderProps) {
@@ -61,8 +85,9 @@ export default function Header(props: HeaderProps) {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position={props.fixed ? "fixed" : "static"} className={classes.appBar}>
         <Toolbar>
+          {props.toggle ? props.toggle : null}
           <Grid container>
             <Grid item>
               <IconButton
@@ -97,6 +122,13 @@ export default function Header(props: HeaderProps) {
                 : <Button color="inherit" component={Link} to="/login">Login</Button>
             }
           </div>
+          {data?.isLoggedIn
+          ?
+            <Avatar className={`${classes.small} ${classes.green}`} component={Link} to={Routes.admin.path}>
+              <SettingsIcon/>
+            </Avatar>
+          : null
+          }
         </Toolbar>
       </AppBar>
     </div >

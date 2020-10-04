@@ -5,6 +5,7 @@ import NewArticle from "./pages/NewArticle";
 import { SignUp } from './pages/SignUp';
 import React from "react";
 import ViewArticle from "./pages/VewArticle";
+import AdminPage from "./pages/AdminPage";
 
 // type Route = {
 //   routeName: string,
@@ -25,7 +26,8 @@ const Routes = {
   login: new Route('/login', Login),
   signup: new Route('/signup', SignUp),
   create: new Route('/wiki/create', NewArticle),
-  title: new Route('/wiki/:title', ViewArticle)
+  title: new Route('/wiki/:title', ViewArticle),
+  admin: new Route('/admin', AdminPage),
 }
 
 export default Routes;

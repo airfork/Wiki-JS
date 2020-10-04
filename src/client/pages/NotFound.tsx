@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Route, useHistory } from "react-router";
+import React from 'react';
+import { Route } from "react-router";
 import { Container, Link, Typography } from "@material-ui/core";
 import { Link as RouterLink } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
@@ -50,7 +50,6 @@ const GET_RANDOM = gql`
 
 export default function NotFound() {
   const classes = useStyles();
-  const history = useHistory();
   const { data } = useQuery<getRandomPage>(GET_RANDOM);
   let random = '';
   if (data && data.getRandomPage) {
