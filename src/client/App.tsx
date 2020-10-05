@@ -4,7 +4,7 @@ import Routes from './routes';
 import { createMuiTheme, CssBaseline, ThemeProvider, useMediaQuery } from '@material-ui/core';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './main';
-import NotFound from "./pages/NotFound";
+import ErrorPage from "./pages/ErrorPage";
 import { GlobalOperations } from './components/GlobalOperations';
 
 
@@ -54,7 +54,7 @@ export default function App() {
               {Object.entries(Routes).map(([routeName, route]) => (
                 <Route path={route.path} key={routeName} exact component={route.component} />
               ))}
-              <Route component={NotFound} />
+              <Route component={ErrorPage} />
             </Switch>
           </Router>
         </GlobalOperations>

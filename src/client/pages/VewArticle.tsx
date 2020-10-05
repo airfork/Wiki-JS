@@ -1,7 +1,7 @@
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { getPage } from "../graphql/getPage";
-import NotFound from "./NotFound";
+import ErrorPage from "./ErrorPage";
 import Header from "../components/Header";
 import { Container, Grid, Typography } from "@material-ui/core";
 import CreateFab from "../components/CreateFab";
@@ -46,7 +46,7 @@ export default function ViewArticle(props) {
   });
 
   if (!loading && !data?.getPage) {
-    return <NotFound />;
+    return <ErrorPage />;
   }
 
   return (

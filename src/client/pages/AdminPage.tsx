@@ -22,6 +22,7 @@ import { useQuery } from "@apollo/client";
 import { isLoggedIn } from "../graphql/isLoggedIn";
 import { IS_LOGGED_IN } from "../auth";
 import Routes from "../routes";
+import ErrorPage from "./ErrorPage";
 
 const drawerWidth = .15 * screen.width;
 
@@ -71,7 +72,7 @@ export default function AdminPage() {
   const { data } = useQuery<isLoggedIn>(IS_LOGGED_IN)
 
   if (data && !data.isLoggedIn) {
-    history.push(Routes.login.path);
+    return <ErrorPage code={403}/>
   }
 
   const handleDrawerToggle = () => {
