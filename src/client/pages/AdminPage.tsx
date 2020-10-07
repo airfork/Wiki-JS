@@ -1,5 +1,4 @@
 import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,13 +17,19 @@ import { makeStyles, useTheme, Theme, createStyles } from '@material-ui/core/sty
 import Header from "../components/Header";
 import { Grid } from "@material-ui/core";
 import { useHistory } from "react-router";
-import { useQuery } from "@apollo/client";
-import { isLoggedIn } from "../graphql/isLoggedIn";
-import { IS_LOGGED_IN } from "../auth";
-import Routes from "../routes";
+import { gql, useQuery } from "@apollo/client";
 import ErrorPage from "./ErrorPage";
+import { getCurrentUser } from '../graphql/getCurrentUser';
 
 const drawerWidth = .15 * screen.width;
+
+export const GET_USER_INFO = gql`
+  query getCurrentUser {
+    getCurrentUser {
+      admin
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,30 +71,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function AdminPage() {
   const classes = useStyles();
   const theme = useTheme();
-  const history = useHistory();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  const { data } = useQuery<isLoggedIn>(IS_LOGGED_IN)
-
-  if (data && !data.isLoggedIn) {
-    return <ErrorPage code={403}/>
-  }
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const toggle = (
-    <IconButton
-      color="inherit"
-      aria-label="open drawer"
-      edge="start"
-      onClick={handleDrawerToggle}
-      className={classes.menuButton}
-    >
-      <MenuIcon />
-    </IconButton>
-  );
   const randomContent = (
     <>
       <Typography paragraph>
@@ -117,6 +99,28 @@ export default function AdminPage() {
       </Typography>
     </>
   );
+  const [content, setContent] = React.useState(randomContent);
+  const { data: userData } = useQuery<getCurrentUser>(GET_USER_INFO);
+
+  if (!userData?.getCurrentUser?.admin) {
+    return <ErrorPage code={403} />
+  }
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const toggle = (
+    <IconButton
+      color="inherit"
+      aria-label="open drawer"
+      edge="start"
+      onClick={handleDrawerToggle}
+      className={classes.menuButton}
+    >
+      <MenuIcon />
+    </IconButton>
+  );
 
   const appSettings = (
     <>
@@ -125,8 +129,6 @@ export default function AdminPage() {
       </Typography>
     </>
   );
-
-  const [content, setContent] = React.useState(randomContent);
 
   const drawer = (
     <div>
@@ -155,7 +157,7 @@ export default function AdminPage() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <Header fixed={true} toggle={toggle}/>
+      <Header fixed={true} toggle={toggle} />
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">

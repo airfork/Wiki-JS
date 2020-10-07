@@ -8,13 +8,17 @@ import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home'
 import SettingsIcon from '@material-ui/icons/Settings';
 import WikiSearch from './WikiSearch';
-import { useQuery } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import { isLoggedIn } from '../graphql/isLoggedIn';
 import { IS_LOGGED_IN, logout } from '../auth';
 import { Avatar, Grid } from '@material-ui/core';
 import { Link as RouterLink, Link } from 'react-router-dom';
 import MenuIcon from "@material-ui/icons/Menu";
 import Routes from "../routes";
+import { getCurrentUser } from '../graphql/getCurrentUser';
+import { GET_USER_INFO } from '../pages/AdminPage';
+
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -82,6 +86,7 @@ type HeaderProps = {
 export default function Header(props: HeaderProps) {
   const classes = useStyles();
   const { data, refetch } = useQuery<isLoggedIn>(IS_LOGGED_IN);
+  const { data: userData } = useQuery<getCurrentUser>(GET_USER_INFO);
 
   return (
     <div className={classes.root}>
@@ -122,12 +127,12 @@ export default function Header(props: HeaderProps) {
                 : <Button color="inherit" component={Link} to="/login">Login</Button>
             }
           </div>
-          {data?.isLoggedIn
-          ?
+          {userData?.getCurrentUser?.admin
+            ?
             <Avatar className={`${classes.small} ${classes.green}`} component={Link} to={Routes.admin.path}>
-              <SettingsIcon/>
+              <SettingsIcon />
             </Avatar>
-          : null
+            : null
           }
         </Toolbar>
       </AppBar>
