@@ -79,7 +79,7 @@
     "@types/sequelize": "^4.28.9",
     "@types/shortid": "0.0.29",
     "@types/validator": "^13.1.0",
-    "apollo-server": "^2.16.1",
+    "apollo-server": "^2.25.3",
     "apollo-server-koa": "^2.16.1",
     "apollo-upload-client": "^14.1.1",
     "argon2": "^0.26.2",
